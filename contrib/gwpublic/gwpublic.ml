@@ -1,7 +1,3 @@
-(* $Id: public.ml,v 4.26 2007/01/19 09:03:02 deraugla Exp $ *)
-
-open Gwaccess
-
 let list_ind = ref ""
 let ind = ref ""
 let bname = ref ""
@@ -14,7 +10,7 @@ let speclist =
    "-list-ind", Arg.String (fun s -> list_ind := s),
    "<file> file to the list of persons"]
 let anonfun i = bname := i
-let usage = "Usage: private [-everybody] [-ind key] [-list-ind file] base"
+let usage = "Usage: public [-everybody] [-ind key] [-list-ind file] base"
 
 let main () =
   Arg.parse speclist anonfun usage;
@@ -22,12 +18,8 @@ let main () =
   let gcc = Gc.get () in
   gcc.Gc.max_overhead <- 100;
   Gc.set gcc;
-  Lock.control_retry (Mutil.lock_file !bname)
-    ~onerror:Lock.print_error_and_exit
-    (fun () ->
-       if !everybody then Gwaccess.access_everybody Def.Private !bname
-       else if !list_ind = "" then
-         Gwaccess.access_some Def.Private !bname !ind
-       else Gwaccess.access_some_list Def.Private !bname !list_ind)
+  if !everybody then Gwaccess.access_everybody Public !bname
+  else if !list_ind = "" then Gwaccess.access_some Public !bname !ind
+  else Gwaccess.access_some_list Public !bname !list_ind
 
 let _ = main ()
