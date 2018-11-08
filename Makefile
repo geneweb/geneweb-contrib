@@ -32,6 +32,7 @@ EXE = \
 	history/fix_hist.exe \
 	history/is_gw_plus.exe \
 	i18n_check/i18n_check.exe \
+	jsonExport/gwJsonExport.exe \
 	lex/lex_utils.exe \
 	misc/lower_string.exe \
 	oneshot/gwBaseCompatiblePlus.exe \
