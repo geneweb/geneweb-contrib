@@ -1,0 +1,17 @@
+sudo: required
+language: c
+env:
+  - OCAML_VERSION=4.05
+  - OCAML_VERSION=4.06
+  - OCAML_VERSION=4.07
+os: linux
+install: wget https://raw.githubusercontent.com/ocaml/ocaml-ci-scripts/master/.travis-opam.sh
+script:
+  - bash -ex .travis-opam.sh ;
+    set -ex ;
+    export OPAMYES=1 ;
+    eval $(opam config env) ;
+    opam pin add geneweb https://github.com/geneweb/geneweb.git --no-action ;
+    opam depext geneweb ;
+    opam install geneweb ;
+    make exe ;
