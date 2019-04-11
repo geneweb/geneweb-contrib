@@ -26,35 +26,33 @@ let compute_ndgen treshold y =
 let mark_descendants base scanned old treshold =
   let rec loop p ndgen =
     let p_key_index = get_key_index p in
-    let i = Adef.int_of_iper p_key_index in
-    if scanned.(i) < ndgen then begin
+    if Gwdb.Marker.get scanned p_key_index < ndgen then begin
       (* If we did not already scanned with ndgen >= current ndgen *)
       let ndgen = match Gwaccess.most_recent_year_of p with
         | Some y ->
           (* We have a date: we do not want to scan this person again with a higher ndgen *)
-          scanned.(i) <- max_int ;
+          Gwdb.Marker.set scanned p_key_index max_int ;
           compute_ndgen treshold y
         | None ->
-          scanned.(i) <- ndgen ;
+          Gwdb.Marker.set scanned p_key_index ndgen ;
           ndgen
       in
       if ndgen > 0 then
         begin
           let ndgen' = ndgen - 1 in
-          old.(i) <- true ;
+          Gwdb.Marker.set old p_key_index true ;
           Array.iter
             (fun ifam ->
                let fam = foi base ifam in
                let sp = Gutil.spouse p_key_index fam in
-               let i = Adef.int_of_iper sp in
-               if scanned.(i) < ndgen then begin
+               if Gwdb.Marker.get scanned sp < ndgen then begin
                  let ndgen'' =
                    Opt.map_default ndgen
                      (compute_ndgen treshold)
                      (Gwaccess.most_recent_year_of (poi base sp))
                  in
                  if ndgen'' > 0 then begin
-                   old.(i) <- true ;
+                   Gwdb.Marker.set old sp true ;
                    Array.iter
                      (fun c -> loop (poi base c) (min ndgen' (max 0 (ndgen'' - 1))))
                      (get_children fam)
@@ -68,9 +66,9 @@ let mark_descendants base scanned old treshold =
 
 let mark_ancestors base scanned treshold =
   let rec loop p =
-    let i = Adef.int_of_iper (get_key_index p) in
-    if not scanned.(i) then begin
-      scanned.(i) <- true ;
+    let i = get_key_index p in
+    if not @@ Gwdb.Marker.get scanned i then begin
+      Gwdb.Marker.set scanned i true ;
       begin match Gwaccess.oldest_year_of p with
         | Some y when y >= treshold ->
           Printf.eprintf "Problem of date ! %s %d\n" (Gutil.designation base p) y;
@@ -111,24 +109,26 @@ let public_all ~mem bname treshold =
         exit 2
       | _ -> assert false);
   let nb = nb_of_persons base in
-  let old = Array.make nb false in
-  let scanned = Array.make nb (-1) in
+  let ipers = Gwdb.ipers base in
+  let old = Gwdb.iper_marker ipers false in
+  let scanned = Gwdb.iper_marker ipers (-1) in
   ProgrBar.start () ;
-  for i = 0 to nb - 1 do
+  Gwdb.Collection.iteri begin fun i ip ->
     ProgrBar.run i nb ;
-    if scanned.(i) < 0 then
-      let p = poi base (Adef.iper_of_int i) in
+    if Gwdb.Marker.get scanned ip < 0 then
+      let p = poi base ip in
       mark_descendants base scanned old treshold p 0
-  done;
+  end ipers ;
   ProgrBar.finish () ;
-  let scanned = Array.make nb false in
+  let ipers = Gwdb.ipers base in
+  let scanned = Gwdb.iper_marker ipers false in
   ProgrBar.start () ;
-  for i = 0 to nb_of_persons base - 1 do
+  Gwdb.Collection.iteri begin fun i ip ->
     ProgrBar.run i nb ;
-    if old.(i) && not scanned.(i) then
-      let p = poi base (Adef.iper_of_int i) in
+    if Gwdb.Marker.get old ip && not @@ Gwdb.Marker.get scanned ip then
+      let p = poi base ip in
       mark_ancestors base scanned treshold p
-  done;
+  end ipers ;
   ProgrBar.finish () ;
   if not mem then begin
     clear_persons_array base ;
@@ -146,7 +146,7 @@ let public_some bname treshold key =
       | None -> Printf.eprintf "Bad key %s\n" key; flush stderr; exit 2
   in
   let p = poi base ip in
-  let scanned = Array.make (nb_of_persons base) false in
+  let scanned = Gwdb.iper_marker (Gwdb.ipers base) false in
   let () = load_ascends_array base in
   let () = load_couples_array base in
   mark_ancestors base scanned treshold p;

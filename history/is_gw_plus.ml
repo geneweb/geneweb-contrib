@@ -1,13 +1,11 @@
-open Geneweb
-
 open Def
 
 type gen_record =
   { date : string;
     wizard : string;
-    gen_p : (iper, string) gen_person;
-    gen_f : (iper, string) gen_family list;
-    gen_c : iper array list }
+    gen_p : (Gwdb.iper, Gwdb.iper, string) gen_person;
+    gen_f : (Gwdb.iper, Gwdb.ifam, string) gen_family list;
+    gen_c : Gwdb.iper array list }
 
 let test_history fname pos =
   match try Some (Secure.open_in_bin fname) with Sys_error _ -> None with

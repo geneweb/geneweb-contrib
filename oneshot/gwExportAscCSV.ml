@@ -1,4 +1,3 @@
-open Geneweb
 open Gwdb
 
 let is_printable =
@@ -42,12 +41,12 @@ let print_asc_csv base ip nb_gen =
   in
   loop 0 nb_person p
 
-let ind = ref 0
+let ind = ref ""
 let nb_gen = ref 4
 let bname = ref ""
 
 let speclist =
-  ["-i", Arg.Int (fun i -> ind := i), "ip of the person (default = 0)";
+  ["-i", Arg.Set_string ind, "ip of the person (default = 0)";
    "-n", Arg.Int (fun i -> nb_gen := i),
    "number of generation (default = " ^ string_of_int !nb_gen ^ ")"]
 let anonfun i = bname := i
@@ -57,16 +56,7 @@ let main () =
   Arg.parse speclist anonfun usage;
   if !bname = "" then begin Arg.usage speclist usage; exit 2 end;
   let base = Gwdb.open_base !bname in
-  let ip = Adef.iper_of_int !ind in print_asc_csv base ip !nb_gen
+  let ip = Gwdb.iper_of_string !ind in
+  print_asc_csv base ip !nb_gen
 
 let _ = main ()
-
-
-
-
-
-
-
-
-
-

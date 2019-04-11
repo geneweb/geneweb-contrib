@@ -1,12 +1,10 @@
-open Geneweb
 open Def
 open Gwdb
 
 let fix_date_text bname =
   let base = Gwdb.open_base bname in
   let space_to_unders = Mutil.tr ' ' '_' in
-  for i = 0 to nb_of_persons base - 1 do
-    let p = poi base (Adef.iper_of_int i) in
+  Gwdb.Collection.iter begin fun p ->
     let birth = get_birth p in
     let birth =
       match Adef.od_of_cdate birth with
@@ -123,9 +121,8 @@ let fix_date_text bname =
        death = death; burial = burial; pevents = pevents}
     in
     patch_person base p.key_index p
-  done;
-  for i = 0 to nb_of_families base - 1 do
-    let fam = foi base (Adef.ifam_of_int i) in
+  end (Gwdb.persons base) ;
+  Gwdb.Collection.iter begin fun fam ->
     let marriage = get_marriage fam in
     let marriage =
       match Adef.od_of_cdate marriage with
@@ -171,7 +168,7 @@ let fix_date_text bname =
       {(gen_family_of_family fam) with marriage = marriage; fevents = fevents}
     in
     patch_family base fam.fam_index fam
-  done;
+  end (Gwdb.families base) ;
   commit_patches base
 
 let bname = ref ""

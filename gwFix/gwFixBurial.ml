@@ -8,8 +8,7 @@ let update_database_with_burial base =
   let empty_string = Gwdb.insert_string base "" in
   let changed = ref false in
   let nb_modified = ref 0 in
-  for i = 0 to nb_of_persons base - 1 do
-    let p = poi base (Adef.iper_of_int i) in
+  Gwdb.Collection.iter begin fun p ->
     match get_burial p with
       UnknownBurial ->
         if sou base (get_burial_place p) = "" &&
@@ -36,7 +35,7 @@ let update_database_with_burial base =
             incr nb_modified
           end
     | _ -> ()
-  done;
+  end (Gwdb.persons base) ;
   if !changed then
     begin
       commit_patches base;

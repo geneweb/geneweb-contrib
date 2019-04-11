@@ -2,50 +2,11 @@ open Geneweb
 open Def
 open Gwdb
 
-let find_dated_ancestor base p =
-  let mark = Array.make (nb_of_persons base) false in
-  let rec loop nb_gen iplist =
-    if iplist = [] then None
-    else
-      let anc_list =
-        List.fold_left
-          (fun anc_list ip ->
-             match get_parents (poi base ip) with
-               Some ifam ->
-                 let fam = foi base ifam in
-                 get_mother fam :: get_father fam :: anc_list
-             | None -> anc_list)
-          [] iplist
-      in
-      (* Dans le cas où le nombre d'implexes est très élevé, le calcul *)
-      (* peut être très long car on le refait plusieurs fois pour les  *)
-      (* mêmes personnes. On rend donc la liste unique.                *)
-      let anc_list = List.sort_uniq compare anc_list in
-      let anc_list =
-        List.filter (fun ip -> not mark.(Adef.int_of_iper ip)) anc_list
-      in
-      let () =
-        List.iter (fun ip -> mark.(Adef.int_of_iper ip) <- true) anc_list
-      in
-      let rec loop_ind =
-        function
-          ip :: iplist ->
-            let p = poi base ip in
-            begin match Gwaccess.oldest_year_of p with
-              Some year -> Some (p, year, nb_gen)
-            | None -> loop_ind iplist
-            end
-        | [] -> loop (nb_gen + 1) anc_list
-      in
-      loop_ind anc_list
-  in
-  loop 1 [get_key_index p]
-
 let nb_years_by_gen = 30
 
 let change_somebody_access base lim_year trace p year_of_p spouse =
   if year_of_p = None && (get_access p = IfTitles || spouse) then
-    match find_dated_ancestor base p with
+    match Gwaccess.find_dated_ancestor base p with
       Some (a, year, nb_gen) ->
         let acc =
           if year + nb_gen * nb_years_by_gen > lim_year then Private
@@ -82,10 +43,9 @@ let public_all ~fast bname lim_year trace patched =
          exit 2
      | _ -> assert false);
   ProgrBar.start ();
-  for i = 0 to n - 1 do
+  Gwdb.Collection.iteri begin fun i p ->
+    let ip = get_key_index p in
     ProgrBar.run i n;
-    let ip = Adef.iper_of_int i in
-    let p = poi base ip in
     if Gwaccess.oldest_year_of p = None && get_access p = IfTitles &&
        (patched && is_patched_person base ip || patched = false)
     then
@@ -128,7 +88,7 @@ let public_all ~fast bname lim_year trace patched =
               | None -> loop (i + 1)
           in
           loop 0
-  done;
+  end (Gwdb.persons base) ;
   if fast then clear_persons_array base ;
   if !changes then commit_patches base;
   ProgrBar.finish ()

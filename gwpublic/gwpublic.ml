@@ -1,4 +1,4 @@
-open Geneweb.Def
+open Def
 
 let list_ind = ref ""
 let ind = ref ""

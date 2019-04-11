@@ -8,8 +8,7 @@ let image_start_with_gallery img =
 
 let remove_image_everybody bname trace =
   let base = Gwdb.open_base bname in
-  for i = 0 to nb_of_persons base - 1 do
-    let p = poi base (Adef.iper_of_int i) in
+  Gwdb.Collection.iter begin fun p ->
     if image_start_with_gallery (sou base (get_image p)) then
       begin
         if trace then Printf.printf "%s\n" (Gutil.designation base p);
@@ -17,7 +16,7 @@ let remove_image_everybody bname trace =
         let p = {(gen_person_of_person p) with image = empty} in
         patch_person base p.key_index p
       end
-  done;
+  end (Gwdb.persons base) ;
   commit_patches base
 
 let remove_image_some bname key trace =

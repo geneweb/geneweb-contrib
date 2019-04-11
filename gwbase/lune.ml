@@ -1,4 +1,3 @@
-open Geneweb
 open Def
 open Gwdb
 
@@ -9,8 +8,7 @@ let lune bname =
   let moon_age = Array.make 31 0 in
   let moon_phase = Array.make 5 0 in
   let nbb = ref 0 in
-  for i = 0 to nb_of_persons base - 1 do
-    let p = poi base (Adef.iper_of_int i) in
+  Gwdb.Collection.iter begin fun p ->
     match Adef.od_of_cdate (get_birth p) with
       Some (Dgreg (dt, _)) ->
         if dt.prec = Sure && dt.delta = 0 && dt.day > 0 then
@@ -30,7 +28,7 @@ let lune bname =
             moon_phase.(i) <- moon_phase.(i) + 1
           end
     | _ -> ()
-  done;
+  end (Gwdb.persons base) ;
   Printf.printf "Influence de la lune sur les naissances.\n\n";
   Printf.printf "Nombre de personnes = %d\n" !nbb;
   Printf.printf "\n";

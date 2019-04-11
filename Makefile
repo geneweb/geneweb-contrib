@@ -5,10 +5,8 @@ EXE = \
 	check_base/check_base.exe \
 	dag2html/main.exe \
 	gui/gui.exe \
-	gwFix/gwFindCpl.exe \
 	gwFix/gwFixBase.exe \
 	gwFix/gwFixBurial.exe \
-	gwFix/gwFixColon.exe \
 	gwFix/gwFixEvtSrc.exe \
 	gwFix/gwFixFromFile.exe \
 	gwFix/gwFixFromFileAlias.exe \
@@ -18,13 +16,10 @@ EXE = \
 	gwbase/clavier.exe \
 	gwbase/consmoy.exe \
 	gwbase/geneanet.exe \
-	gwbase/gwck.exe \
 	gwbase/hist.exe \
 	gwbase/lune.exe \
 	gwbase/nbdesc.exe \
 	gwbase/probot.exe \
-	gwbase/public.exe \
-	gwbase/public2.exe \
 	gwbase/selroy.exe \
 	gwbase/titres.exe \
 	gwpublic/gwiftitles.exe \

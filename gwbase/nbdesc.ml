@@ -1,4 +1,3 @@
-open Geneweb
 open Def
 open Gwdb
 
@@ -15,28 +14,26 @@ let before_date d d1 =
 
 let string_of_date d = string_of_int d.year
 
-let apply base date nb_ind f =
+let apply base date f =
   let cnt = ref 0 in
-  for i = 0 to nb_ind - 1 do
-    let ip = Adef.iper_of_int i in
-    let p = poi base ip in
+  Gwdb.Collection.iter begin fun p ->
     match Adef.od_of_cdate (get_birth p) with
       Some (Dgreg (b_dmy, _)) ->
-        let alive_at_that_date =
-          if before_date date b_dmy then
-            match get_death p with
-              Death (_, cd) ->
-                begin match Adef.date_of_cdate cd with
-                  Dgreg (d_dmy, _) -> before_date d_dmy date
-                | _ -> false
-                end
-            | NotDead -> true
-            | _ -> false
-          else false
-        in
-        if alive_at_that_date then begin f !cnt ip p; incr cnt end
+      let alive_at_that_date =
+        if before_date date b_dmy then
+          match get_death p with
+            Death (_, cd) ->
+            begin match Adef.date_of_cdate cd with
+                Dgreg (d_dmy, _) -> before_date d_dmy date
+              | _ -> false
+            end
+          | NotDead -> true
+          | _ -> false
+        else false
+      in
+      if alive_at_that_date then begin f !cnt (get_key_index p) p; incr cnt end
     | Some (Dtext _) | None -> ()
-  done;
+  end (Gwdb.persons base) ;
   !cnt
 
 (**)
@@ -51,10 +48,10 @@ let number_of_desc base mark p =
     function
       ifam :: ifaml ->
         let (nb, new_gen) =
-          if mark.(Adef.int_of_ifam ifam) = curr_mark then nb, new_gen
+          if Gwdb.Marker.get mark ifam = curr_mark then nb, new_gen
           else
             begin
-              mark.(Adef.int_of_ifam ifam) <- curr_mark;
+              Gwdb.Marker.set mark ifam curr_mark;
               let fam = foi base ifam in
               let ipa = get_children fam in
               let nb = nb + Array.length ipa in
@@ -81,17 +78,15 @@ let nb_desc bname date =
   let base = Gwdb.open_base bname in
   let () = Gwdb.load_descends_array base in
   let () = Gwdb.load_unions_array base in
-  let nb_ind = nb_of_persons base in
-  let nb_fam = nb_of_families base in
-  let nb_liv = apply base date nb_ind (fun _ _ _ -> ()) in
+  let nb_liv = apply base date (fun _ _ _ -> ()) in
   Printf.printf "nombre de personnes vivantes en %s : %d\n" (string_of_date date)
     nb_liv;
   flush stdout;
-  let mark = Array.make nb_fam 0 in
+  let mark = Gwdb.ifam_marker (Gwdb.ifams base) 0 in
   let nb_desc = ref [] in
   ProgrBar.start ();
   ignore
-    (apply base date nb_ind
+    (apply base date
        (fun cnt _ip p ->
           ProgrBar.run cnt nb_liv;
           let nb_list = number_of_desc base mark p in

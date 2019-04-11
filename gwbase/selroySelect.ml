@@ -1,25 +1,22 @@
 (* Copyright (c) 2000-2006 INRIA *)
-open Geneweb
 open Def
 open Gwdb
 
 let select_ancestors base per_tab fam_tab flag =
   let rec loop iper =
-    let i = Adef.int_of_iper iper in
-    if per_tab.(i) land flag <> 0 then ()
+    if Gwdb.Marker.get per_tab iper land flag <> 0 then ()
     else
       begin
-        per_tab.(i) <- per_tab.(i) lor flag;
+        Gwdb.Marker.set per_tab iper (Gwdb.Marker.get per_tab iper lor flag);
         match get_parents (poi base iper) with
-          Some ifam ->
-            let i = Adef.int_of_ifam ifam in
-            if fam_tab.(i) land flag <> 0 then ()
-            else
-              begin
-                fam_tab.(i) <- fam_tab.(i) lor flag;
-                let cpl = foi base ifam in
-                loop (get_father cpl); loop (get_mother cpl)
-              end
+        | Some ifam ->
+          if Gwdb.Marker.get fam_tab ifam land flag <> 0 then ()
+          else
+            begin
+              Gwdb.Marker.set fam_tab ifam (Gwdb.Marker.get fam_tab ifam lor flag);
+              let cpl = foi base ifam in
+              loop (get_father cpl); loop (get_mother cpl)
+            end
         | None -> ()
       end
   in
@@ -66,22 +63,22 @@ let good_dates base p =
     | None -> false
 
 let rec select_closure base per_tab fam_tab flag ip =
-  if per_tab.(Adef.int_of_iper ip) = 1 then
+  if Gwdb.Marker.get per_tab ip = 1 then
     let u = poi base ip in
-    per_tab.(Adef.int_of_iper ip) <- flag;
+    Gwdb.Marker.set per_tab ip flag;
     begin match get_parents (poi base ip) with
-      Some ifam ->
+      | Some ifam ->
         let cpl = foi base ifam in
         select_closure base per_tab fam_tab flag (get_father cpl);
         select_closure base per_tab fam_tab flag (get_mother cpl)
-    | None -> ()
+      | None -> ()
     end;
     for i = 0 to Array.length (get_family u) - 1 do
       let ifam = (get_family u).(i) in
       let desc = foi base ifam in
-      if fam_tab.(Adef.int_of_ifam ifam) = 1 then
+      if Gwdb.Marker.get fam_tab ifam = 1 then
         begin
-          fam_tab.(Adef.int_of_ifam ifam) <- flag;
+          Gwdb.Marker.set fam_tab ifam flag;
           for i = 0 to Array.length (get_children desc) - 1 do
             select_closure base per_tab fam_tab flag (get_children desc).(i)
           done;
@@ -91,30 +88,26 @@ let rec select_closure base per_tab fam_tab flag ip =
     ()
 
 let functions base _ _ _ _ _ _ _ _ =
-  let per_tab = Array.make (nb_of_persons base) 0 in
-  let fam_tab = Array.make (nb_of_families base) 0 in
-  for i = 0 to nb_of_persons base - 1 do
-    let p = poi base (Adef.iper_of_int i) in
-    let iaper = Adef.iper_of_int i in
+  let per_tab = Gwdb.iper_marker (Gwdb.ipers base) 0 in
+  let fam_tab = Gwdb.ifam_marker (Gwdb.ifams base) 0 in
+  Gwdb.Collection.iter begin fun p ->
     if has_titles base p || parents_has_titles base p || good_dates base p
-    then
-      select_ancestors base per_tab fam_tab 1 iaper
-  done;
-  for i = 0 to nb_of_persons base - 1 do
-    if per_tab.(i) == 1 then
-      let u = poi base (Adef.iper_of_int i) in
+    then select_ancestors base per_tab fam_tab 1 (get_key_index p)
+  end (Gwdb.persons base) ;
+  Gwdb.Collection.iter begin fun i ->
+    if Gwdb.Marker.get per_tab i == 1 then
+      let u = poi base i in
       for i = 0 to Array.length (get_family u) - 1 do
         let ifam = (get_family u).(i) in
         let cpl = foi base ifam in
-        fam_tab.(Adef.int_of_ifam ifam) <- 1;
-        per_tab.(Adef.int_of_iper (get_father cpl)) <- 1;
-        per_tab.(Adef.int_of_iper (get_mother cpl)) <- 1;
-        ()
+        Gwdb.Marker.set fam_tab ifam 1;
+        Gwdb.Marker.set per_tab (get_father cpl) 1;
+        Gwdb.Marker.set per_tab (get_mother cpl) 1
       done
-  done;
+  end (Gwdb.ipers base) ;
   match person_of_key base "juan carlos" "de borbon" 0 with
     Some ip ->
       select_closure base per_tab fam_tab 3 ip;
-      (fun i -> per_tab.(Adef.int_of_iper i) == 3),
-      (fun i -> fam_tab.(Adef.int_of_ifam i) == 3)
+      (fun i -> Gwdb.Marker.get per_tab i == 3),
+      (fun i -> Gwdb.Marker.get fam_tab i == 3)
   | None -> failwith "not found juan carlos.0 de borbon"

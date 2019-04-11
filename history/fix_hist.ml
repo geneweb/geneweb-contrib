@@ -3,7 +3,6 @@ open Def
 
 (**/**) (* Ancien format de stockage *)
 
-
 type ('person, 'string) old_gen_person =
   { old_first_name : 'string;
     old_surname : 'string;
@@ -16,7 +15,7 @@ type ('person, 'string) old_gen_person =
     old_surnames_aliases : 'string list;
     old_titles : 'string gen_title list;
     old_rparents : ('person, 'string) gen_relation list;
-    old_related : iper list;
+    old_related : Gwdb.iper list;
     old_occupation : 'string;
     old_sex : sex;
     old_access : access;
@@ -34,7 +33,7 @@ type ('person, 'string) old_gen_person =
     old_burial_src : 'string;
     old_notes : 'string;
     old_psources : 'string;
-    old_key_index : iper }
+    old_key_index : Gwdb.iper }
 
 type ('person, 'string) old_gen_family =
   { old_marriage : cdate;
@@ -46,24 +45,22 @@ type ('person, 'string) old_gen_family =
     old_comment : 'string;
     old_origin_file : 'string;
     old_fsources : 'string;
-    old_fam_index : ifam }
+    old_fam_index : Gwdb.ifam }
 
 
 type old_gen_record =
   { old_date : string;
     old_wizard : string;
-    old_gen_p : (iper, string) old_gen_person;
-    old_gen_f : (iper, string) old_gen_family list;
-    old_gen_c : iper array list }
+    old_gen_p : (Gwdb.iper, string) old_gen_person;
+    old_gen_f : (Gwdb.iper, string) old_gen_family list;
+    old_gen_c : Gwdb.iper array list }
 
 type gen_record =
   { date : string;
     wizard : string;
-    gen_p : (iper, string) gen_person;
-    gen_f : (iper, string) gen_family list;
-    gen_c : iper array list }
-
-
+    gen_p : (Gwdb.iper, Gwdb.iper, string) gen_person;
+    gen_f : (Gwdb.iper, Gwdb.ifam, string) gen_family list;
+    gen_c : Gwdb.iper array list }
 
 (* Conversion both *)
 

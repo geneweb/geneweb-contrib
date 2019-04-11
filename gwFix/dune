@@ -5,8 +5,6 @@
         gwFixFromFileAlias
         gwFixBurial
         gwFixEvtSrc
-        gwFixColon
-        gwFindCpl
         gwFixY)
   (libraries str geneweb.gwdb1 geneweb)
 )

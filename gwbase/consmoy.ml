@@ -4,12 +4,12 @@ open Geneweb
 open Gwdb
 
 let consmoy base =
-  let cons = ref 0.0 in
-  for i = 0 to nb_of_persons base - 1 do
-    let p = poi base (Adef.iper_of_int i) in
-    cons := !cons +. Adef.float_of_fix (get_consang p)
-  done;
-  Printf.printf "average consanguinity: %f\n" (!cons /. float (nb_of_persons base));
+  let sum =
+    Gwdb.Collection.fold
+      (fun acc p -> acc +. Adef.float_of_fix (get_consang p))
+      0.0 (Gwdb.persons base)
+  in
+  Printf.printf "average consanguinity: %f\n" (sum /. float (nb_of_persons base));
   flush stdout;
   ()
 

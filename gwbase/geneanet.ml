@@ -9,14 +9,14 @@ let sou base s = Ansel.to_iso_8859_1 (sou base s)
 let in_file = ref ""
 
 let rec mark_ancestors base mark i =
-  if mark.(i) = false then
+  if not @@ Gwdb.Marker.get mark i then
     begin
-      mark.(i) <- true;
-      match get_parents (poi base (Adef.iper_of_int i)) with
+      Gwdb.Marker.set mark i true;
+      match get_parents (poi base i) with
         Some ifam ->
           let cpl = foi base ifam in
-          mark_ancestors base mark (Adef.int_of_iper (get_father cpl));
-          mark_ancestors base mark (Adef.int_of_iper (get_mother cpl))
+          mark_ancestors base mark (get_father cpl);
+          mark_ancestors base mark (get_mother cpl)
       | None -> ()
     end
 
@@ -234,31 +234,31 @@ let cmp_lines l1 l2 =
   else 0
 
 let geneanet base =
-  let mark = Array.make (nb_of_persons base) false in
+  let mark = Gwdb.iper_marker (Gwdb.ipers base) false in
   let lines = ref Line.empty in
   load_ascends_array base;
   load_unions_array base;
   load_couples_array base;
-  for i = 0 to nb_of_persons base - 1 do
-    if mark.(i) then ()
-    else if to_be_inserted base (poi base (Adef.iper_of_int i)) then
-      mark_ancestors base mark i
-  done;
-  for i = 0 to nb_of_persons base - 1 do
-    let p = poi base (Adef.iper_of_int i) in
+  Gwdb.Collection.iter begin fun i ->
+    if Gwdb.Marker.get mark i then ()
+    else if to_be_inserted base (poi base i) then mark_ancestors base mark i
+  end (Gwdb.ipers base) ;
+  Gwdb.Collection.iter begin fun p ->
     let surname = sou base (get_surname p) in
-    if mark.(i) && surname <> "?" && surname <> "x" then
+    if Gwdb.Marker.get mark (get_key_index p)
+    && surname <> "?"
+    && surname <> "x"
+    then
       let line = line_of_person base p in
       try
         let line1 = Line.find line !lines in
         line1.dbeg <- min line.dbeg line1.dbeg;
         line1.dend <- max line.dend line1.dend;
         line1.nbindi <- line1.nbindi + 1;
-        if line1.info = "" || line.dbeg = line1.dbeg then
-          line1.info <- line.info;
-        ()
+        if line1.info = "" || line.dbeg = line1.dbeg
+        then line1.info <- line.info
       with Not_found -> lines := Line.add line line !lines
-  done;
+  end (Gwdb.persons base) ;
   begin let list = Line.fold (fun _ line list -> line :: list) !lines [] in
     let list = List.sort cmp_lines list in List.iter print_line list
   end;

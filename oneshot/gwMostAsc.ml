@@ -1,4 +1,3 @@
-open Geneweb
 open Gwdb
 
 let trace = ref false
@@ -35,35 +34,19 @@ let rec compute_nb_asc base ifam =
 
 let compute_most_asc base =
   (* on récupère tous les enfants *)
-  let l = ref [] in
-  let () =
-    for i = 0 to Gwdb.nb_of_persons base - 1 do
-      let ip = Adef.iper_of_int i in
-      let p = poi base ip in
-      let has_children =
-        let rec loop faml =
-          match faml with
-            [] -> false
-          | ifam :: faml ->
-              let fam = foi base ifam in
-              if get_children fam <> [| |] then true else loop faml
-        in
-        loop (Array.to_list (get_family p))
-      in
-      if has_children then () else l := ip :: !l
-    done
+  let l =
+    Gwdb.Collection.fold begin fun acc p ->
+      if Array.exists (fun ifam -> get_children (foi base ifam) <> [| |]) (get_family p)
+      then acc
+      else (get_key_index p) :: acc
+    end [] (Gwdb.persons base)
   in
-  let _ =
-    List.map
-      (fun ip ->
-         let p = poi base ip in
-         match get_parents p with
-           Some ifam -> compute_nb_asc base ifam
-         | None -> 0)
-      !l
-  in
-  ()
-
+  List.iter begin fun ip ->
+    let p = poi base ip in
+    match get_parents p with
+    | Some ifam -> ignore @@ compute_nb_asc base ifam
+    | None -> ()
+  end l
 
 (**/**)
 

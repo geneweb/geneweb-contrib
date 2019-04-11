@@ -1,4 +1,3 @@
-open Geneweb
 open Def
 open Gwdb
 
@@ -17,14 +16,13 @@ let lower_utf_8 s =
 
 let titres bname =
   let base = Gwdb.open_base bname in
-  for i = 0 to nb_of_persons base - 1 do
-    let p = poi base (Adef.iper_of_int i) in
+  Gwdb.Collection.iter begin fun p ->
     List.iter
       (fun t ->
          Printf.printf "%s/%s\n" (lower_utf_8 (sou base t.t_ident))
            (lower_utf_8 (sou base t.t_place)))
       (get_titles p)
-  done;
+  end (Gwdb.persons base) ;
   flush stdout
 
 let bname = ref ""

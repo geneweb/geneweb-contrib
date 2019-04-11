@@ -12,8 +12,7 @@ let fix_occu_y base =
   let nb_fam_modified = ref 0 in
   let regexp_one = Str.regexp_string "Y," in
   let regexp_two = Str.regexp_string "Y<br>" in
-  for i = 0 to nb_of_persons base - 1 do
-    let p = poi base (Adef.iper_of_int i) in
+  Gwdb.Collection.iter begin fun p ->
     let updt = ref false in
     let occu = sou base (get_occupation p) in
     let () = if Str.string_match regexp_one occu 0 then updt := true in
@@ -52,9 +51,8 @@ let fix_occu_y base =
         changed := true;
         incr nb_ind_modified
       end
-  done;
-  for i = 0 to nb_of_families base - 1 do
-    let fam = foi base (Adef.ifam_of_int i) in
+  end (Gwdb.persons base) ;
+  Gwdb.Collection.iter begin fun fam ->
     let updt = ref false in
     let new_fevents =
       List.map
@@ -87,7 +85,7 @@ let fix_occu_y base =
         changed := true;
         incr nb_fam_modified
       end
-  done;
+  end (Gwdb.families base) ;
   if !changed then
     begin
       commit_patches base;

@@ -6,75 +6,34 @@ let suspend_with msg = ProgrBar.suspend (); msg () ; flush stdout
 let restart_with_fixed i n = Printf.printf "\t\tfixed\n"; flush stdout; ProgrBar.restart i n
 let string_of_p base i = Gutil.designation base (poi base i)
 
-let check_keys ~verbosity1 ~verbosity2 base nb_ind fix =
-  if verbosity1 then (Printf.printf "Check keys\n"; flush stdout);
-  if verbosity1 then ProgrBar.start ();
-  for i = 0 to nb_ind - 1 do
-    if verbosity1 then ProgrBar.run i nb_ind;
-    let ip = Adef.iper_of_int i in
-    let p = poi base ip in
-    let fn = sou base (get_first_name p) in
-    let sn = sou base (get_surname p) in
-    let occ = get_occ p in
-    if fn <> "?" && sn <> "?" then
-      let patch ?msg base ip fn sn occ =
-        Opt.iter suspend_with msg ;
-        Gwdb.patch_key base ip fn sn occ;
-        incr fix ;
-        Opt.iter (fun _ -> restart_with_fixed i nb_ind) msg
-      in
-      match Gwdb.person_of_key base fn sn occ with
-      | Some ip2 when ip2 <> ip ->
-        let msg =
-          if verbosity2
-          then Some (fun () ->
-              Printf.printf "\tkey %s.%d %s is \"%s\"\n" fn occ sn (string_of_p base ip2) )
-          else None
-        in
-        patch ?msg base ip fn sn occ
-      | None ->
-        let msg =
-          if verbosity2
-          then Some (fun () -> Printf.printf "\tkey %s.%d %s = no anwser\n" fn occ sn)
-          else None
-        in
-        patch ?msg base ip fn sn occ
-      | _ -> ()
-  done;
-  if verbosity1 then ProgrBar.finish ()
-
 let check_families_parents ~verbosity1 ~verbosity2 base nb_fam =
-  let dummy_iper = Adef.iper_of_int (-1) in
   if verbosity1 then begin
     Printf.printf "Check families' parents\n";
     flush stdout;
     ProgrBar.start () ;
   end ;
-  for i = 0 to nb_fam - 1 do
+  Gwdb.Collection.iteri begin fun i fam ->
+    let ifam = get_fam_index fam in
     if verbosity1 then ProgrBar.run i nb_fam ;
-    let ifam = Adef.ifam_of_int i in
-    let fam = foi base ifam in
-    if not @@ is_deleted_family fam then begin
-      let a = get_parent_array fam in
-      for j = 0 to Array.length a - 1 do
-        let ip = a.(j) in
-        if ip = dummy_iper then begin (* FIXME *)
-          if verbosity2 then begin
-            suspend_with (fun () ->
-                Printf.printf "\tdummy parent in family %d\n" (Adef.int_of_ifam ifam) ) ;
-            flush stdout ;
-            ProgrBar.restart i nb_fam
-          end ;
-        end else if not @@ Array.mem ifam (get_family (poi base ip)) then
-          begin
-            suspend_with (fun () ->
-                Printf.printf "\tno family for : %s\n" (string_of_p base ip) ) ;
-            flush stdout ;
-            ProgrBar.restart i nb_fam
-          end
-      done
-    end
-  done;
+    let a = get_parent_array fam in
+    for j = 0 to Array.length a - 1 do
+      let ip = a.(j) in
+      if ip = dummy_iper then begin
+        if verbosity2 then begin
+          suspend_with (fun () ->
+              Printf.printf "\tdummy parent in family %s\n" (string_of_ifam ifam) ) ;
+          flush stdout ;
+          ProgrBar.restart i nb_fam
+        end ;
+      end else if not @@ Array.mem ifam (get_family (poi base ip)) then
+        begin
+          suspend_with (fun () ->
+              Printf.printf "\tno family for : %s\n" (string_of_p base ip) ) ;
+          flush stdout ;
+          ProgrBar.restart i nb_fam
+        end
+    done
+  end (Gwdb.families base) ;
   ProgrBar.finish ()
 
 let check_families_children ~verbosity1 ~verbosity2 base nb_fam fix =
@@ -83,36 +42,34 @@ let check_families_children ~verbosity1 ~verbosity2 base nb_fam fix =
     flush stdout;
     ProgrBar.start ()
   end;
-  for i = 0 to nb_fam - 1 do
+  Gwdb.Collection.iteri begin fun i fam ->
+    let ifam = get_fam_index fam in
     if verbosity1 then ProgrBar.run i nb_fam;
-    let ifam = Adef.ifam_of_int i in
-    let fam = foi base ifam in
-    if not (is_deleted_family fam) then
-      let children = get_children fam in
-      for j = 0 to Array.length children - 1 do
-        let ip = children.(j) in
-        let a = poi base ip in
-        let parents = get_parents a in
-        if parents = Some (Adef.ifam_of_int (-1)) || parents = None then begin
-          if verbosity2 then begin
-            ProgrBar.suspend ();
-            Printf.printf "\tno parents: %s in family [%s & %s]\n"
-              (string_of_p base ip)
-              (string_of_p base @@ get_father fam)
-              (string_of_p base @@ get_mother fam);
-            flush stdout
-          end ;
-          patch_ascend base ip {parents = Some ifam; consang = get_consang a};
-          incr fix ;
-          if verbosity1 then ProgrBar.restart i nb_fam ;
-        end
-        else if parents <> Some ifam && verbosity1 then begin
-          (* FIXME: what to do here ? *)
-          Printf.printf "\tbad parents : %s\n" (string_of_p base ip);
+    let children = get_children fam in
+    for j = 0 to Array.length children - 1 do
+      let ip = children.(j) in
+      let a = poi base ip in
+      let parents = get_parents a in
+      if parents = Some dummy_ifam || parents = None then begin
+        if verbosity2 then begin
+          ProgrBar.suspend ();
+          Printf.printf "\tno parents: %s in family [%s & %s]\n"
+            (string_of_p base ip)
+            (string_of_p base @@ get_father fam)
+            (string_of_p base @@ get_mother fam);
           flush stdout
-        end
-      done
-  done;
+        end ;
+        patch_ascend base ip {parents = Some ifam; consang = get_consang a};
+        incr fix ;
+        if verbosity1 then ProgrBar.restart i nb_fam ;
+      end
+      else if parents <> Some ifam && verbosity1 then begin
+        (* FIXME: what to do here ? *)
+        Printf.printf "\tbad parents : %s\n" (string_of_p base ip);
+        flush stdout
+      end
+    done
+  end (Gwdb.families base) ;
   if verbosity1 then ProgrBar.finish ()
 
 let check_persons_parents ~verbosity1 ~verbosity2 base nb_ind fix =
@@ -121,13 +78,12 @@ let check_persons_parents ~verbosity1 ~verbosity2 base nb_ind fix =
     flush stdout;
     ProgrBar.start ()
   end;
-  for i = 0 to nb_ind - 1 do
+  Gwdb.Collection.iteri begin fun i p ->
     if verbosity1 then ProgrBar.run i nb_ind;
-    let ip = Adef.iper_of_int i in
-    let a = poi base ip in
-    get_parents a |> Opt.iter @@ fun ifam ->
-    let fam = foi base ifam in
-    if is_deleted_family fam then begin
+    get_parents p |> Opt.iter @@ fun ifam ->
+    let ip = get_key_index p in
+    let fam = Gwdb.foi base ifam in
+    if get_fam_index fam = dummy_ifam then begin
       if verbosity2 then begin
         Printf.printf "\tparent family deleted: %s\n" (string_of_p base ip) ;
         flush stdout
@@ -146,7 +102,7 @@ let check_persons_parents ~verbosity1 ~verbosity2 base nb_ind fix =
           let children = Array.append children [| ip |] in
           patch_descend base ifam {children = children}; incr fix
         end
-  done;
+  end (Gwdb.persons base) ;
   if verbosity1 then ProgrBar.finish ()
 
 let check_persons_families ~verbosity1 ~verbosity2 base nb_ind fix =
@@ -155,11 +111,10 @@ let check_persons_families ~verbosity1 ~verbosity2 base nb_ind fix =
     flush stdout;
     ProgrBar.start ()
   end;
-  for i = 0 to nb_ind - 1 do
+  Gwdb.Collection.iteri begin fun i p ->
     if verbosity1 then ProgrBar.run i nb_ind;
-    let ip = Adef.iper_of_int i in
-    let u = poi base ip in
-    let ifams = get_family u in
+    let ip = get_key_index p in
+    let ifams = get_family p in
     let ifams' =
       Array.of_list @@
       Array.fold_right
@@ -169,8 +124,8 @@ let check_persons_families ~verbosity1 ~verbosity2 base nb_ind fix =
              begin
                if verbosity2 then
                  suspend_with (fun () ->
-                     Printf.printf "\tRemoving ifam %d from [%s] unions\n"
-                       (Adef.int_of_ifam ifam)
+                     Printf.printf "\tRemoving ifam %s from [%s] unions\n"
+                       (string_of_ifam ifam)
                        (string_of_p base ip));
                incr fix ;
                acc
@@ -179,7 +134,7 @@ let check_persons_families ~verbosity1 ~verbosity2 base nb_ind fix =
         ifams []
     in
     if ifams' <> ifams then patch_union base ip {family = ifams'} ;
-  done;
+  end (Gwdb.persons base) ;
   if verbosity1 then ProgrBar.finish ()
 
 (* FIXME? let imoth = get_mother fam in *)
@@ -189,10 +144,8 @@ let check_witnesses ~verbosity1 ~verbosity2 base nb_fam fix =
     flush stdout;
     ProgrBar.start ()
   end;
-  for i = 0 to nb_fam - 1 do
+  Gwdb.Collection.iteri begin fun i fam ->
     if verbosity1 then ProgrBar.run i nb_fam;
-    let ifam = Adef.ifam_of_int i in
-    let fam = foi base ifam in
     let witn = get_witnesses fam in
     let ifath = get_father fam in
     for j = 0 to Array.length witn - 1 do
@@ -214,7 +167,7 @@ let check_witnesses ~verbosity1 ~verbosity2 base nb_fam fix =
           if verbosity2 then restart_with_fixed i nb_fam
         end
     done
-  done;
+  end (Gwdb.families base) ;
   if verbosity1 then ProgrBar.finish ()
 
 let check_pevents_witnesses ~verbosity1 ~verbosity2 base nb_ind fix =
@@ -223,10 +176,9 @@ let check_pevents_witnesses ~verbosity1 ~verbosity2 base nb_ind fix =
     flush stdout;
     ProgrBar.start ()
   end;
-  for i = 0 to nb_ind - 1 do
+  Gwdb.Collection.iteri begin fun i p ->
     if verbosity1 then ProgrBar.run i nb_ind;
-    let ip = Adef.iper_of_int i in
-    let p = poi base ip in
+    let ip = get_key_index p in
     List.iter
       (fun evt ->
          let witn = Array.map fst evt.epers_witnesses in
@@ -246,7 +198,7 @@ let check_pevents_witnesses ~verbosity1 ~verbosity2 base nb_ind fix =
              end
          done)
       (get_pevents p)
-  done;
+  end (Gwdb.persons base) ;
   if verbosity1 then ProgrBar.finish ()
 
 let check_fevents_witnesses ~verbosity1 ~verbosity2 base nb_fam fix =
@@ -255,10 +207,8 @@ let check_fevents_witnesses ~verbosity1 ~verbosity2 base nb_fam fix =
     flush stdout;
     ProgrBar.start ()
   end;
-  for i = 0 to nb_fam - 1 do
+  Gwdb.Collection.iteri begin fun i fam ->
     if verbosity1 then ProgrBar.run i nb_fam;
-    let ifam = Adef.ifam_of_int i in
-    let fam = foi base ifam in
     let ifath = get_father fam in
     List.iter
       (fun evt ->
@@ -283,13 +233,12 @@ let check_fevents_witnesses ~verbosity1 ~verbosity2 base nb_fam fix =
              end
          done)
       (get_fevents fam)
-  done;
+  end (Gwdb.families base) ;
   if verbosity1 then ProgrBar.finish ()
 
 let check
     ~verbosity
     ~fast
-    ~keys
     ~f_parents
     ~f_children
     ~p_parents
@@ -307,7 +256,6 @@ let check
   let nb_fam = nb_of_families base in
   let nb_ind = nb_of_persons base in
   if fast then begin load_strings_array base ; load_persons_array base end ;
-  if !keys then check_keys ~verbosity1 ~verbosity2 base nb_ind fix;
   if !f_parents then check_families_parents ~verbosity1 ~verbosity2 base nb_fam;
   if !f_children then check_families_children ~verbosity1 ~verbosity2 base nb_fam fix;
   if !p_parents then check_persons_parents ~verbosity1 ~verbosity2 base nb_ind fix;
@@ -330,8 +278,8 @@ let check
   if verbosity1 then (Printf.printf "Rebuilding the indexes..\n" ; flush stdout) ;
   begin match Gwdb.ascends_array base with
   | (_, _, _, None) ->
-    Gwdb.apply_base1 base
-      (fun base -> Outbase.gen_output false base.Dbdisk.data.Dbdisk.bdir base) 
+    Gwdb1.apply_base1 (Gwdb1.OfGwdb.base base)
+      (fun base -> Outbase.gen_output false base.Dbdisk.data.Dbdisk.bdir base)
   | _ -> ()
   end ;
   (* On recalcul le nombre reel de personnes. *)
@@ -343,7 +291,6 @@ let check
 let bname = ref ""
 let verbosity = ref 2
 let fast = ref false
-let keys = ref false
 let f_parents = ref false
 let f_children = ref false
 let p_parents = ref false
@@ -356,7 +303,6 @@ let speclist =
   [ ("-q", Arg.Unit (fun () -> verbosity := 1), " quiet mode")
   ; ("-qq", Arg.Unit (fun () -> verbosity := 0), " very quiet mode")
   ; ("-fast", Arg.Set fast, " fast mode. Needs more memory.")
-  ; ("-keys", Arg.Set keys, " missing doc")
   ; ("-families-parents", Arg.Set f_parents, " missing doc")
   ; ("-families-children", Arg.Set f_children, " missing doc")
   ; ("-persons-parents", Arg.Set p_parents, " missing doc")
@@ -375,8 +321,7 @@ let main () =
   if !bname = "" then begin Arg.usage speclist usage; exit 2 end;
   Lock.control (Mutil.lock_file !bname) false ~onerror:Lock.print_try_again @@
   fun () ->
-  if !keys
-  || !f_parents
+  if !f_parents
   || !f_children
   || !p_parents
   || !p_families
@@ -385,7 +330,6 @@ let main () =
   || !fevents_witnesses
   then ()
   else begin
-    keys := true ;
     f_parents := true ;
     f_children := true ;
     p_parents := true ;
@@ -397,7 +341,6 @@ let main () =
   check
     ~fast
     ~verbosity
-    ~keys
     ~f_parents
     ~f_children
     ~p_parents
