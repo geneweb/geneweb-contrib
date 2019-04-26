@@ -6,5 +6,5 @@
         gwFixBurial
         gwFixEvtSrc
         gwFixY)
-  (libraries str geneweb.gwdb1 geneweb)
+  (libraries str geneweb.gwdb1 geneweb.wserver geneweb)
 )
