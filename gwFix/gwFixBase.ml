@@ -13,7 +13,7 @@ let check_families_parents ~verbosity1 ~verbosity2 base nb_fam =
     ProgrBar.start () ;
   end ;
   Gwdb.Collection.iteri begin fun i fam ->
-    let ifam = get_fam_index fam in
+    let ifam = get_ifam fam in
     if verbosity1 then ProgrBar.run i nb_fam ;
     let a = get_parent_array fam in
     for j = 0 to Array.length a - 1 do
@@ -43,7 +43,7 @@ let check_families_children ~verbosity1 ~verbosity2 base nb_fam fix =
     ProgrBar.start ()
   end;
   Gwdb.Collection.iteri begin fun i fam ->
-    let ifam = get_fam_index fam in
+    let ifam = get_ifam fam in
     if verbosity1 then ProgrBar.run i nb_fam;
     let children = get_children fam in
     for j = 0 to Array.length children - 1 do
@@ -83,7 +83,7 @@ let check_persons_parents ~verbosity1 ~verbosity2 base nb_ind fix =
     get_parents p |> Opt.iter @@ fun ifam ->
     let ip = get_iper p in
     let fam = Gwdb.foi base ifam in
-    if get_fam_index fam = dummy_ifam then begin
+    if get_ifam fam = dummy_ifam then begin
       if verbosity2 then begin
         Printf.printf "\tparent family deleted: %s\n" (string_of_p base ip) ;
         flush stdout
