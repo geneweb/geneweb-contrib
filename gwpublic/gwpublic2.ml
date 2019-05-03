@@ -54,7 +54,7 @@ let public_all bname lim_year trace =
             if i = Array.length fama then ()
             else
               let ifam = fama.(i) in
-              let isp = Gutil.spouse (get_key_index p) (foi base ifam) in
+              let isp = Gutil.spouse (get_iper p) (foi base ifam) in
               let sp = poi base isp in
               let year_of_sp = Gwaccess.oldest_year_of sp in
               let acc_opt =

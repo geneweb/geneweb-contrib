@@ -245,7 +245,7 @@ let geneanet base =
   end (Gwdb.ipers base) ;
   Gwdb.Collection.iter begin fun p ->
     let surname = sou base (get_surname p) in
-    if Gwdb.Marker.get mark (get_key_index p)
+    if Gwdb.Marker.get mark (get_iper p)
     && surname <> "?"
     && surname <> "x"
     then

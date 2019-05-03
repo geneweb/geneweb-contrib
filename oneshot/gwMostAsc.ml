@@ -38,7 +38,7 @@ let compute_most_asc base =
     Gwdb.Collection.fold begin fun acc p ->
       if Array.exists (fun ifam -> get_children (foi base ifam) <> [| |]) (get_family p)
       then acc
-      else (get_key_index p) :: acc
+      else (get_iper p) :: acc
     end [] (Gwdb.persons base)
   in
   List.iter begin fun ip ->

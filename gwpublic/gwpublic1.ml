@@ -25,7 +25,7 @@ let compute_ndgen treshold y =
 *)
 let mark_descendants base scanned old treshold =
   let rec loop p ndgen =
-    let p_key_index = get_key_index p in
+    let p_key_index = get_iper p in
     if Gwdb.Marker.get scanned p_key_index < ndgen then begin
       (* If we did not already scanned with ndgen >= current ndgen *)
       let ndgen = match Gwaccess.most_recent_year_of p with
@@ -66,7 +66,7 @@ let mark_descendants base scanned old treshold =
 
 let mark_ancestors base scanned treshold =
   let rec loop p =
-    let i = get_key_index p in
+    let i = get_iper p in
     if not @@ Gwdb.Marker.get scanned i then begin
       Gwdb.Marker.set scanned i true ;
       begin match Gwaccess.oldest_year_of p with

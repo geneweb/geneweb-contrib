@@ -44,7 +44,7 @@ let public_all ~fast bname lim_year trace patched =
      | _ -> assert false);
   ProgrBar.start ();
   Gwdb.Collection.iteri begin fun i p ->
-    let ip = get_key_index p in
+    let ip = get_iper p in
     ProgrBar.run i n;
     if Gwaccess.oldest_year_of p = None && get_access p = IfTitles &&
        (patched && is_patched_person base ip || patched = false)

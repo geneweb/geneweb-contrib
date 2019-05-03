@@ -64,7 +64,7 @@ let find_dated_ancestor base p =
       in
       loop_ind anc_list
   in
-  loop 1 [get_key_index p]
+  loop 1 [get_iper p]
 
 let input_person file =
   let pl = ref [] in

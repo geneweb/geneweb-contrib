@@ -31,7 +31,7 @@ let apply base date f =
           | _ -> false
         else false
       in
-      if alive_at_that_date then begin f !cnt (get_key_index p) p; incr cnt end
+      if alive_at_that_date then begin f !cnt (get_iper p) p; incr cnt end
     | Some (Dtext _) | None -> ()
   end (Gwdb.persons base) ;
   !cnt

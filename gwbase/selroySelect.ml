@@ -92,7 +92,7 @@ let functions base _ _ _ _ _ _ _ _ =
   let fam_tab = Gwdb.ifam_marker (Gwdb.ifams base) 0 in
   Gwdb.Collection.iter begin fun p ->
     if has_titles base p || parents_has_titles base p || good_dates base p
-    then select_ancestors base per_tab fam_tab 1 (get_key_index p)
+    then select_ancestors base per_tab fam_tab 1 (get_iper p)
   end (Gwdb.persons base) ;
   Gwdb.Collection.iter begin fun i ->
     if Gwdb.Marker.get per_tab i == 1 then

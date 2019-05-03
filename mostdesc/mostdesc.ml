@@ -65,8 +65,8 @@ let most_desc base p =
   let tab = Array.make (nb_of_persons base) Sosa.zero in
   let entered = Array.make (nb_of_persons base) false in
   let q = ref Pq.empty in
-  q := Pq.add (get_key_index p) !q;
-  tab.(Adef.int_of_iper (get_key_index p)) <- Sosa.one;
+  q := Pq.add (get_iper p) !q;
+  tab.(Adef.int_of_iper (get_iper p)) <- Sosa.one;
   while not (Pq.is_empty !q) do
     begin let (ip, nq) = Pq.take !q in
       q := nq;
