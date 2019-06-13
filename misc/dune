@@ -1,4 +1,4 @@
 (executable
   (name lower_string)
-  (libraries geneweb.gwdb1 geneweb.wserver geneweb)
+  (libraries unix geneweb.gwdb1 geneweb.wserver geneweb)
 )

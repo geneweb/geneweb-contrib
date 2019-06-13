@@ -2,5 +2,5 @@
 
 (executables
  (names geneanet clavier hist selroy chkimg consmoy lune titres nbdesc probot)
-  (libraries geneweb.gwdb1 geneweb.wserver geneweb)
+  (libraries unix geneweb.gwdb1 geneweb.wserver geneweb)
 )
