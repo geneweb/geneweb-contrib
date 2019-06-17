@@ -230,12 +230,17 @@ let json_of_person base person =
     ]
 
 let json_of_relation_kind relation_kind = match relation_kind with
-    Married -> `String "married"
+  | Married -> `String "married"
   | NotMarried ->  `String "not_married"
   | Engaged ->  `String  "engaged"
   | NoSexesCheckNotMarried ->  `String  "no_sexes_check_not_married"
   | NoMention ->  `String  "no_mention"
   | NoSexesCheckMarried -> `String "no_sexes_check_married"
+  | MarriageBann -> `String "marriage_bann"
+  | MarriageContract -> `String "marriage_contract"
+  | MarriageLicense -> `String "marriage_license"
+  | Pacs -> `String "pacs"
+  | Residence -> `String "residence"
 
 let json_of_divorce divorce = match divorce with
     NotDivorced -> `Null
