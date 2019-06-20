@@ -316,12 +316,10 @@ let check
     flush stdout
   end ;
   if verbosity1 then (Printf.printf "Rebuilding the indexes..\n" ; flush stdout) ;
-  begin match Gwdb.ascends_array base with
-  | (_, _, _, None) ->
-    Gwdb1.apply_base1 (Gwdb1.OfGwdb.base base)
-      (fun base -> Outbase.gen_output false base.Dbdisk.data.Dbdisk.bdir base)
-  | _ -> ()
-  end ;
+  (* FIXME: make it gwdbX agnostic *)
+  Gwdb1.apply_base1
+    (Gwdb1.OfGwdb.base base)
+    (fun base -> Outbase.gen_output false base.Dbdisk.data.Dbdisk.bdir base) ;
   (* On recalcul le nombre reel de personnes. *)
   Util.init_cache_info bname base ;
   if verbosity1 then (Printf.printf "Done" ; flush stdout)

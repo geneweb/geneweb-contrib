@@ -53,7 +53,7 @@ let min_or_max_date f a base p =
     | _ -> a
   in
   let a =
-    match CheckItem.date_of_death (get_death p) with
+    match Date.date_of_death (get_death p) with
       Some (Dgreg (d, _)) -> f d.year a
     | _ -> a
   in
