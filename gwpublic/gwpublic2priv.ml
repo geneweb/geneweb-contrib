@@ -27,7 +27,7 @@ let change_somebody_access base lim_year trace p year_of_p spouse =
     | None -> None
   else None
 
-let public_all ~fast bname lim_year trace patched =
+let public_all ~fast bname lim_year trace =
   let base = Gwdb.open_base bname in
   let () = load_ascends_array base in
   let () = load_couples_array base in
@@ -46,8 +46,7 @@ let public_all ~fast bname lim_year trace patched =
   Gwdb.Collection.iteri begin fun i p ->
     let ip = get_iper p in
     ProgrBar.run i n;
-    if Gwaccess.oldest_year_of p = None && get_access p = IfTitles &&
-       (patched && is_patched_person base ip || patched = false)
+    if Gwaccess.oldest_year_of p = None && get_access p = IfTitles
     then
       match
         change_somebody_access base lim_year trace p (Gwaccess.oldest_year_of p) false
@@ -95,7 +94,6 @@ let public_all ~fast bname lim_year trace patched =
 
 let lim_year = ref 1900
 let trace = ref false
-let patched = ref false
 let bname = ref ""
 let fast = ref false
 
@@ -104,7 +102,6 @@ let speclist =
   ; ("-y", Arg.Int (fun i -> lim_year := i),
      "limit year (default = " ^ string_of_int !lim_year ^ ")")
   ; ("-t", Arg.Set trace, "trace changed persons")
-  ; ("-p", Arg.Set patched, "compute patched persons only")
   ]
 
 let anonfun i = bname := i
@@ -117,6 +114,6 @@ let main () =
   Secure.set_base_dir (Filename.dirname !bname);
   Lock.control_retry
     (Mutil.lock_file !bname) ~onerror:Lock.print_error_and_exit @@ fun () ->
-  public_all ~fast:!fast !bname !lim_year !trace !patched
+  public_all ~fast:!fast !bname !lim_year !trace
 
 let _ = main ()
