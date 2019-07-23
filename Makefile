@@ -4,7 +4,6 @@
 EXE = \
 	check_base/check_base.exe \
 	dag2html/main.exe \
-	gui/gui.exe \
 	gwFix/gwFixBase.exe \
 	gwFix/gwFixBurial.exe \
 	gwFix/gwFixEvtSrc.exe \
