@@ -14,7 +14,7 @@ script:
     set -ex ;
     export OPAMYES=1 ;
     eval $(opam config env) ;
-    opam pin add geneweb https://github.com/geneanet/geneweb.git#split-lib-master-sosa --no-action ;
+    opam pin add geneweb https://github.com/geneweb/geneweb.git --no-action ;
     opam depext geneweb ;
     opam install geneweb ;
     make exe ;
