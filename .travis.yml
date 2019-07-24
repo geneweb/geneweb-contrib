@@ -1,17 +1,27 @@
 sudo: required
+
 language: c
+
 env:
   - OCAML_VERSION=4.05
   - OCAML_VERSION=4.06
   - OCAML_VERSION=4.07
-os: linux
-before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq protobuf-compiler
-install: wget https://raw.githubusercontent.com/ocaml/ocaml-ci-scripts/master/.travis-opam.sh
+  - OCAML_VERSION=4.08
+
+os:
+  - linux
+  - osx
+
+cache:
+  directories:
+    - /home/travis/.opam/
+
+install:
+  - wget https://raw.githubusercontent.com/ocaml/ocaml-ci-scripts/master/.travis-ocaml.sh ;
+    bash -ex .travis-ocaml.sh ;
+
 script:
-  - bash -ex .travis-opam.sh ;
-    set -ex ;
+  - set -ex ;
     export OPAMYES=1 ;
     eval $(opam config env) ;
     opam pin add geneweb https://github.com/geneweb/geneweb.git --no-action ;
