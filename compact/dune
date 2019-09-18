@@ -1,0 +1,6 @@
+(executable
+  (name compact)
+  (public_name geneweb-compact)
+  (libraries unix str geneweb.gwdb1 geneweb.wserver geneweb)
+  (modules compact)
+)
