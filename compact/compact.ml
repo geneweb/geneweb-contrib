@@ -13,53 +13,74 @@ let clear_array a = a.clear_array ()
 let split_sname base i = Mutil.split_sname @@ base.data.strings.get i
 let split_fname base i = Mutil.split_fname @@ base.data.strings.get i
 
-let aux_istr_person fn p =
-  fn p.first_name ;
-  fn p.surname ;
-  fn p.image ;
-  fn p.public_name ;
-  List.iter fn p.qualifiers ;
-  List.iter fn p.aliases ;
-  List.iter fn p.first_names_aliases ;
-  List.iter fn p.surnames_aliases ;
-  List.iter begin fun {t_name;t_ident;t_place; _ } ->
-    fn t_ident ;
-    fn t_place ;
-    (match t_name with Tname i -> fn i | _ -> ()) ;
-  end p.titles ;
-  fn p.occupation ;
-  fn p.birth_place ;
-  fn p.birth_note ;
-  fn p.birth_src ;
-  fn p.baptism_place ;
-  fn p.baptism_note ;
-  fn p.baptism_src ;
-  fn p.death_place ;
-  fn p.death_note ;
-  fn p.death_src ;
-  fn p.burial_place ;
-  fn p.burial_note ;
-  fn p.burial_src ;
-  fn p.notes ;
-  fn p.psources ;
-  List.iter (fun {r_sources;_} -> fn r_sources) p.rparents ;
-  List.iter begin fun {epers_name;epers_place;epers_reason;epers_note;epers_src;_} ->
-    (match epers_name with Epers_Name i -> fn i | _ -> ()) ;
-    fn epers_place ;
-    fn epers_reason ;
-    fn epers_note ;
-    fn epers_src ;
-  end p.pevents
+let aux_istr_person fn p : dsk_person =
+  { p with
+    first_name = fn p.first_name
+  ; surname = fn p.surname
+  ; image = fn p.image
+  ; public_name = fn p.public_name
+  ; qualifiers = List.map fn p.qualifiers
+  ; aliases = List.map fn p.aliases
+  ; first_names_aliases = List.map fn p.first_names_aliases
+  ; surnames_aliases = List.map fn p.surnames_aliases
+  ; titles = List.map begin fun t ->
+      { t with t_name = (match t.t_name with Tname i -> Tname (fn i) | x -> x)
+             ; t_ident = fn t.t_ident
+             ; t_place = fn t.t_place
+      } end p.titles
+  ; occupation = fn p.occupation
+  ; birth_place = fn p.birth_place
+  ; birth_note = fn p.birth_note
+  ; birth_src = fn p.birth_src
+  ; baptism_place = fn p.baptism_place
+  ; baptism_note = fn p.baptism_note
+  ; baptism_src = fn p.baptism_src
+  ; death_place = fn p.death_place
+  ; death_note = fn p.death_note
+  ; death_src = fn p.death_src
+  ; burial_place = fn p.burial_place
+  ; burial_note = fn p.burial_note
+  ; burial_src = fn p.burial_src
+  ; notes = fn p.notes
+  ; psources = fn p.psources
+  ; rparents = List.map (fun r -> { r with r_sources = fn r.r_sources} ) p.rparents
+  ; pevents = List.map begin fun e ->
+      { e with
+        epers_name = (match e.epers_name with Epers_Name i -> Epers_Name (fn i) | x -> x)
+      ; epers_place = fn e.epers_place
+      ; epers_reason = fn e.epers_reason
+      ; epers_note = fn e.epers_note
+      ; epers_src = fn e.epers_src
+      } end p.pevents
+  }
+
+let aux_istr_family fn f =
+  { f with
+    marriage_place = fn f.marriage_place
+  ; marriage_note = fn f.marriage_note
+  ; marriage_src = fn f.marriage_src
+  ; comment = fn f.comment
+  ; origin_file = fn f.origin_file
+  ; fsources = fn f.fsources
+  ; fevents = List.map begin fun e ->
+      { e with
+        efam_name = (match e.efam_name with Efam_Name i -> Efam_Name (fn i) | x -> x)
+      ; efam_place = fn e.efam_place
+      ; efam_reason = fn e.efam_reason
+      ; efam_note = fn e.efam_note
+      ; efam_src = fn e.efam_src
+      } end f.fevents
+  }
 
 let scan base string person family =
-  let mark t i = Array.unsafe_set t i true in
+  let mark t i = Array.unsafe_set t i true ; i in
   if !step_strings && base.data.strings.len > 2 then begin
     load_array base.data.strings ;
     let rev = Hashtbl.create base.data.strings.len in
     for i = 0 to base.data.strings.len - 1 do
       Hashtbl.add rev (base.data.strings.get i) i
     done ;
-    let opt_mark t s = match Hashtbl.find_opt rev s with Some x -> mark t x | None -> () in
+    let opt_mark t s = match Hashtbl.find_opt rev s with Some x -> ignore @@ mark t x | None -> () in
     let t = Array.make base.data.strings.len false in
     Array.unsafe_set t 0 true ;
     Array.unsafe_set t 1 true ;
@@ -69,25 +90,12 @@ let scan base string person family =
       List.iter (opt_mark t) (split_fname base p.first_name) ;
       List.iter (opt_mark t) (split_sname base p.surname) ;
       opt_mark t @@ Name.concat (base.data.strings.get p.first_name) (base.data.strings.get p.surname) ;
-      aux_istr_person (mark t) p
+      ignore @@ aux_istr_person (mark t) p
     done ;
     clear_array base.data.persons ;
     load_array base.data.families ;
     for i = 0 to base.data.families.len - 1 do
-      let f = base.data.families.get i in
-      mark t f.marriage_place ;
-      mark t f.marriage_note ;
-      mark t f.marriage_src ;
-      mark t f.comment ;
-      mark t f.origin_file ;
-      mark t f.fsources ;
-      List.iter begin fun {efam_name;efam_place;efam_reason;efam_note;efam_src;_} ->
-        (match efam_name with Efam_Name i -> mark t i | _ -> ()) ;
-        mark t efam_place ;
-        mark t efam_reason ;
-        mark t efam_note ;
-        mark t efam_src ;
-      end f.fevents
+      ignore @@ aux_istr_family (mark t) (base.data.families.get i)
     done ;
     clear_array base.data.families ;
     clear_array base.data.strings ;
@@ -97,7 +105,7 @@ let scan base string person family =
     load_array base.data.persons ;
     let t = Array.make base.data.persons.len false in
     for i = 0 to base.data.persons.len - 1 do
-      if (base.data.persons.get i).key_index <> Gwdb1.dummy_iper then mark t i
+      if (base.data.persons.get i).key_index <> Gwdb1.dummy_iper then ignore @@ mark t i
     done ;
     clear_array base.data.persons ;
     person base t
@@ -106,7 +114,7 @@ let scan base string person family =
     load_array base.data.families ;
     let t = Array.make base.data.families.len false in
     for i = 0 to base.data.families.len - 1 do
-      if (base.data.families.get i).fam_index <> Gwdb1.dummy_ifam then mark t i
+      if (base.data.families.get i).fam_index <> Gwdb1.dummy_ifam then ignore @@ mark t i
     done ;
     clear_array base.data.families ;
     family base t
@@ -144,6 +152,40 @@ let dump base =
   in
   scan base dump_istr dump_iper dump_ifam
 
+(* Do not clear modified arrays, or modifications would be lost *)
+let compact base =
+  let compact_istr base t =
+    base.data.strings.clear_array () ;
+    base.data.strings.load_array () ;
+    let rec loop acc i =
+      if i = -1 then acc
+      else if not t.(i) then loop (i :: acc) (i - 1)
+      else loop acc (i - 1)
+    in
+    let acc = loop [] (Array.length t - 1) in
+    let shift i =
+      let rec loop acc = function
+        | j :: tl when j < i -> loop j tl
+        | _ -> acc
+      in loop 0 acc
+    in
+    for i = 0 to base.data.strings.len - 1 do
+      match shift i with
+      | 0 -> ()
+      | shift -> base.data.strings.set (i - shift) (base.data.strings.get i)
+    done ;
+    base.data.persons.load_array () ;
+    for i = 0 to base.data.persons.len - 1 do
+      let p = base.data.persons.get i in
+      let p' = aux_istr_person (fun i -> i - shift i) p in
+      if p <> p' then begin
+        Printf.printf "Person changed: %d\n" i ;
+        base.data.persons.set i p'
+      end
+    done
+  in
+  scan base compact_istr (fun _ _ -> ()) (fun _ _ -> ())
+
 let steps = ref "strings,persons,families"
 let bname = ref ""
 let action = ref None
@@ -161,7 +203,10 @@ let speclist =
     , " only report number of unused values" )
   ; ( "-dump"
     , Arg.Unit (fun () -> action := Some `dump)
-    , " dump unuse values" )
+    , " dump unused values" )
+  ; ( "-compact"
+    , Arg.Unit (fun () -> action := Some `compact)
+    , " compact database and remove unused values (only dry run is implemented)" )
   ]
 
 let _ =
@@ -180,3 +225,4 @@ let _ =
   | None -> Arg.usage speclist usage ; exit 2
   | Some `dump -> dump base
   | Some `report -> report base
+  | Some `compact -> compact base
