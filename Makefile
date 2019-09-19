@@ -3,6 +3,7 @@
 
 EXE = \
 	check_base/check_base.exe \
+	compact/compact.exe \
 	dag2html/main.exe \
 	gwFix/gwFixBase.exe \
 	gwFix/gwFixBurial.exe \
