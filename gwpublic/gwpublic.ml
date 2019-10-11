@@ -17,9 +17,7 @@ let usage = "Usage: public [-everybody] [-ind key] [-list-ind file] base"
 let main () =
   Arg.parse speclist anonfun usage;
   if !bname = "" then begin Arg.usage speclist usage; exit 2 end;
-  let gcc = Gc.get () in
-  gcc.Gc.max_overhead <- 100;
-  Gc.set gcc;
+  Gc.set { (Gc.get ()) with Gc.max_overhead = 100 } ;
   if !everybody then Gwaccess.access_everybody Public !bname
   else if !list_ind = "" then Gwaccess.access_some Public !bname !ind
   else Gwaccess.access_some_list Public !bname !list_ind
