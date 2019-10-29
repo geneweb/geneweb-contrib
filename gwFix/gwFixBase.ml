@@ -128,39 +128,6 @@ let check_persons_families ~verbosity1 ~verbosity2 base nb_ind fix =
   end (Gwdb.persons base) ;
   if verbosity1 then ProgrBar.finish ()
 
-(* FIXME? let imoth = get_mother fam in *)
-let check_witnesses ~verbosity1 ~verbosity2 base nb_fam fix =
-  if verbosity1 then begin
-    Printf.printf "Check witnesses\n";
-    flush stdout;
-    ProgrBar.start ()
-  end;
-  Gwdb.Collection.iteri begin fun i fam ->
-    if verbosity1 then ProgrBar.run i nb_fam;
-    let witn = get_witnesses fam in
-    let ifath = get_father fam in
-    for j = 0 to Array.length witn - 1 do
-      let ip = witn.(j) in
-      let p = poi base ip in
-      if not (List.memq ifath (get_related p)) then
-        begin
-          if verbosity2 then
-            suspend_with (fun () ->
-                let imoth = get_mother fam in
-                Printf.printf "\tin marriage: %s & %s\n"
-                  (string_of_p base ifath)
-                  (string_of_p base imoth);
-                Printf.printf "\twitness has no pointer to marriage: %s\n"
-                  (string_of_p base ip) ) ;
-          patch_person base ip
-            {(gen_person_of_person p) with related = ifath :: get_related p};
-          incr fix;
-          if verbosity2 then restart_with_fixed i nb_fam
-        end
-    done
-  end (Gwdb.families base) ;
-  if verbosity1 then ProgrBar.finish ()
-
 let check_pevents_witnesses ~verbosity1 ~verbosity2 base nb_ind fix =
   if verbosity1 then begin
     Printf.printf "Check persons' events witnesses\n";
@@ -271,7 +238,6 @@ let check
     ~f_children
     ~p_parents
     ~p_families
-    ~witnesses
     ~pevents_witnesses
     ~fevents_witnesses
     ~marriage_divorce
@@ -289,7 +255,6 @@ let check
   if !f_children then check_families_children ~verbosity1 ~verbosity2 base nb_fam fix;
   if !p_parents then check_persons_parents ~verbosity1 ~verbosity2 base nb_ind fix;
   if !p_families then check_persons_families ~verbosity1 ~verbosity2 base nb_ind fix;
-  if !witnesses then check_witnesses ~verbosity1 ~verbosity2 base nb_fam fix;
   if !pevents_witnesses then check_pevents_witnesses ~verbosity1 ~verbosity2 base nb_ind fix;
   if !fevents_witnesses then check_fevents_witnesses ~verbosity1 ~verbosity2 base nb_fam fix;
   if !marriage_divorce then fix_marriage_divorce ~verbosity1 ~verbosity2 base nb_fam fix;
@@ -323,7 +288,6 @@ let f_parents = ref false
 let f_children = ref false
 let p_parents = ref false
 let p_families = ref false
-let witnesses = ref false
 let pevents_witnesses = ref false
 let fevents_witnesses = ref false
 let marriage_divorce = ref false
@@ -336,7 +300,6 @@ let speclist =
   ; ("-families-children", Arg.Set f_children, " missing doc")
   ; ("-persons-parents", Arg.Set p_parents, " missing doc")
   ; ("-persons-families", Arg.Set p_families, " missing doc")
-  ; ("-witnesses", Arg.Set witnesses, " missing doc")
   ; ("-pevents-witnesses", Arg.Set pevents_witnesses, " missing doc")
   ; ("-fevents-witnesses", Arg.Set fevents_witnesses, " missing doc")
   ; ("-marriage-divorce", Arg.Set marriage_divorce, " missing doc")
@@ -355,7 +318,6 @@ let main () =
   || !f_children
   || !p_parents
   || !p_families
-  || !witnesses
   || !pevents_witnesses
   || !fevents_witnesses
   || !marriage_divorce
@@ -365,7 +327,6 @@ let main () =
     f_children := true ;
     p_parents := true ;
     p_families := true ;
-    witnesses := true ;
     pevents_witnesses := true ;
     fevents_witnesses := true ;
     marriage_divorce := true
@@ -377,7 +338,6 @@ let main () =
     ~f_children
     ~p_parents
     ~p_families
-    ~witnesses
     ~pevents_witnesses
     ~fevents_witnesses
     ~marriage_divorce
