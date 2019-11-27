@@ -1,4 +1,4 @@
 (executables
   (names gwpublic gwpublic1 gwpublic2 gwpublic2priv gwprivate gwiftitles)
-  (libraries unix geneweb-gwdb-legacy geneweb-wserver geneweb-sosa-zarith geneweb-lib)
+  (libraries unix geneweb.gwdb-legacy geneweb.sosa_zarith geneweb)
 )

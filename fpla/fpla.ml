@@ -58,7 +58,7 @@ let usage = "usage: " ^ Sys.argv.(0) ^ " <base>"
 let speclist = []
 
 let main () =
-  Argl.parse speclist (fun s -> bname := s) usage;
+  Arg.parse speclist (fun s -> bname := s) usage;
   Secure.set_base_dir (Filename.dirname !bname);
   let base = Gwdb.open_base !bname in first_parentless_ancestor base
 

@@ -1,4 +1,3 @@
-open Geneweb
 open Def
 
 let ind = ref ""

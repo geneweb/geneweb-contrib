@@ -1,6 +1,5 @@
 (* Copyright (c) 1999 INRIA *)
 
-open Geneweb
 open Gutil
 open Gwdb
 
@@ -26,7 +25,7 @@ let usage = "usage: " ^ Sys.argv.(0) ^ " <base>"
 let speclist = []
 
 let main () =
-  Argl.parse speclist (fun s -> bname := s) usage;
+  Arg.parse speclist (fun s -> bname := s) usage;
   let base = Gwdb.open_base !bname in histselect !bname base
 
 let _ = Printexc.print main ()

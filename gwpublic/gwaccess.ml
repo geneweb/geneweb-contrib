@@ -1,4 +1,3 @@
-open Geneweb
 open Gwdb
 
 (** [oldest_year_of p]

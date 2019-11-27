@@ -94,7 +94,7 @@ let speclist = []
 
 let main () =
   let cnt = ref 0 in
-  Argl.parse speclist
+  Arg.parse speclist
     (fun s ->
        begin match !cnt with
          0 -> bname := s

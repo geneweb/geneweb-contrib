@@ -1,4 +1,4 @@
 (executables
  (names gwJsonExport)
-  (libraries unix geneweb-gwdb-legacy geneweb-wserver geneweb-lib yojson)
+  (libraries unix geneweb.gwdb-legacy geneweb.sosa_zarith geneweb yojson)
 )

@@ -7,7 +7,6 @@
      ligne_vide
 *)
 
-open Geneweb
 open Def
 open Gwdb
 

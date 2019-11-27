@@ -1,6 +1,5 @@
 (* Copyright (c) 2000 INRIA *)
 
-open Geneweb
 open Gwdb
 
 let consmoy base =
@@ -18,7 +17,7 @@ let usage = "usage: " ^ Sys.argv.(0) ^ " <base>"
 let speclist = []
 
 let main () =
-  Argl.parse speclist (fun s -> bname := s) usage;
+  Arg.parse speclist (fun s -> bname := s) usage;
   let base = Gwdb.open_base !bname in consmoy base
 
 let _ = Printexc.print main ()

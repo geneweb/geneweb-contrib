@@ -1,4 +1,3 @@
-open Geneweb
 open Def
 
 (**/**) (* Ancien format de stockage *)
@@ -149,7 +148,7 @@ let convert_file file tmp_file =
 
 let convert history_dir =
   let files =
-    Util.ls_r [ history_dir ]
+    Mutil.ls_r [ history_dir ]
     |> List.filter (fun x -> not @@ Sys.is_directory x)
   in
   let len = List.length files in

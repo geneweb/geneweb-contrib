@@ -1,6 +1,25 @@
 ; TOFIX_EXE := cleopatre popule modif
 
 (executables
- (names geneanet clavier hist selroy chkimg consmoy lune titres nbdesc probot)
-  (libraries unix geneweb-gwdb-legacy geneweb-wserver geneweb-lib)
+  (names   geneanet clavier hist chkimg consmoy lune titres nbdesc probot)
+  (modules geneanet clavier hist chkimg consmoy lune titres nbdesc probot)
+  (libraries
+    geneweb
+    geneweb.gwdb-legacy
+    geneweb.sosa_zarith
+    unix
+  )
 )
+
+; FIXME
+; (executables
+;   (names   selroy)
+;   (modules selroy selroySelect)
+;   (libraries
+;     geneweb
+;     geneweb.gwdb-legacy
+;     geneweb.gwu_lib
+;     geneweb.sosa_zarith
+;     unix
+;   )
+; )

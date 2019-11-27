@@ -267,7 +267,7 @@ let geneanet base =
 let main () =
   let speclist = [] in
   let errmsg = "Usage: geneanet <file>" in
-  Argl.parse speclist (fun s -> in_file := s) errmsg;
+  Arg.parse speclist (fun s -> in_file := s) errmsg;
   if !in_file = "" then
     begin
       Printf.eprintf "Missing file\n";

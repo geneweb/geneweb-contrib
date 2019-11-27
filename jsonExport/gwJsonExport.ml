@@ -1,4 +1,3 @@
-open Geneweb
 open Gwdb
 open Json
 

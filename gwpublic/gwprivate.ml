@@ -1,5 +1,3 @@
-open Geneweb
-
 let list_ind = ref ""
 let ind = ref ""
 let bname = ref ""

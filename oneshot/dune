@@ -1,4 +1,4 @@
 (executables
- (names gwRemoveImgGallery gwBaseCompatiblePlus gwFixDateText gwFixDeletedIpers gwFixWrongPatch gwExportAscCSV gwFixAddEvent gwMostAsc)
-  (libraries unix geneweb-gwdb-legacy geneweb-wserver geneweb-lib)
+ (names gwRemoveImgGallery gwFixDateText gwFixDeletedIpers gwFixWrongPatch gwFixAddEvent gwMostAsc)
+  (libraries unix geneweb.gwdb-legacy geneweb.sosa_zarith geneweb)
 )

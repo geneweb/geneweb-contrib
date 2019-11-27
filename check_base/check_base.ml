@@ -20,8 +20,7 @@ let check_base bname =
   in
   let errors = ref [] in
   let warnings = ref [] in
-  Check.check_base base (set_list errors) (set_list warnings) (fun _ -> true)
-    changed_p false;
+  Check.check_base base (set_list errors) (set_list warnings) changed_p ;
   List.iter (print_error base) (List.rev !errors);
   List.iter (print_warning base) (List.sort_uniq compare !warnings);
   flush stdout

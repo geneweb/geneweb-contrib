@@ -1,7 +1,5 @@
 (* Copyright (c) 2000 INRIA *)
 
-open Geneweb
-
 let get_images_names bname =
   let dh = Unix.opendir (Filename.concat "images" bname) in
   let list = ref [] in
@@ -41,7 +39,7 @@ let usage = "usage: " ^ Sys.argv.(0) ^ " <base>"
 let speclist = []
 
 let main () =
-  Argl.parse speclist (fun s -> bname := s) usage;
+  Arg.parse speclist (fun s -> bname := s) usage;
   let base = Gwdb.open_base !bname in chkimg !bname base
 
 let _ = Printexc.print main ()

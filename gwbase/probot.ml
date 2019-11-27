@@ -1,4 +1,32 @@
-open Geneweb
+(* Copied from gwd *)
+module Robot = struct
+
+  let magic_robot = "GWRB0007"
+
+  module W = Map.Make (struct type t = string let compare = compare end)
+
+  type norfriwiz =
+      Normal
+    | Friend of string
+    | Wizard of string
+
+  type who =
+    { acc_times : float list;
+      oldest_time : float;
+      nb_connect : int;
+      nbase : string;
+      utype : norfriwiz }
+
+  type excl =
+    { mutable excl : (string * int ref) list;
+      mutable who : who W.t;
+      mutable max_conn : int * string }
+
+  let input_excl ic =
+    let b = really_input_string ic (String.length magic_robot) in
+    if b <> magic_robot then raise Not_found else (input_value ic : excl)
+
+end
 
 let () =
   let xcl = Robot.input_excl (open_in_bin "cnt/robot") in

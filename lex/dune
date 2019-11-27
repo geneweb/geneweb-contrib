@@ -1,5 +1,0 @@
-(executable
- (name lex_utils)
- (libraries unix str geneweb-gwdb-legacy geneweb-wserver geneweb-lib)
-)
-

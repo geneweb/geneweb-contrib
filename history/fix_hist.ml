@@ -1,4 +1,3 @@
-open Geneweb
 open Def
 
 (**/**) (* Ancien format de stockage *)
@@ -188,7 +187,7 @@ let convert_file_both2 file tmp_file =
   | None -> ()
 
 let convert_both2 history_dir =
-  let files = Util.ls_r [history_dir] |> List.filter (fun x -> not @@ Sys.is_directory x) in
+  let files = Mutil.ls_r [history_dir] |> List.filter (fun x -> not @@ Sys.is_directory x) in
   let len = List.length files in
   ProgrBar.start ();
   List.iteri

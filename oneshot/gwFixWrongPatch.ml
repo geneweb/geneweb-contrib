@@ -1,5 +1,3 @@
-open Geneweb
-
 type person = Dbdisk.dsk_person
 type ascend = Dbdisk.dsk_ascend
 type union = Dbdisk.dsk_union
@@ -25,7 +23,7 @@ let () =
   Lock.control (Mutil.lock_file bname) true ~onerror:Lock.print_try_again @@
   fun () ->
   let open Dbdisk in
-  let base = Gwdb_driver_legacy.open_base bname in
+  let base = Database.opendb bname in
   let bdir = base.data.bdir in
   let ic = Secure.open_in_bin (Filename.concat bdir "patches") in
   assert (Mutil.check_magic "GnPa0001" ic) ;

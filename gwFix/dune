@@ -6,5 +6,5 @@
         gwFixBurial
         gwFixEvtSrc
         gwFixY)
-  (libraries unix str geneweb-gwdb-legacy geneweb-wserver geneweb-sosa-zarith geneweb-lib)
+  (libraries unix str geneweb.gwdb-legacy geneweb.sosa_zarith geneweb)
 )

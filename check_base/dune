@@ -1,4 +1,4 @@
 (executables
   (names check_base)
-  (libraries unix geneweb-gwdb-legacy geneweb-wserver geneweb-lib)
+  (libraries unix geneweb.gwdb-legacy geneweb.sosa_zarith geneweb)
 )
