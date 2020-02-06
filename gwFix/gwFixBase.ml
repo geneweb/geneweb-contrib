@@ -6,6 +6,59 @@ let suspend_with msg = ProgrBar.suspend (); msg () ; flush stdout
 let restart_with_fixed i n = Printf.printf "\t\tfixed\n"; flush stdout; ProgrBar.restart i n
 let string_of_p base i = Gutil.designation base (poi base i)
 
+let check_burial base ~verbosity1 ~verbosity2 nb_ind cnt =
+  if verbosity1 then begin
+    Printf.printf "Check persons' burial\n";
+    flush stdout;
+    ProgrBar.start ()
+  end;
+  let fix_pevents p =
+    let evt =
+      { epers_name = Epers_Burial
+      ; epers_date = Adef.cdate_None
+      ; epers_place = get_burial_place p
+      ; epers_reason = empty_string
+      ; epers_note = get_burial_note p
+      ; epers_src = get_burial_src p
+      ; epers_witnesses = [| |]
+      }
+    in
+    patch_person base (get_iper p)
+      { (gen_person_of_person p) with pevents = get_pevents p @ [ evt ] }
+  in
+  let fix_burial p =
+    patch_person base (get_iper p)
+      { (gen_person_of_person p) with burial = Buried Adef.cdate_None } ;
+  in
+  let fix p =
+    match get_burial p with
+    | UnknownBurial ->
+      begin
+        match
+          List.find_opt (fun e -> e.epers_name = Epers_Burial) (get_pevents p)
+        with
+        | Some _e -> fix_burial p ; true
+        | None ->
+          if not (is_empty_string (get_burial_place p))
+          || not (is_empty_string (get_burial_src p))
+          then begin
+             fix_burial p ;
+             fix_pevents p ;
+             true
+           end else false
+      end
+    | _ -> false
+  in
+  Gwdb.Collection.iteri begin fun i p ->
+    if verbosity1 then ProgrBar.run i nb_ind;
+    if fix p then begin
+      incr cnt ;
+      if verbosity2
+      then Printf.printf "Modifiy person : %s\n%!" (Gutil.designation base p)
+    end
+  end (Gwdb.persons base) ;
+  if verbosity1 then ProgrBar.finish ()
+
 let check_families_parents ~verbosity1 ~verbosity2 base nb_fam fix =
   if verbosity1 then begin
     Printf.printf "Check families' parents\n";
@@ -238,6 +291,7 @@ let check
     ~f_children
     ~p_parents
     ~p_families
+    ~p_burial
     ~pevents_witnesses
     ~fevents_witnesses
     ~marriage_divorce
@@ -254,6 +308,7 @@ let check
   if !f_parents then check_families_parents ~verbosity1 ~verbosity2 base nb_fam fix;
   if !f_children then check_families_children ~verbosity1 ~verbosity2 base nb_fam fix;
   if !p_parents then check_persons_parents ~verbosity1 ~verbosity2 base nb_ind fix;
+  if !p_burial then check_burial base ~verbosity1 ~verbosity2 nb_ind fix ;
   if !p_families then check_persons_families ~verbosity1 ~verbosity2 base nb_ind fix;
   if !pevents_witnesses then check_pevents_witnesses ~verbosity1 ~verbosity2 base nb_ind fix;
   if !fevents_witnesses then check_fevents_witnesses ~verbosity1 ~verbosity2 base nb_fam fix;
@@ -271,12 +326,7 @@ let check
     flush stdout
   end ;
   if verbosity1 then (Printf.printf "Rebuilding the indexes..\n" ; flush stdout) ;
-  (* FIXME: make it gwdbX agnostic *)
-  Gwdb1.apply_base1
-    (Gwdb1.OfGwdb.base base)
-    (fun base -> Outbase.gen_output false base.Dbdisk.data.Dbdisk.bdir base) ;
-  (* On recalcul le nombre reel de personnes. *)
-  Util.init_cache_info bname base ;
+  Gwdb.sync base ;
   if verbosity1 then (Printf.printf "Done" ; flush stdout)
 
 (**/**)
@@ -288,6 +338,7 @@ let f_parents = ref false
 let f_children = ref false
 let p_parents = ref false
 let p_families = ref false
+let p_burial = ref false
 let pevents_witnesses = ref false
 let fevents_witnesses = ref false
 let marriage_divorce = ref false
@@ -298,6 +349,7 @@ let speclist =
   ; ("-fast", Arg.Set fast, " fast mode. Needs more memory.")
   ; ("-families-parents", Arg.Set f_parents, " missing doc")
   ; ("-families-children", Arg.Set f_children, " missing doc")
+  ; ("-persons-burial", Arg.Set p_parents, " missing doc")
   ; ("-persons-parents", Arg.Set p_parents, " missing doc")
   ; ("-persons-families", Arg.Set p_families, " missing doc")
   ; ("-pevents-witnesses", Arg.Set pevents_witnesses, " missing doc")
@@ -321,6 +373,7 @@ let main () =
   || !pevents_witnesses
   || !fevents_witnesses
   || !marriage_divorce
+  || !p_burial
   then ()
   else begin
     f_parents := true ;
@@ -329,13 +382,15 @@ let main () =
     p_families := true ;
     pevents_witnesses := true ;
     fevents_witnesses := true ;
-    marriage_divorce := true
+    marriage_divorce := true ;
+    p_burial := true
   end ;
   check
     ~fast
     ~verbosity
     ~f_parents
     ~f_children
+    ~p_burial
     ~p_parents
     ~p_families
     ~pevents_witnesses
