@@ -8,6 +8,7 @@ let () =
   let open Dbdisk in
   let base = Gwdb_driver_legacy.open_base bname in
   let changes = ref 0 in
+  base.data.persons.load_array () ;
   for i = 0 to base.data.persons.len - 1 do
     let p : (int, int, int) gen_person = base.data.persons.get i in
     if p.key_index <> i
