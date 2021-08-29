@@ -26,7 +26,7 @@ let my_uppercase s =
     (List.map (fun e -> my_uppercase2 e) s)
 in
 
-let date_of_death =
+let date_of_death = (* from Date *)
   function
     Death (_, cd) -> Some (Adef.date_of_cdate cd)
   | _ -> None
@@ -124,7 +124,7 @@ let fname = ref "" in
 
 let errmsg = "usage: " ^ Sys.argv.(0) ^ " [options] <database>" in
 
-let no_lock_flag = ref false in
+let no_lock_flag = ref false in (* from Lock *)
 
 let speclist =
   [("-nolock", Arg.Set no_lock_flag, ": do not lock data base")]
@@ -133,6 +133,9 @@ in
 let anonfun s =
   if !fname = "" then fname := s
   else raise (Arg.Bad "Cannot treat several data bases")
+  fname :=
+    if Filename.extension !fname = ".gwb" then !fname
+    else !fname ^ ".gwb"
 in
 
 let main () =
