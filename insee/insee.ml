@@ -1,8 +1,16 @@
 (* Copyright (c) 2019 Ludovic LEDIEU *)
-open Gwdb
-open Date
+(* Adjusted for gwrepl by Henri *)
+(*
+  use: cat <script.ml> | [ GWREPL_VERBOSE=1 ] [ GWREPL_FORCE_UNPACK=1 ]
+   [ GWREPL_NOPROMPT=1 ] gwrepl.exe [script_arg1] ...
+
+*)
 
 let () =
+
+let open Def in
+let open Gwdb in
+let open Arg in
 
 let my_uppercase2 s =
   let s = String.split_on_char '\'' s in
@@ -18,6 +26,12 @@ let my_uppercase s =
     (List.map (fun e -> my_uppercase2 e) s)
 in
 
+let date_of_death =
+  function
+    Death (_, cd) -> Some (Adef.date_of_cdate cd)
+  | _ -> None
+in
+
 let check_insee base =
   (* pour chaque personne *)
   Gwdb.Collection.iteri begin fun i p ->
@@ -27,7 +41,7 @@ let check_insee base =
       | _ -> None
     in
     let d_date =
-      match CheckItem.date_of_death (get_death p) with
+      match date_of_death (get_death p) with
         Some (Dgreg (d, _)) -> Some d
       | _ -> None
     in
@@ -110,8 +124,10 @@ let fname = ref "" in
 
 let errmsg = "usage: " ^ Sys.argv.(0) ^ " [options] <database>" in
 
+let no_lock_flag = ref false in
+
 let speclist =
-  [("-nolock", Arg.Set Lock.no_lock_flag, ": do not lock data base")]
+  [("-nolock", Arg.Set no_lock_flag, ": do not lock data base")]
 in
 
 let anonfun s =
@@ -120,7 +136,7 @@ let anonfun s =
 in
 
 let main () =
-  Argl.parse speclist anonfun errmsg;
+  Arg.parse speclist anonfun errmsg;
   if !fname = "" then begin
     Printf.eprintf "Missing file name\n";
     Printf.eprintf "Use option -help for usage\n";
