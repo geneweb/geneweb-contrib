@@ -5,4 +5,4 @@
 
 # assumes GW and CONTRIB are defined env variables
 
-cat $CONTRIB/insee/insee.ml | $GW/gwrepl $1
+cat $CONTRIB/insee/insee.ml | $GW/gw/gwrepl "$@"

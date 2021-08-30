@@ -5,12 +5,19 @@
    [ GWREPL_NOPROMPT=1 ] gwrepl.exe [script_arg1] ...
 
 *)
+#mod_use "/Users/Henri/GitHub/hgouraud/geneweb/lib/date.ml" ;;
+#mod_use "/Users/Henri/GitHub/hgouraud/geneweb/lib/lock.ml" ;;
+#mod_use "/Users/Henri/GitHub/hgouraud/geneweb/lib/config.ml" ;;
+#mod_use "/Users/Henri/GitHub/hgouraud/geneweb/lib/output.ml" ;;
+#mod_use "/Users/Henri/GitHub/hgouraud/geneweb/lib/gwlib.ml" ;;
+#mod_use "/Users/Henri/GitHub/hgouraud/geneweb/lib/GWPARAM.ml" ;;
 
 let () =
 
 let open Def in
 let open Gwdb in
 let open Arg in
+
 
 let my_uppercase2 s =
   let s = String.split_on_char '\'' s in
@@ -26,12 +33,6 @@ let my_uppercase s =
     (List.map (fun e -> my_uppercase2 e) s)
 in
 
-let date_of_death = (* from Date *)
-  function
-    Death (_, cd) -> Some (Adef.date_of_cdate cd)
-  | _ -> None
-in
-
 let check_insee base =
   (* pour chaque personne *)
   Gwdb.Collection.iteri begin fun i p ->
@@ -41,7 +42,7 @@ let check_insee base =
       | _ -> None
     in
     let d_date =
-      match date_of_death (get_death p) with
+      match Date.date_of_death (get_death p) with
         Some (Dgreg (d, _)) -> Some d
       | _ -> None
     in
@@ -124,19 +125,18 @@ let fname = ref "" in
 
 let errmsg = "usage: " ^ Sys.argv.(0) ^ " [options] <database>" in
 
-let no_lock_flag = ref false in (* from Lock *)
-
 let speclist =
-  [("-nolock", Arg.Set no_lock_flag, ": do not lock data base")]
+  [("-nolock", Arg.Set Lock.no_lock_flag, ": do not lock data base");
+   ("-bd", Arg.String Secure.set_base_dir,
+     "<DIR> Directory where the databases are installed.")]
 in
 
 let anonfun s =
   if !fname = "" then fname := s
   else raise (Arg.Bad "Cannot treat several data bases")
-  fname :=
-    if Filename.extension !fname = ".gwb" then !fname
-    else !fname ^ ".gwb"
 in
+
+let bpath bname = !GWPARAM.bpath bname in
 
 let main () =
   Arg.parse speclist anonfun errmsg;
@@ -147,9 +147,25 @@ let main () =
     exit 2
   end
   else
-    let base = open_base !fname in
-    let () = load_strings_array base in
-    check_insee base
+    let fname = Filename.basename !fname in
+    let bfname =
+      if (Filename.extension fname) = ".gwb" then bpath fname 
+      else bpath (fname ^ ".gwb")
+    in
+    let bfile =
+      if Sys.file_exists bfname
+        then Some bfname
+        else None
+    in
+    let base =
+      match bfile with
+      | None -> None
+      | Some bfile -> try Some (Gwdb.open_base bfile) with _ -> None
+    in
+    match base with
+      | None -> Printf.eprintf "Base %s not found\n" (bpath fname);
+      | Some base ->
+          begin load_strings_array base ; check_insee base end
 in
 
 Printexc.catch main ();;
