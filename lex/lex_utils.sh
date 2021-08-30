@@ -5,4 +5,5 @@
 
 # assumes GW and CONTRIB are defined env variables
 
-cat $CONTRIB/lex/lex_utils.ml | $GW/gw/gwrepl "$@"
+OPT="GWREPL_PPF=/dev/null GWREPL_NOPROMPT=1"
+cat $CONTRIB/lex/lex_utils.ml | $OPT $GW/gw/gwrepl "$@"

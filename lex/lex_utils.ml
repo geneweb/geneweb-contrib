@@ -1,4 +1,3 @@
-let () =
 
 (* script adapted for gwrepl *)
 (* 
@@ -407,5 +406,4 @@ let main () =
   else ()
 in
 
-Printexc.print main ()
-;;
+Printexc.print main () ;;
