@@ -7,20 +7,6 @@ let () =
 *)
 (**/**) (* Utils. *)
 
-let ls_r dirs =
-  let rec loop result = function
-    | f :: fs when Sys.is_directory f ->
-      Sys.readdir f
-      |> Array.to_list
-      |> List.rev_map (Filename.concat f)
-      |> List.rev_append fs
-      |> loop (f :: result)
-    | f :: fs -> loop (f :: result) fs
-    | [] -> result
-  in
-  loop [] dirs
-in
-
 let skip_to_next_message ic =
   let rec loop () =
     let line = input_line ic in
@@ -29,32 +15,29 @@ let skip_to_next_message ic =
 in
 
 let get_all_versions ic =
-  let rec loop accu ref =
+  let rec loop accu =
     let line = try input_line ic with End_of_file -> "" in
-    if line = "" then (accu, ref)
+    if line = "" then accu
     else
       try
         let i = String.index line ':' in
         let lang = String.sub line 0 i in
         let transl = String.sub line (i + 1) (String.length line - i - 1) in
-        if lang = "->" then
-          ((lang, transl) :: accu, (String.sub transl 1 ((String.length transl) - 1)))
-        else
-          loop ((lang, transl) :: accu) ref
-      with Not_found -> (accu, ref)
-  in loop [] ""
+        loop ((lang, transl) :: accu)
+      with Not_found -> accu
+  in loop []
 in
 
 
 (**/**) (* Missing or unused translation. *)
 
 let get_ml_files repo =
-  ls_r [repo]
+  Mutil.ls_r [repo]
   |> List.filter (fun x -> Filename.check_suffix x ".ml")
 in
 
 let get_tpl_files repo =
-  ls_r [repo]
+  Mutil.ls_r [repo]
   |> List.filter (fun x -> Filename.check_suffix x ".txt")
 in
 
@@ -101,6 +84,7 @@ let get_msg_src repo =
   let msg = ref [] in
   (* TODO the current setup misses translations with the string on the next line !! *)
   let regexp = Str.regexp "transl.* \"" in
+  let _ = "\"" in (* just for quotes balancing in BBedit. Putting it in comment fails!! *)
   List.iter
     (fun src ->
       match try Some (open_in src) with Sys_error _ -> None with
@@ -214,7 +198,7 @@ let sort_uniq cmp l =
 in
 
 (* Essaie de chercher tous les identifiants de message du répository et *)
-(* recherche s'il ne sont plus utilisés pour au contraire non trdauit.  *)
+(* recherche s'il ne sont plus utilisés pour au contraire non traduit.  *)
 let missing_or_unused_msg lexicon repo log =
   let lexicon =
     if Filename.is_relative lexicon then
@@ -265,7 +249,6 @@ let missing_or_unused_msg lexicon repo log =
         if List.mem w msg then ()
         else print_endline w)
       lex;
-
     Printf.fprintf stdout
       "\nMessage from %s and %s not in lexicon :\n" repo_src repo_tpl;
     flush stdout;
@@ -312,7 +295,7 @@ let missing_translation lexicon languages =
       (try
         while true do
           let msg = skip_to_next_message ic in
-          let (list, _ref) = get_all_versions ic in
+          let list = get_all_versions ic in
           let list' = missing_languages list languages in
           if list' <> [] then
             begin
@@ -349,13 +332,10 @@ let sort_lexicon lexicon =
       (try
         while true do
           let msg = skip_to_next_message ic in
-          let (list, ref) = get_all_versions ic in
+          let list = get_all_versions ic in
           let list' = List.sort (fun (x, _) (y, _) -> compare x y) list in
-          let msg = if ref = "" then msg
-            else "    " ^ ref ^ msg
-          in
           let list' = if !merge then match Lex_map.find_opt msg !lex_sort with
-            | Some (list, _ref) ->
+            | Some list ->
                 (* merge list and list' *)
                 let list' =
                   let rec loop accu list =
@@ -371,17 +351,13 @@ let sort_lexicon lexicon =
             | None -> list'
             else list'
           in
-          lex_sort := Lex_map.add msg (list', ref) !lex_sort
+          lex_sort := Lex_map.add msg list' !lex_sort
         done
       with End_of_file -> ());
       close_in ic
   | None -> ());
   Lex_map.iter
-    (fun msg (list, ref) ->
-       let msg = if ref = "" then msg
-         else String.sub msg ((String.length ref) + 4)
-            ((String.length msg) - (String.length ref) - 4)
-       in
+    (fun msg list ->
        print_endline msg;
        List.iter
          (fun (lang, transl) -> print_endline (lang ^ ":" ^ transl)) list;
