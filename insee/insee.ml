@@ -12,12 +12,9 @@
 #mod_use "/Users/Henri/GitHub/hgouraud/geneweb/lib/gwlib.ml" ;;
 #mod_use "/Users/Henri/GitHub/hgouraud/geneweb/lib/GWPARAM.ml" ;;
 
-let () =
-
 let open Def in
 let open Gwdb in
 let open Arg in
-
 
 let my_uppercase2 s =
   let s = String.split_on_char '\'' s in
