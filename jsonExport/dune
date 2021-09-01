@@ -1,4 +1,0 @@
-(executables
- (names gwJsonExport)
-  (libraries unix geneweb.gwdb1 geneweb.wserver geneweb yojson)
-)

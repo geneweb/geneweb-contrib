@@ -1,5 +1,0 @@
-(executable
-  (name main)
-  (modules main)
-  (libraries unix geneweb.gwdb1 geneweb.wserver geneweb)
-)
