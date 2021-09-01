@@ -1,9 +1,8 @@
-
-(* script adapted for gwrepl *)
-(* 
+(*
   use: cat <script.ml> | [ GWREPL_VERBOSE=1 ] [ GWREPL_FORCE_UNPACK=1 ]
    [ GWREPL_NOPROMPT=1 ] gwrepl.exe [script_arg1] ...
 *)
+
 (**/**) (* Utils. *)
 
 let skip_to_next_message ic =
@@ -45,14 +44,14 @@ let get_lexicon_msg lexicon =
   let lex = ref [] in
   match try Some (open_in lexicon) with Sys_error _ -> None with
   | Some ic ->
-      (try
-        while true do
-          let msg = skip_to_next_message ic in
-          lex := msg :: !lex
-        done
-      with End_of_file -> ());
-      close_in ic;
-      List.rev_map (fun w -> String.sub w 4 (String.length w - 4)) !lex
+    (try
+       while true do
+         let msg = skip_to_next_message ic in
+         lex := msg :: !lex
+       done
+     with End_of_file -> ());
+    close_in ic;
+    List.rev_map (fun w -> String.sub w 4 (String.length w - 4)) !lex
   | None -> !lex
 in
 
@@ -86,9 +85,9 @@ let get_msg_src repo =
   let _ = "\"" in (* just for quotes balancing in BBedit. Putting it in comment fails!! *)
   List.iter
     (fun src ->
-      match try Some (open_in src) with Sys_error _ -> None with
-      | Some ic ->
-          (try
+       match try Some (open_in src) with Sys_error _ -> None with
+       | Some ic ->
+         (try
             while true do
               let line = input_line ic in
               let has_msg =
@@ -101,8 +100,8 @@ let get_msg_src repo =
               else ()
             done
           with End_of_file -> ());
-          close_in ic;
-      | None -> ())
+         close_in ic;
+       | None -> ())
     (get_ml_files repo);
   List.fold_left
     (fun accu msg -> List.rev_append (cut_all_msg_src msg) accu)
@@ -157,9 +156,9 @@ let get_msg_tpl repo =
   let regexp = Str.regexp "[*?[a-z]+]" in
   List.iter
     (fun tpl ->
-      match try Some (open_in tpl) with Sys_error _ -> None with
-      | Some ic ->
-          (try
+       match try Some (open_in tpl) with Sys_error _ -> None with
+       | Some ic ->
+         (try
             while true do
               let line = input_line ic in
               let has_msg =
@@ -172,8 +171,8 @@ let get_msg_tpl repo =
               else ()
             done
           with End_of_file -> ());
-          close_in ic;
-      | None -> ())
+         close_in ic;
+       | None -> ())
     (get_tpl_files repo);
   List.fold_left
     (fun accu msg -> List.rev_append (cut_all_msg msg) accu)
@@ -181,10 +180,10 @@ let get_msg_tpl repo =
 in
 
 let module StringSet = Set.Make
-  (struct
-    type t = string
-    let compare = Stdlib.compare
-   end)
+    (struct
+      type t = string
+      let compare = Stdlib.compare
+    end)
 in
 
 let sort_uniq cmp l =
@@ -220,22 +219,22 @@ let missing_or_unused_msg lexicon repo log =
   let msg =
     sort_uniq
       (fun x y ->
-        Stdlib.compare
-          (String.lowercase_ascii x) (String.lowercase_ascii y))
+         Stdlib.compare
+           (String.lowercase_ascii x) (String.lowercase_ascii y))
       (List.rev_append msg_src msg_tpl)
   in
 
   if log then begin
     (match try Some (open_out "log_lex") with Sys_error _ -> None with
-    | Some oc ->
-        List.iter (fun w -> Printf.fprintf oc "%s\n" w) lex;
-        close_out oc
-    | None -> ());
+       | Some oc ->
+         List.iter (fun w -> Printf.fprintf oc "%s\n" w) lex;
+         close_out oc
+       | None -> ());
     (match try Some (open_out "log_msg") with Sys_error _ -> None with
-    | Some oc ->
-        List.iter (fun w -> Printf.fprintf oc "%s\n" w) msg;
-        close_out oc
-    | None -> ());
+       | Some oc ->
+         List.iter (fun w -> Printf.fprintf oc "%s\n" w) msg;
+         close_out oc
+       | None -> ());
     print_endline
       "View log_lex for lexicon msg and log_msg for src and tpl msg."
   end
@@ -245,33 +244,21 @@ let missing_or_unused_msg lexicon repo log =
     flush stdout;
     List.iter
       (fun w ->
-        if List.mem w msg then ()
-        else print_endline w)
+         if List.mem w msg then ()
+         else print_endline w)
       lex;
     Printf.fprintf stdout
       "\nMessage from %s and %s not in lexicon :\n" repo_src repo_tpl;
     flush stdout;
     List.iter
       (fun w ->
-        if List.mem w lex then ()
-        else print_endline w)
+         if List.mem w lex then ()
+         else print_endline w)
       msg
   end
 in
 
-
 (**/**) (* Missing translation. *)
-
-let lang_gw =
-  [ "af"; "bg"; "br"; "ca"; "co"; "cs"; "da"; "de"; "en"; "eo";
-    "es"; "et"; "fi"; "fr"; "he"; "is"; "it"; "lv"; "nl"; "no"; 
-    "oc"; "pl"; "pt"; "pt-br"; "ro"; "ru"; "sk"; "sl"; "sv"; "tr";
-    "zh" ]
-in
-
-let lang_gnt = [ "de"; "en"; "es"; "fi"; "fr"; "it"; "nl"; "no"; "sv" ] in
-
-let lang_cust = ref [] in
 
 let missing_languages list languages =
   List.fold_left
@@ -291,22 +278,22 @@ in
 let missing_translation lexicon languages =
   match try Some (open_in lexicon) with Sys_error _ -> None with
   | Some ic ->
-      (try
-        while true do
-          let msg = skip_to_next_message ic in
-          let list = get_all_versions ic in
-          let list' = missing_languages list languages in
-          if list' <> [] then
-            begin
-              print_endline msg;
-              print_transl_en_fr list;
-              List.iter
-                (fun lang -> print_endline (lang ^ ":")) (List.rev list');
-              print_string "\n"
-            end
-        done
-      with End_of_file -> ());
-      close_in ic
+    (try
+       while true do
+         let msg = skip_to_next_message ic in
+         let list = get_all_versions ic in
+         let list' = missing_languages list languages in
+         if list' <> [] then
+           begin
+             print_endline msg;
+             print_transl_en_fr list;
+             List.iter
+               (fun lang -> print_endline (lang ^ ":")) (List.rev list');
+             print_string "\n"
+           end
+       done
+     with End_of_file -> ());
+    close_in ic
   | None -> ()
 in
 
@@ -314,11 +301,11 @@ in
 (**/**) (* Sorting. *)
 
 let module Lex_map = Map.Make
-  (struct
-    type t = string
-    let compare x y =
-      compare (String.lowercase_ascii x) (String.lowercase_ascii y)
-   end)
+    (struct
+      type t = string
+      let compare x y =
+        compare (String.lowercase_ascii x) (String.lowercase_ascii y)
+    end)
 in
 
 let merge = ref false in
@@ -327,34 +314,34 @@ let first = ref false in
 let sort_lexicon lexicon =
   let lex_sort = ref Lex_map.empty in
   (match try Some (open_in lexicon) with Sys_error _ -> None with
-  | Some ic ->
-      (try
-        while true do
-          let msg = skip_to_next_message ic in
-          let list = get_all_versions ic in
-          let list' = List.sort (fun (x, _) (y, _) -> compare x y) list in
-          let list' = if !merge then match Lex_map.find_opt msg !lex_sort with
-            | Some list ->
-                (* merge list and list' *)
-                let list' =
-                  let rec loop accu list =
-                    match list with
-                    | [] -> accu
-                    | (k, v):: list -> loop ((k, v) :: accu) list
-                  in loop list' list
-                in
-                if !first then
-                  List.sort_uniq (fun (x, _) (y, _) -> compare x y) list'
-                else
-                  List.sort_uniq (fun (x, _) (y, _) -> compare x y) (List.rev list')
-            | None -> list'
-            else list'
-          in
-          lex_sort := Lex_map.add msg list' !lex_sort
-        done
-      with End_of_file -> ());
-      close_in ic
-  | None -> ());
+     | Some ic ->
+       (try
+          while true do
+            let msg = skip_to_next_message ic in
+            let list = get_all_versions ic in
+            let list' = List.sort (fun (x, _) (y, _) -> compare x y) list in
+            let list' = if !merge then match Lex_map.find_opt msg !lex_sort with
+                | Some list ->
+                  (* merge list and list' *)
+                  let list' =
+                    let rec loop accu list =
+                      match list with
+                      | [] -> accu
+                      | (k, v):: list -> loop ((k, v) :: accu) list
+                    in loop list' list
+                  in
+                  if !first then
+                    List.sort_uniq (fun (x, _) (y, _) -> compare x y) list'
+                  else
+                    List.sort_uniq (fun (x, _) (y, _) -> compare x y) (List.rev list')
+                | None -> list'
+              else list'
+            in
+            lex_sort := Lex_map.add msg list' !lex_sort
+          done
+        with End_of_file -> ());
+       close_in ic
+     | None -> ());
   Lex_map.iter
     (fun msg list ->
        print_endline msg;
@@ -367,43 +354,70 @@ in
 
 (**/**) (* Main. *)
 
+let lang_default =
+  [ "af"
+  ; "bg"
+  ; "br"
+  ; "ca"
+  ; "co"
+  ; "cs"
+  ; "da"
+  ; "de"
+  ; "en"
+  ; "eo"
+  ; "es"
+  ; "et"
+  ; "fi"
+  ; "fr"
+  ; "he"
+  ; "is"
+  ; "it"
+  ; "lv"
+  ; "nl"
+  ; "no"
+  ; "oc"
+  ; "pl"
+  ; "pt"
+  ; "pt-br"
+  ; "ro"
+  ; "ru"
+  ; "sk"
+  ; "sl"
+  ; "sv"
+  ; "tr"
+  ; "zh"
+  ]
+in
+
+let lang = ref lang_default in
+
 let lexicon = ref "" in
 let lex_sort = ref false in
-let missing_gw = ref false in
-let missing_gnt = ref false in
+let missing = ref false in
 let repo = ref "" in
 let log = ref false in
 
 let speclist =
-  [("-sort", Arg.Set lex_sort, ": sort the lexicon (both key and content).");
-   ("-merge", Arg.Set merge,
-    ": merge rather than replace new lexicon entries.");
-   ("-first", Arg.Set first,
-    ": if multiple language entries, select first occurence.");
-   ("-missing_gw", Arg.Set missing_gw,
-    ": print missing translation managed by gw.");
-   ("-missing_gnt", Arg.Set missing_gnt,
-    ": print missing translation managed by gnt.");
-   ("-missing_one", Arg.String (fun x -> lang_cust := x :: !lang_cust),
-    ": print missing translation for these languages.");
-   ("-repo", Arg.String (fun x -> repo := x),
-    ": check missing or unused key word.");
-   ("-log", Arg.Set log,
-    ": option for repo. Print in log files instead of stdout.")];
+  [ ("-first", Arg.Set first, " If multiple language entries, select first occurence.")
+  ; ("-log", Arg.Set log, " Option for repo. Print in log files instead of stdout.")
+  ; ("-merge", Arg.Set merge, " Merge rather than replace new lexicon entries.")
+  ; ("-missing", Arg.Set missing
+    , " Print missing translation for these lang: " ^ String.concat "," lang_default ^".")
+  ; ( "-missing-lang", Arg.String (fun s -> missing := true ; lang := String.split_on_char ',' s)
+    , " Same as -missing, but use a comma-separated list of lang instead of the default one.")
+  ; ("-repo", Arg.String (fun x -> repo := x), " Check missing or unused keyword.")
+  ; ("-sort", Arg.Set lex_sort, " Sort the lexicon (both key and content).")
+  ] |> Arg.align
 in
 
 let anonfun s = lexicon := s in
-let usage = "Usage: lex_utils [options] lexicon" in
-
+let usage = "Usage: cat lex_utils.ml | " ^ Sys.argv.(0) ^ " [options] lexicon" in
 let main () =
   Arg.parse speclist anonfun usage;
   if !lexicon = "" then (Arg.usage speclist usage; exit 2);
   if !lex_sort then sort_lexicon !lexicon
-  else if !missing_gw then missing_translation !lexicon lang_gw
-  else if !missing_gnt then missing_translation !lexicon lang_gnt
-  else if !lang_cust <> [] then missing_translation !lexicon !lang_cust
+  else if !missing then missing_translation !lexicon !lang
   else if !repo <> "" then missing_or_unused_msg !lexicon !repo !log
-  else ()
 in
 
 Printexc.print main () ;;
