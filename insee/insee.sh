@@ -6,4 +6,4 @@
 # assumes GW and CONTRIB are defined env variables
 
 #OPT="GWREPL_NOPROMPT=1 GWREPL_PPF=/dev/null "
-cat $CONTRIB/insee/insee.ml | GWREPL_NOPROMPT=1 GWREPL_PPF=/dev/null $GW/gw/gwrepl "$@"
+cat $CONTRIB/insee/insee.ml | GWREPL_NOPROMPT=1 GWREPL_PPF=/dev/null $GW/gwrepl "$@"
