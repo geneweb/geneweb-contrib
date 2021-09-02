@@ -212,7 +212,7 @@ let missing_or_unused_msg lexicon repo log =
   let repo_tpl =
     List.fold_left Filename.concat repo ["hd"; "etc"]
   in
-
+  (* TODO, scan plugin area as well *)
   let lex = get_lexicon_msg lexicon in
   let msg_src = get_msg_src repo in
   let msg_tpl = get_msg_tpl repo_tpl in
@@ -394,30 +394,38 @@ let lang = ref lang_default in
 let lexicon = ref "" in
 let lex_sort = ref false in
 let missing = ref false in
+let orphans = ref false in
 let repo = ref "" in
 let log = ref false in
 
 let speclist =
-  [ ("-first", Arg.Set first, " If multiple language entries, select first occurence.")
-  ; ("-log", Arg.Set log, " Option for repo. Print in log files instead of stdout.")
-  ; ("-merge", Arg.Set merge, " Merge rather than replace new lexicon entries.")
-  ; ("-missing", Arg.Set missing
-    , " Print missing translation for these lang: " ^ String.concat "," lang_default ^".")
-  ; ( "-missing-lang", Arg.String (fun s -> missing := true ; lang := String.split_on_char ',' s)
-    , " Same as -missing, but use a comma-separated list of lang instead of the default one.")
-  ; ("-repo", Arg.String (fun x -> repo := x), " Check missing or unused keyword.")
+  [ ("-missing", Arg.Set missing
+    ," Print missing translation for these lang: " ^ String.concat "," lang_default ^".")
+  ; ("-missing-lang", Arg.String (fun s -> missing := true ; lang := String.split_on_char ',' s)
+    ," Same as -missing, but use a comma-separated list of lang instead of the default one.")
+  ; ("-repo", Arg.String (fun x -> repo := x)
+    ," Define repo location. If repo is defined, lexicon is relative to repo")
+  ; ("-orphans", Arg.Set orphans
+    ," Check missing or unused keyword. -repo must be defined")
+  ; ("-log", Arg.Set log, " Option for orphans. Print in log files instead of stdout.")
   ; ("-sort", Arg.Set lex_sort, " Sort the lexicon (both key and content).")
+  ; ("-first", Arg.Set first, " If multiple language entries, select first occurence.")
+  ; ("-merge", Arg.Set merge, " Merge rather than replace new lexicon entries.")
   ] |> Arg.align
 in
 
-let anonfun s = lexicon := s in
+let anonfun s = lexicon :=
+  if !repo = "" then s else (Filename.concat !repo s)
+in
+
 let usage = "Usage: cat lex_utils.ml | " ^ Sys.argv.(0) ^ " [options] lexicon" in
 let main () =
   Arg.parse speclist anonfun usage;
   if !lexicon = "" then (Arg.usage speclist usage; exit 2);
+  if !orphans && !repo = "" then (Arg.usage speclist usage; exit 2);
   if !lex_sort then sort_lexicon !lexicon
   else if !missing then missing_translation !lexicon !lang
-  else if !repo <> "" then missing_or_unused_msg !lexicon !repo !log
+  else if !orphans then missing_or_unused_msg !lexicon !repo !log
 in
 
 Printexc.print main () ;;
