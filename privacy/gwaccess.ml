@@ -66,26 +66,3 @@ let find_dated_ancestor base p =
   in
   loop 1 [get_iper p]
 in
-
-let access_everybody access base =
-  Gwdb.Collection.iter begin fun p ->
-    if get_access p <> access then
-      let p = {(gen_person_of_person p) with Def.access = access} in
-      patch_person base p.Def.key_index p
-  end (Gwdb.persons base)
-in
-
-let access_some access base key =
-  match
-    match Gutil.person_ht_find_all base key with
-    | [ip] -> Some ip
-    | _ -> Gutil.person_of_string_dot_key base key
-  with
-  | Some ip ->
-    let p = poi base ip in
-    if get_access p <> access then begin
-      let p = { (gen_person_of_person p) with Def.access = access } in
-      patch_person base p.Def.key_index p
-    end
-  | None -> Printf.eprintf "Bad key %s\n" key ; flush stderr
-in

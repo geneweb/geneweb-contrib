@@ -149,17 +149,9 @@ let public_all ~mem base treshold =
 in
 
 let treshold = ref None in
-let access = ref None in
 let default_treshold = 1900 in
-let ind = ref [] in
 let bname = ref "" in
-let everybody = ref false in
 let mem = ref false in
-
-let aux v () =
-  assert (!access = None) ;
-  access := Some v
-in
 
 let speclist =
   [ ( "-y"
@@ -167,26 +159,7 @@ let speclist =
     , "<YEAR> Treshold year. Anybody born before this year is considered old (default = "
       ^ string_of_int default_treshold ^ ")"
     )
-  ; ( "-everybody"
-    , Arg.Set everybody
-    , " Process the whole database."
-    )
-  ; ( "-ind"
-    , Arg.String (fun x -> ind := x :: !ind)
-    , "<KEY> Process this individual and its ancestors."
-    )
-  ; ( "-list-ind"
-    , Arg.String begin fun s ->
-        let ic = open_in s in
-        try while true do ind := (input_line ic) :: !ind done
-        with End_of_file -> ()
-      end
-    , "<FILE> Process the list of persons contained in <FILE> (one key per line)."
-    )
   ; ( "-mem", Arg.Set mem, " Save memory (slower)." )
-  ; ( "-public", Arg.Unit (aux Public), " Set individuals access to Public." )
-  ; ( "-private", Arg.Unit (aux Private), " Set individuals access to Private." )
-  ; ( "-iftitle", Arg.Unit (aux IfTitles), " Set individuals access to IfTitle." )
   ; ( "-trace", Arg.Set trace, " Trace changes." )
   ] |> Arg.align
 in
@@ -207,8 +180,9 @@ let main () =
   let base = Gwdb.open_base !bname in
   begin match !treshold, !everybody, !ind, !access with
     | Some _, true, _, _
-    | Some _, _, _ :: _, _ ->
-      prerr_endline "-everybody, -ind/-list-ind and -y options are mutually exclusive" ;
+    | Some _, _, _ :: _, _
+    | Some _, _, _, Some _ ->
+      prerr_endline "-everybody/-ind/-list-ind/-public/-iftitle and -y options are mutually exclusive" ;
       usage ()
     | None, true, _, None
     | None, _, _ :: _, None ->
