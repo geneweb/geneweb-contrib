@@ -148,52 +148,33 @@ let public_all ~mem base treshold =
   end
 in
 
-let treshold = ref None in
-let default_treshold = 1900 in
-let bname = ref "" in
-let mem = ref false in
-
-let speclist =
-  [ ( "-y"
-    , Arg.Int (fun i -> treshold := Some i)
-    , "<YEAR> Treshold year. Anybody born before this year is considered old (default = "
-      ^ string_of_int default_treshold ^ ")"
-    )
-  ; ( "-mem", Arg.Set mem, " Save memory (slower)." )
-  ; ( "-trace", Arg.Set trace, " Trace changes." )
-  ] |> Arg.align
-in
-
-let anonfun i = bname := i in
-
-let usage =
-  "Usage: cat gwacces.ml gwpublic.ml | GWREPL_PPF=/dev/null GW_NOPROMPT=1 "
-  ^ Sys.argv.(0) ^ " [OPTS] /path/to/base.gwb"
-in
-
 let main () =
+  let default_treshold = 1900 in
+  let treshold = ref default_treshold in
+  let bname = ref "" in
+  let mem = ref false in
+  let speclist =
+    [ ( "-y"
+      , Arg.Set_int treshold
+      , "<YEAR> Treshold year. Anybody born before this year is considered old (default = "
+        ^ string_of_int default_treshold ^ ")"
+      )
+    ; ( "-mem", Arg.Set mem, " Save memory (slower)." )
+    ; ( "-trace", Arg.Set trace, " Trace changes." )
+    ] |> Arg.align
+  in
+  let anonfun i = bname := i in
+  let usage =
+    "Usage: cat privacy_auto.ml | [GWREPL OPTS] " ^ Sys.argv.(0) ^ " [OPTS] /path/to/base.gwb"
+  in
   Arg.parse speclist anonfun usage ;
   let usage () = Arg.usage speclist usage ; exit 2 in
   if !bname = "" then usage () ;
   Secure.set_base_dir (Filename.dirname !bname);
-  Lock.control_retry (Mutil.lock_file !bname) ~onerror:Lock.print_error_and_exit @@ fun () ->
-  let base = Gwdb.open_base !bname in
-  begin match !treshold, !everybody, !ind, !access with
-    | Some _, true, _, _
-    | Some _, _, _ :: _, _
-    | Some _, _, _, Some _ ->
-      prerr_endline "-everybody/-ind/-list-ind/-public/-iftitle and -y options are mutually exclusive" ;
-      usage ()
-    | None, true, _, None
-    | None, _, _ :: _, None ->
-      prerr_endline "missing -public, -private or -iftitle option" ;
-      usage ()
-    | Some y, _, _, _ -> public_all ~mem:!mem base y
-    | None, false, [], None -> public_all ~mem:!mem base default_treshold
-    | _, true, _, Some access -> access_everybody access base
-    | _, _, ind, Some access -> List.iter (access_some access base) ind
-  end ;
-  Gwdb.commit_patches base ;
+  Lock.control_retry (Mutil.lock_file !bname) ~onerror:Lock.print_error_and_exit begin fun () ->
+    public_all ~mem:!mem (Gwdb.open_base !bname) (!threshold)
+      Gwdb.commit_patches base
+  end
 in
 
 main ()

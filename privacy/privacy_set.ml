@@ -56,24 +56,25 @@ let main () =
   let usage () = Arg.usage speclist usage ; exit 2 in
   if !bname = "" then usage () ;
   Secure.set_base_dir (Filename.dirname !bname);
-  Lock.control_retry (Mutil.lock_file !bname) ~onerror:Lock.print_error_and_exit @@ fun () ->
-  let base = Gwdb.open_base !bname in
-  begin match !access, !ind, !everybody with
-    | None, _, _ ->
-      prerr_endline "missing -public, -private or -iftitle option" ;
-      usage ()
-    | _, [], false ->
-      prerr_endline "missing -everybody, -ind or -list-ind option" ;
-      usage ()
-    | _, _ :: _, true ->
-      prerr_endline "missing -everybody and -ind/-list-ind options are mutually exclusive" ;
-      usage ()
-    | Some access, [], true ->
-      access_everybody access base
-    | Some access, ind, false ->
-      List.iter (access_some access base) ind
-  end ;
-  Gwdb.commit_patches base
+  Lock.control_retry (Mutil.lock_file !bname) ~onerror:Lock.print_error_and_exit begin fun () ->
+    let base = Gwdb.open_base !bname in
+    begin match !access, !ind, !everybody with
+      | None, _, _ ->
+        prerr_endline "missing -public, -private or -iftitle option" ;
+        usage ()
+      | _, [], false ->
+        prerr_endline "missing -everybody, -ind or -list-ind option" ;
+        usage ()
+      | _, _ :: _, true ->
+        prerr_endline "missing -everybody and -ind/-list-ind options are mutually exclusive" ;
+        usage ()
+      | Some access, [], true ->
+        access_everybody access base
+      | Some access, ind, false ->
+        List.iter (access_some access base) ind
+    end ;
+    Gwdb.commit_patches base
+  end
 in
 main ()
 ;;
