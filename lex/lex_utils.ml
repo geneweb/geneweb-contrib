@@ -69,17 +69,19 @@ let get_msg_src repo =
   (* TODO the current setup misses translations with the string on the next line !! *)
   let regexp = Str.regexp "transl.* \"" in
   let _ = "\"" in (* just for quotes balancing in BBedit. Putting it in comment fails!! *)
-  List.fold_left begin fun acc src ->
-    let ic = open_in src in
-    let loop acc =
-      match input_line ic with
-      | exception End_of_file -> close_in ic ; acc
-      | line ->
-        if Str.string_match regexp line 0
-        then cut_all_msg_src acc line
-        else acc
-    in loop acc
-  end [] (get_ml_files repo)
+  List.fold_left begin fun acc dir ->
+    List.fold_left begin fun acc src ->
+      let ic = open_in src in
+      let rec loop acc =
+        match input_line ic with
+        | exception End_of_file -> close_in ic ; acc
+        | line ->
+          if Str.string_match regexp line 0
+          then cut_all_msg_src acc line
+          else acc
+      in loop acc
+    end acc (get_ml_files dir)
+  end [] repo
 in
 
 let cut_all_msg acc s =
@@ -123,16 +125,18 @@ in
 
 let get_msg_tpl repo : string list =
   let regexp = Str.regexp "[*?[a-z]+]" in
-  List.fold_left begin fun acc tpl ->
-    let ic = open_in tpl in
-    let rec loop acc = match input_line ic with
-      | exception End_of_file -> close_in ic ; acc
-      | line ->
-        if Str.string_match regexp line 0
-        then loop (cut_all_msg acc line)
-        else loop acc
-    in loop acc
-  end [] (get_tpl_files repo)
+  List.fold_left begin fun acc dir ->
+    List.fold_left begin fun acc tpl ->
+      let ic = open_in tpl in
+      let rec loop acc = match input_line ic with
+        | exception End_of_file -> close_in ic ; acc
+        | line ->
+          if Str.string_match regexp line 0
+          then loop (cut_all_msg acc line)
+          else loop acc
+      in loop acc
+    end acc (get_tpl_files dir)
+  end [] repo
 in
 
 let module StringSet = Set.Make (String) in
@@ -145,12 +149,14 @@ let missing_or_unused_msg lexicon repo log =
   in
   let lexicon = absolute lexicon in
   let repo = absolute repo in
-  let repo_src = Filename.concat repo "src" in
+  let repo_src = Filename.concat repo "lib" in
+  let repo_bin = Filename.concat repo "bin" in
   let repo_tpl = Filename.concat repo (Filename.concat "hd" "etc") in
-  (* TODO, scan plugin area as well *)
+  let repo_plugins = Filename.concat repo "plugins" in
+  (* TODO, scan plugin lex as well *)
   let lex = get_lexicon_msg lexicon in
-  let msg_src = get_msg_src repo in
-  let msg_tpl = get_msg_tpl repo_tpl in
+  let msg_src = get_msg_src [repo_src; repo_bin; repo_plugins] in
+  let msg_tpl = get_msg_tpl [repo_tpl; repo_plugins] in
   let msg =
     List.fold_left (fun acc e -> StringSet.add e acc) StringSet.empty (List.rev_append msg_src msg_tpl)
     |> StringSet.elements
@@ -171,9 +177,9 @@ let missing_or_unused_msg lexicon repo log =
       "View log_lex for lexicon msg and log_msg for src and tpl msg."
   end
   else begin
-    Printf.fprintf stdout "\nMessage not used anymore in %s and %s :\n%!" repo_src repo_tpl;
+    Printf.fprintf stdout "\nMessage in lexicon not used anymore in %s and %s:\n%!" repo repo_tpl;
     List.iter (fun w -> if not (List.mem w msg) then print_endline w) lex;
-    Printf.fprintf stdout "\nMessage from %s and %s not in lexicon :\n%!" repo_src repo_tpl;
+    Printf.fprintf stdout "\nMessage from %s and %s not in lexicon:\n%!" repo repo_tpl;
     List.iter (fun w -> if not (List.mem w lex) then print_endline w) msg
   end
 in
