@@ -201,8 +201,6 @@ let missing_or_unused_msg lexicon repo log =
   
   let lex = get_lexicon_msg lexicon in
   let plugins = Array.to_list (Sys.readdir repo_plugins) in
-  let _ = Printf.printf "Lexicon: %s\n" lexicon in
-  let _ = Printf.printf "Read plugin repo: %d\n" (List.length plugins) in
   let lex =
     if !only then lex
     else 
@@ -212,7 +210,6 @@ let missing_or_unused_msg lexicon repo log =
         | rep :: repl ->
           let rep = Filename.concat rep (Filename.concat "assets" "lex") in
           let rep = Filename.concat repo (Filename.concat "plugins" rep) in
-          let _ = Printf.printf "Plugin dir: %s\n" rep in
           if Sys.file_exists rep && Sys.is_directory rep then
             let ll = Array.to_list (Sys.readdir rep) in
             let rec loop2 acc ll =
@@ -220,7 +217,6 @@ let missing_or_unused_msg lexicon repo log =
               | [] -> loop acc repl
               | lf :: ll ->
                 let lf = Filename.concat rep lf in
-                let _ = Printf.printf "Plugin lex file: %s\n" lf in
                 loop2 (List.append acc (get_lexicon_msg lf)) ll
               end
             in loop2 acc ll
