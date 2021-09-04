@@ -34,7 +34,14 @@ let get_tpl_files repo =
   |> List.filter (fun x -> Filename.check_suffix x ".txt")
 in
 
-(* RÃ©cupÃ¨re tous les identifiants de message de lexicon. *)
+let get_lex_files repo =
+  Mutil.ls_r [repo]
+  |> List.filter (fun x ->
+    Filename.basename (Filename.dirname x) = "lex" &&
+    Filename.check_suffix x ".txt")
+in
+
+(* RŽcupre tous les identifiants de message de lexicon. *)
 let get_lexicon_msg lexicon =
   let lex = ref [] in
   match try Some (open_in lexicon) with Sys_error _ -> None with
@@ -181,8 +188,8 @@ let module StringSet = Set.Make (String) in
 
 let only = ref false in
 
-(* Essaie de chercher tous les identifiants de message du rÃ©pository et *)
-(* recherche s'il ne sont plus utilisÃ©s pour au contraire non trdauit.  *)
+(* Essaie de chercher tous les identifiants de message du rŽpository et *)
+(* recherche s'il ne sont plus utilisŽs pour au contraire non trdauit.  *)
 let missing_or_unused_msg lexicon repo log =
   let lexicon =
     if Filename.is_relative lexicon then
@@ -198,30 +205,23 @@ let missing_or_unused_msg lexicon repo log =
   let repo_bin = Filename.concat repo "bin" in
   let repo_tpl = List.fold_left Filename.concat repo ["hd"; "etc"] in
   let repo_plugins = Filename.concat repo "plugins" in
-  
   let lex = get_lexicon_msg lexicon in
-  let plugins = Array.to_list (Sys.readdir repo_plugins) in
+  let lex_files =
+    if !only then []
+    else get_lex_files repo_plugins
+  in
   let lex =
-    if !only then lex
-    else 
-      let rec loop acc rep =
-        match rep with
+    if lex_files = [] then lex
+    else
+      let rec loop acc fl =
+        match fl with
         | [] -> acc
-        | rep :: repl ->
-          let rep = Filename.concat rep (Filename.concat "assets" "lex") in
-          let rep = Filename.concat repo (Filename.concat "plugins" rep) in
-          if Sys.file_exists rep && Sys.is_directory rep then
-            let ll = Array.to_list (Sys.readdir rep) in
-            let rec loop2 acc ll =
-              begin match ll with
-              | [] -> loop acc repl
-              | lf :: ll ->
-                let lf = Filename.concat rep lf in
-                loop2 (List.append acc (get_lexicon_msg lf)) ll
-              end
-            in loop2 acc ll
-          else loop acc repl
-      in loop lex plugins
+        | f :: fl ->
+          loop (List.append acc (get_lexicon_msg f)) fl
+      in loop lex lex_files
+  in
+  let lex = List.sort
+    (fun x y -> Stdlib.compare (String.lowercase_ascii x) (String.lowercase_ascii y)) lex
   in
   let msg_src = get_msg_src [repo_lib; repo_bin; repo_plugins] in
   let msg_tpl = get_msg_tpl [repo_tpl; repo_plugins] in
@@ -283,26 +283,48 @@ let print_transl_en_fr list =
   if fr_transl <> "" then print_endline ("fr:" ^ fr_transl)
 in
 
-let missing_translation lexicon languages =
-  match try Some (open_in lexicon) with Sys_error _ -> None with
-  | Some ic ->
-      (try
-        while true do
-          let msg = skip_to_next_message ic in
-          let list = get_all_versions ic in
-          let list' = missing_languages list languages in
-          if list' <> [] then
-            begin
-              print_endline msg;
-              print_transl_en_fr list;
-              List.iter
-                (fun lang -> print_endline (lang ^ ":")) (List.rev list');
-              print_string "\n"
-            end
-        done
-      with End_of_file -> ());
-      close_in ic
-  | None -> ()
+let missing_translation repo lexicon languages =
+  let lexicon =
+    if Filename.is_relative lexicon then
+      Filename.concat (Sys.getcwd ()) lexicon
+    else lexicon
+  in
+  let repo =
+    if Filename.is_relative repo then
+      Filename.concat (Sys.getcwd ()) repo
+    else repo
+  in
+  let one_lex lexicon =
+    Printf.printf "\n**** Missing translations for %s\n" lexicon;
+    match try Some (open_in lexicon) with Sys_error _ -> None with
+    | Some ic ->
+        (try
+          while true do
+            let msg = skip_to_next_message ic in
+            let list = get_all_versions ic in
+            let list' = missing_languages list languages in
+            if list' <> [] then
+              begin
+                print_endline msg;
+                print_transl_en_fr list;
+                List.iter
+                  (fun lang -> print_endline (lang ^ ":")) (List.rev list');
+                print_string "\n"
+              end
+          done
+        with End_of_file -> ());
+        close_in ic
+    | None -> ()
+  in
+  one_lex lexicon;
+  if !only then ()
+  else
+    let repo_plugins = Filename.concat repo "plugins" in
+    let lex_files =
+      if !only then []
+      else get_lex_files repo_plugins
+    in
+    List.iter (fun f -> one_lex f) lex_files
 in
 
 
@@ -397,11 +419,16 @@ let speclist =
     ," Define repo location. If repo is defined, lexicon is relative to repo")
   ; ("-orphans", Arg.Set orphans
     ," Check missing or unused keyword. -repo must be defined")
-  ; ("-log", Arg.Set log, " Option for orphans. Print in log files instead of stdout.")
+  ; ("-log", Arg.Set log
+    ," Assumes -orphans. Print whole content of lexicon in log_lex and of
+       source/templates messages in log_msg.")
   ; ("-sort", Arg.Set lex_sort, " Sort the lexicon (both key and content).")
-  ; ("-first", Arg.Set first, " If multiple language entries, select first occurence.")
-  ; ("-merge", Arg.Set merge, " Merge rather than replace new lexicon entries.")
-  ; ("-only", Arg.Set only, " Process only designated lexicon.")
+  ; ("-first", Arg.Set first, " When sorting, if multiple language entries,
+       select first occurence (default is second).")
+  ; ("-merge", Arg.Set merge, " When sorting, merge rather than replace new
+       lexicon entries (default is replace).")
+  ; ("-only", Arg.Set only, " Process only designated lexicon. 
+       Default is scan plugins for additional lexicon files.")
   ] |> Arg.align
 in
 
@@ -413,8 +440,10 @@ let main () =
   Arg.parse speclist anonfun usage;
   if !lexicon = "" then (Arg.usage speclist usage; exit 2);
   if !orphans && !repo = "" then (Arg.usage speclist usage; exit 2);
+  
+  
   if !lex_sort then sort_lexicon !lexicon
-  else if !missing then missing_translation !lexicon !lang
+  else if !missing then missing_translation !repo !lexicon !lang
   else if !orphans then missing_or_unused_msg !lexicon !repo !log
 in
 Printexc.print main () ;;
