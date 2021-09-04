@@ -60,18 +60,20 @@ in
 let cut_all_msg_src s =
   let list = ref [] in
   let i = ref 0 in
-  let regexp = Str.regexp "transl" in
+  let regexp = Str.regexp "transl[ _]" in
   try
     while true do
       i := Str.search_forward regexp s !i;
       let start = String.index_from s !i '"' in
-      let stop =
-        let rec loop k =
+      let (stop, s) =
+        let rec loop k s =
           let stop = String.index_from s k '"' in
-          if s.[stop - 1] = '\\' then loop (stop + 1)
-          else stop
+          if s.[stop - 1] = '\\' then
+            loop (stop + 2)
+            ((String.sub s 0 (stop-1)) ^ (String.sub s (stop) ((String.length s) - stop)))
+          else (stop, s)
         in
-        loop (start + 1)
+        loop (start + 1) s
       in
       list := String.sub s (start + 1) (stop - start - 1) :: !list;
       i := stop + 1
@@ -82,7 +84,7 @@ in
 
 let get_msg_src repl =
   let msg = ref [] in
-  let regexp = Str.regexp "transl .* \"" in
+  let regexp = Str.regexp "transl[_ ].* \"" in
   let _ = " \" " in
   List.iter (fun repo ->
     List.iter
@@ -105,7 +107,7 @@ let get_msg_src repl =
             close_in ic;
         | None -> ())
       (get_ml_files repo))
-  repl;
+    repl;
   List.fold_left
     (fun accu msg -> List.rev_append (cut_all_msg_src msg) accu)
     [] !msg
@@ -119,10 +121,16 @@ let cut_all_msg s =
       let start = String.index_from s !i '[' in
       let stop = String.index_from s (start + 1) ']' in
       let w =
-        if s.[start + 1] = '*' then
-          String.sub s (start + 2) (stop - start - 2)
+        if s.[start + 1] = '[' then
+          if s.[start + 2] = '*' then
+            String.sub s (start + 3) (stop - start - 3)
+          else
+            String.sub s (start + 2) (stop - start - 2)
         else
-          String.sub s (start + 1) (stop - start - 1)
+          if s.[start + 1] = '*' then
+            String.sub s (start + 2) (stop - start - 2)
+          else
+            String.sub s (start + 1) (stop - start - 1)
       in
       let w =
         try
