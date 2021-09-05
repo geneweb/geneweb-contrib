@@ -77,8 +77,8 @@ let get_msg_src repo =
         | exception End_of_file -> close_in ic ; acc
         | line ->
           if Str.string_match regexp line 0
-          then cut_all_msg_src acc line
-          else acc
+          then loop (cut_all_msg_src acc line)
+          else loop acc
       in loop acc
     end acc (get_ml_files dir)
   end [] repo

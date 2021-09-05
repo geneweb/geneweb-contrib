@@ -60,7 +60,7 @@ in
 let cut_all_msg_src s =
   let list = ref [] in
   let i = ref 0 in
-  let regexp = Str.regexp "transl[ _]" in
+  let regexp = Str.regexp "transl" in
   try
     while true do
       i := Str.search_forward regexp s !i;
@@ -84,7 +84,7 @@ in
 
 let get_msg_src repl =
   let msg = ref [] in
-  let regexp = Str.regexp "transl[_ ].* \"" in
+  let regexp = Str.regexp "transl.* \"" in
   let _ = " \" " in
   List.iter (fun repo ->
     List.iter
