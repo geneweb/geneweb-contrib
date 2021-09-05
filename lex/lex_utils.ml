@@ -178,9 +178,13 @@ let missing_or_unused_msg lexicon repo log =
   end
   else begin
     Printf.fprintf stdout "\nMessage in lexicon not used anymore in %s and %s:\n%!" repo repo_tpl;
-    List.iter (fun w -> if not (List.mem w msg) then print_endline w) lex;
+    let lex_cnt = ref 0 in
+    List.iter (fun w -> if not (List.mem w msg) then begin print_endline w; incr lex_cnt end) lex;
     Printf.fprintf stdout "\nMessage from %s and %s not in lexicon:\n%!" repo repo_tpl;
-    List.iter (fun w -> if not (List.mem w lex) then print_endline w) msg
+    let msg_cnt = ref 0 in
+    List.iter (fun w -> if not (List.mem w lex) then begin print_endline w; incr msg_cnt end) msg;
+    Printf.fprintf stdout "\n%d messages in sources, %d messages in lexicon\n" (List.length msg) (List.length lex);
+    Printf.fprintf stdout "%d messages not used, %d messages not translated\n" !lex_cnt !msg_cnt;
   end
 in
 

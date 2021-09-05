@@ -122,7 +122,7 @@ let cut_all_msg s =
       let stop = String.index_from s (start + 1) ']' in
       let w =
         if s.[start + 1] = '[' then
-          if s.[start + 2] = '*' then
+          if s.[start + 1] = '*' then
             String.sub s (start + 3) (stop - start - 3)
           else
             String.sub s (start + 2) (stop - start - 2)
@@ -257,20 +257,27 @@ let missing_or_unused_msg lexicon repo log =
     Printf.fprintf stdout
       "\nMessage in lexicon not used anymore in %s (lib, bin, hd/etc, plugins):\n" repo;
     flush stdout;
+    let lex_cnt = ref 0 in
     List.iter
       (fun w ->
         if List.mem w msg then ()
-        else print_endline w)
+        else begin print_endline w; incr lex_cnt end)
       lex;
-
     Printf.fprintf stdout
       "\nMessage from sources %s (lib, bin, hd/etc, plugins) not in lexicon:\n" repo;
     flush stdout;
+    let msg_cnt = ref 0 in
     List.iter
       (fun w ->
         if List.mem w lex then ()
-        else print_endline w)
-      msg
+        else begin print_endline w; incr msg_cnt end)
+      msg;
+    Printf.fprintf stdout
+      "\n%d messages in sources, %d messages in lexicon\n" 
+        (List.length msg) (List.length lex);
+    Printf.fprintf stdout
+      "%d messages not used, %d messages not translated\n" !lex_cnt !msg_cnt;
+    flush stdout;
   end
 in
 
