@@ -122,7 +122,7 @@ let cut_all_msg s =
       let stop = String.index_from s (start + 1) ']' in
       let w =
         if s.[start + 1] = '[' then
-          if s.[start + 1] = '*' then
+          if s.[start + 2] = '*' then
             String.sub s (start + 3) (stop - start - 3)
           else
             String.sub s (start + 2) (stop - start - 2)
