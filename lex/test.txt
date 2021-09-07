@@ -1,0 +1,18 @@
+    xxxx
+en: xxxx en
+fr: xxxx fr
+
+    aaaa
+en: aaaa en
+fr: aaaa fr
+
+    bbbb
+->: aaaa
+
+    cccc
+->: dddd
+
+    dddd
+->: cccc
+
+

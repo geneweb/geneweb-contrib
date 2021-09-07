@@ -11,14 +11,15 @@ in
 let get_all_versions ic =
   let rec loop accu =
     let line = try input_line ic with End_of_file -> "" in
-    if line = "" then accu
+    if line = "" then (accu, "")
     else
       try
         let i = String.index line ':' in
         let lang = String.sub line 0 i in
         let transl = String.sub line (i + 1) (String.length line - i - 1) in
-        loop ((lang, transl) :: accu)
-      with Not_found -> accu
+        if lang = "->" then (["->", transl], transl)
+        else loop ((lang, transl) :: accu)
+      with Not_found -> (accu, "")
   in loop []
 in
 
@@ -316,9 +317,9 @@ let missing_translation repo lexicon languages =
         (try
           while true do
             let msg = skip_to_next_message ic in
-            let list = get_all_versions ic in
+            let (list, alias) = get_all_versions ic in
             let list' = missing_languages list languages in
-            if list' <> [] then
+            if list' <> [] && alias = "" then
               begin
                 print_endline msg;
                 print_transl_en_fr list;
@@ -363,19 +364,36 @@ let sort_lexicon lexicon =
       (try
         while true do
           let msg = skip_to_next_message ic in
-          let list = get_all_versions ic in
+          let (list, alias) = get_all_versions ic in
+          Printf.printf "Msg1: %s (%d)\n" msg (List.length list);
+          let alias = 
+            if String.length alias > 1 then
+              String.sub alias 1 (String.length alias - 1)
+            else alias
+          in
+          Printf.printf "Alias: |%s|\n" alias;
           let list' = List.sort (fun (x, _) (y, _) -> compare x y) list in
-          lex_sort := Lex_map.add msg list' !lex_sort
+          let msg =
+            if alias = "" then msg
+            else ("    " ^ alias ^ msg)
+          in
+          Printf.printf "Msg2: %s (%d)\n" msg (List.length list');
+          lex_sort := Lex_map.add msg (alias, list') !lex_sort
         done
       with End_of_file -> ());
       close_in ic
   | None -> ());
   Lex_map.iter
-    (fun msg list ->
-       print_endline msg;
-       List.iter
-         (fun (lang, transl) -> print_endline (lang ^ ":" ^ transl)) list;
-       print_string "\n")
+    (fun msg (alias, list) ->
+      let msg =
+        if alias = "" then msg
+        else (String.sub msg (String.length alias + 4)
+          (String.length msg - (String.length alias) - 4))
+      in
+      print_endline msg;
+      List.iter
+        (fun (lang, transl) -> print_endline (lang ^ ":" ^ transl)) list;
+      print_string "\n")
     !lex_sort
 in
 
