@@ -365,19 +365,16 @@ let sort_lexicon lexicon =
         while true do
           let msg = skip_to_next_message ic in
           let (list, alias) = get_all_versions ic in
-          Printf.printf "Msg1: %s (%d)\n" msg (List.length list);
           let alias = 
             if String.length alias > 1 then
               String.sub alias 1 (String.length alias - 1)
             else alias
           in
-          Printf.printf "Alias: |%s|\n" alias;
           let list' = List.sort (fun (x, _) (y, _) -> compare x y) list in
           let msg =
             if alias = "" then msg
             else ("    " ^ alias ^ msg)
           in
-          Printf.printf "Msg2: %s (%d)\n" msg (List.length list');
           lex_sort := Lex_map.add msg (alias, list') !lex_sort
         done
       with End_of_file -> ());
