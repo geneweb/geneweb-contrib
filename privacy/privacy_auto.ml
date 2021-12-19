@@ -1,6 +1,5 @@
-open Geneweb
-open Def
-open Gwdb
+let open Def in
+let open Gwdb in
 
 (** This script is used to set people old enough privacy to [Public]. *)
 (** Set privacy of persons older than X years as [Public]. Set the
@@ -8,15 +7,49 @@ open Gwdb
     generations by century for descendants).
 *)
 
-let nb_gen_by_century = 3
+(** [oldest_year_of p]
+    Find a year in [[ birth ; baptism ; death ]].
+*)
+let oldest_year_of p =
+  match Adef.od_of_cdate (get_birth p) with
+  | Some (Dgreg (d, _)) -> Some d.year
+  | _ -> match Adef.od_of_cdate (get_baptism p) with
+    | Some (Dgreg (d, _)) -> Some d.year
+    | _ -> match Date.date_of_death (get_death p) with
+      | Some (Dgreg (d, _)) -> Some d.year
+      | _ -> None
+in
 
-let changes = ref false
+(** [most_recent_year_of p]
+    Find a year in [[ death ; baptism ; birth ]].
+*)
+let most_recent_year_of p =
+  match Date.date_of_death (get_death p) with
+  | Some (Dgreg (d, _)) -> Some d.year
+  | _ -> match Adef.od_of_cdate (get_baptism p) with
+    | Some (Dgreg (d, _)) -> Some d.year
+    | _ -> match Adef.od_of_cdate (get_birth p) with
+      | Some (Dgreg (d, _)) -> Some d.year
+      | _ -> None
+in
+
+let nb_gen_by_century = 3 in
+
+let trace = ref false in
+
+let if_trace base p acc =
+  if !trace then
+    Printf.printf "%s -> %s\n%!"
+      (Gutil.designation base p)
+      (if acc = Private then "private" else "public")
+in
 
 (** Compute the number of (descending) generation to be considered as old
     starting from [p] included. i.e. [0] means that [p] is not considered old.
 *)
 let compute_ndgen treshold y =
   (treshold - y) * nb_gen_by_century / 100
+in
 
 (** Recursively mark descendants and spouses as old,
     as long as a date allow you to do so, or until
@@ -28,7 +61,7 @@ let mark_descendants base scanned old treshold =
     let p_key_index = get_iper p in
     if Gwdb.Marker.get scanned p_key_index < ndgen then begin
       (* If we did not already scanned with ndgen >= current ndgen *)
-      let ndgen = match Gwaccess.most_recent_year_of p with
+      let ndgen = match most_recent_year_of p with
         | Some y ->
           (* We have a date: we do not want to scan this person again with a higher ndgen *)
           Gwdb.Marker.set scanned p_key_index max_int ;
@@ -49,7 +82,7 @@ let mark_descendants base scanned old treshold =
                  let ndgen'' =
                    Opt.map_default ndgen
                      (compute_ndgen treshold)
-                     (Gwaccess.most_recent_year_of (poi base sp))
+                     (most_recent_year_of (poi base sp))
                  in
                  if ndgen'' > 0 then begin
                    Gwdb.Marker.set old sp true ;
@@ -63,13 +96,14 @@ let mark_descendants base scanned old treshold =
     end
   in
   loop
+in
 
 let mark_ancestors base scanned treshold =
   let rec loop p =
     let i = get_iper p in
     if not @@ Gwdb.Marker.get scanned i then begin
       Gwdb.Marker.set scanned i true ;
-      begin match Gwaccess.oldest_year_of p with
+      begin match oldest_year_of p with
         | Some y when y >= treshold ->
           Printf.eprintf "Problem of date ! %s %d\n" (Gutil.designation base p) y;
           flush stderr
@@ -78,9 +112,8 @@ let mark_ancestors base scanned treshold =
           && not (is_quest_string (get_first_name p))
           && not (is_quest_string (get_surname p))
           then begin
-            let p = {(gen_person_of_person p) with access = Public} in
-            patch_person base p.key_index p ;
-            changes := true
+            if_trace base p Public ;
+            patch_person base (get_iper p) {(gen_person_of_person p) with access = Public} ;
           end
       end ;
       Opt.iter
@@ -92,9 +125,9 @@ let mark_ancestors base scanned treshold =
     end
   in
   loop
+in
 
-let public_all ~mem bname treshold =
-  let base = Gwdb.open_base bname in
+let public_all ~mem base treshold =
   if not mem then begin
     load_persons_array base ;
     load_ascends_array base ;
@@ -134,50 +167,40 @@ let public_all ~mem bname treshold =
     clear_persons_array base ;
     clear_ascends_array base ;
     clear_couples_array base ;
-  end ;
-  if !changes then commit_patches base
+  end
+in
 
-let public_some bname treshold key =
-  let base = Gwdb.open_base bname in
-  let ip = match Gutil.person_ht_find_all base key with
-    | [ip] -> ip
-    | _ -> match Gutil.person_of_string_dot_key base key with
-      | Some ip -> ip
-      | None -> Printf.eprintf "Bad key %s\n" key; flush stderr; exit 2
+let main () =
+  let default_treshold = 1900 in
+  let treshold = ref default_treshold in
+  let bname = ref "" in
+  let mem = ref false in
+  let speclist =
+    [ ( "-y"
+      , Arg.Set_int treshold
+      , "<YEAR> Treshold year. Anybody born before this year is set as Public (default = "
+        ^ string_of_int default_treshold ^ ")"
+      )
+    ; ( "-mem", Arg.Set mem, " Save memory (slower)." )
+    ; ( "-trace", Arg.Set trace, " Trace changes." )
+    ] |> Arg.align
   in
-  let p = poi base ip in
-  let scanned = Gwdb.iper_marker (Gwdb.ipers base) false in
-  let () = load_ascends_array base in
-  let () = load_couples_array base in
-  mark_ancestors base scanned treshold p;
-  let () = clear_ascends_array base in
-  let () = clear_couples_array base in
-  if !changes then commit_patches base
-
-let treshold = ref 1900
-let ind = ref ""
-let bname = ref ""
-let everybody = ref false
-let mem = ref false
-
-let speclist =
-  ["-y", Arg.Int (fun i -> treshold := i),
-   "treshold year. Anybody born before this year is considered old (default = " ^ string_of_int !treshold ^ ")";
-   "-everybody", Arg.Set everybody, "set flag public to everybody.";
-   "-ind", Arg.String (fun x -> ind := x), "individual key. Process only this individual and its ancestors.";
-   "-mem", Arg.Set mem, "save memory (slower)";
-  ]
-let anonfun i = bname := i
-let usage = "Usage: public1 [-everybody] [-mem] [-y #] [-ind key] base"
-
-let () =
-  Arg.parse speclist anonfun usage;
-  if !bname = "" then begin Arg.usage speclist usage ; exit 2 end ;
+  let anonfun i = bname := i in
+  let usage =
+    "Usage: cat privacy_auto.ml | [GWREPL OPTS] " ^ Sys.argv.(0) ^ " [OPTS] /path/to/base.gwb"
+  in
+  Arg.parse speclist anonfun usage ;
+  let usage () = Arg.usage speclist usage ; exit 2 in
+  if !bname = "" then usage () ;
   Secure.set_base_dir (Filename.dirname !bname);
-  Lock.control_retry (Mutil.lock_file !bname) ~onerror:Lock.print_error_and_exit @@ fun () ->
-  if !everybody then
-    if !ind <> "" then failwith "-everybody and -ind options are mutually exclusive"
-    else if !treshold <> 1900 then failwith "-everybody and -y options are mutually exclusive"
-    else Gwaccess.access_everybody Def.Public !bname
-  else if !ind = "" then public_all ~mem:!mem !bname !treshold
-  else public_some !bname !treshold !ind
+  Lock.control_retry (Mutil.lock_file !bname) ~onerror:Lock.print_error_and_exit begin fun () ->
+    let base = Gwdb.open_base !bname in
+    public_all ~mem:!mem (Gwdb.open_base !bname) (!treshold) ;
+    print_endline __LOC__ ;
+    Gwdb.commit_patches base ;
+    print_endline __LOC__ ;
+  end
+in
+
+main ()
+;;
