@@ -65,19 +65,6 @@ let find_dated_ancestor base p =
   in
   loop 1 [get_iper p]
 
-let input_person file =
-  let pl = ref [] in
-  begin match (try Some (open_in file) with Sys_error _ -> None) with
-    Some ic ->
-      begin try
-        while true do let line = input_line ic in pl := line :: !pl done
-      with End_of_file -> ()
-      end;
-      close_in ic
-  | None -> Printf.eprintf "Error while opening file %s\n" file; flush stderr
-  end;
-  List.rev !pl
-
 let access_everybody access bname =
   let base = Gwdb.open_base bname in
   Gwdb.Collection.iter begin fun p ->
@@ -87,35 +74,55 @@ let access_everybody access bname =
   end (Gwdb.persons base) ;
   commit_patches base
 
-let access_some access bname key =
-  let base = Gwdb.open_base bname in
+let access_some_aux base access key =
   match Gutil.person_ht_find_all base key with
-    [ip] ->
-      let p = poi base ip in
-      if get_access p <> access then
-        begin let p = {(gen_person_of_person p) with Def.access = access} in
-          patch_person base p.Def.key_index p
-        end;
-      commit_patches base
+  | [ip] ->
+    let p = poi base ip in
+    if get_access p <> access then begin
+      let p = {(gen_person_of_person p) with Def.access = access} in
+      patch_person base p.Def.key_index p
+    end ;
   | _ ->
-      match Gutil.person_of_string_dot_key base key with
-        Some ip ->
-          let p = poi base ip in
-          if get_access p <> access then
-            begin let p =
-              {(gen_person_of_person p) with Def.access = access}
-            in
-              patch_person base p.Def.key_index p
-            end;
-          commit_patches base
-      | None -> Printf.eprintf "Bad key %s\n" key; flush stderr
+    match Gutil.person_of_string_dot_key base key with
+    | Some ip ->
+      let p = poi base ip in
+      if get_access p <> access then begin
+        let p = {(gen_person_of_person p) with Def.access = access} in
+        patch_person base p.Def.key_index p
+      end ;
+    | None ->
+      Printf.eprintf "Bad key %s\n" key; flush stderr
 
-let access_some_list access bname file =
-  if Sys.file_exists file then
-    let pl = input_person file in List.iter (access_some access bname) pl
-  else
-    begin
-      Printf.eprintf "File does not exist : %s\n" file;
-      flush stderr;
-      exit 2
-    end
+let access_some access bname list =
+  let base = Gwdb.open_base bname in
+  List.iter (access_some_aux base access) list ;
+  commit_patches base
+
+let input_file list file =
+  let ic = open_in file in
+  begin
+    try while true do list := input_line ic :: !list done
+    with End_of_file -> ()
+  end ;
+  close_in ic
+
+(* TODO: one .exe to rule them all *)
+let main access name =
+  let list = ref [] in
+  let bname = ref "" in
+  let everybody = ref false in
+  let speclist =
+    [ "-everybody", Arg.Set everybody, " set flag " ^ name ^ " to everybody"
+    ; "-ind", Arg.String (fun s -> list := s :: !list), "<KEY>"
+    ; "-list-ind", Arg.String (fun s -> input_file list s), "<FILE> file containing one key per line"
+    ]
+    |> Arg.align
+  in
+  let anonfun i = bname := i in
+  let usage = "Usage: " ^ Sys.argv.(0) ^ " [-everybody] [-ind key] [-list-ind file] base" in
+  Arg.parse speclist anonfun usage;
+  if !bname = "" then begin Arg.usage speclist usage ; exit 2 end;
+  Secure.set_base_dir (Filename.dirname !bname);
+  Lock.control_retry (Mutil.lock_file !bname) ~onerror:Lock.print_error_and_exit @@ fun () ->
+  if !everybody then access_everybody access !bname
+  else access_some access !bname !list
