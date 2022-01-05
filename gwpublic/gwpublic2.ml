@@ -5,7 +5,7 @@ let nb_years_by_gen = 30
 
 let change_somebody_access base lim_year trace p year_of_p =
   if year_of_p = None && get_access p = IfTitles then
-    match Gwaccess.find_dated_ancestor base p with
+    match Gwaccess_util.find_dated_ancestor base p with
       Some (a, year, nb_gen) ->
         let acc =
           if year + nb_gen * nb_years_by_gen > lim_year then IfTitles
@@ -44,8 +44,8 @@ let public_all bname lim_year trace =
   ProgrBar.start ();
   Gwdb.Collection.iteri begin fun i p ->
     ProgrBar.run i n;
-    if Gwaccess.oldest_year_of p = None && get_access p = IfTitles then
-      match change_somebody_access base lim_year trace p (Gwaccess.oldest_year_of p) with
+    if Gwaccess_util.oldest_year_of p = None && get_access p = IfTitles then
+      match change_somebody_access base lim_year trace p (Gwaccess_util.oldest_year_of p) with
       | Some _ -> changes := true
       | None ->
           let fama = get_family p in
@@ -55,7 +55,7 @@ let public_all bname lim_year trace =
               let ifam = fama.(i) in
               let isp = Gutil.spouse (get_iper p) (foi base ifam) in
               let sp = poi base isp in
-              let year_of_sp = Gwaccess.oldest_year_of sp in
+              let year_of_sp = Gwaccess_util.oldest_year_of sp in
               let acc_opt =
                 match year_of_sp with
                   Some year ->
