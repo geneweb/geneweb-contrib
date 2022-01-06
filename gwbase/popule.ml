@@ -1,20 +1,18 @@
-(* $Id: popule.ml,v 4.31 2007-02-16 10:35:39 deraugla Exp $ *)
-
 open Def
 open Gwdb
 
 let _ = Mutil.verbose := false
 
 let h_first_names =
-  [| "Albert"; "Bernard"; "Cyrille"; "Daniel"; "Éric"; "François"; "Gérard";
-     "Hervé"; "Isidore"; "Jacques"; "Kevin"; "Louis"; "Michel"; "Nicolas";
-     "Octave"; "Philippe"; "Quentin"; "René"; "Sylvain"; "Thierry"; "Urbain";
-     "Vincent"; "Wolfgang"; "Xavier"; "Yann"; "Zébulon" |]
+  [| "Albert"; "Bernard"; "Cyrille"; "Daniel"; "Ã‰ric"; "FranÃ§ois"; "GÃ©rard";
+     "HervÃ©"; "Isidore"; "Jacques"; "Kevin"; "Louis"; "Michel"; "Nicolas";
+     "Octave"; "Philippe"; "Quentin"; "RenÃ©"; "Sylvain"; "Thierry"; "Urbain";
+     "Vincent"; "Wolfgang"; "Xavier"; "Yann"; "ZÃ©bulon" |]
 let f_first_names =
-  [| "Anne"; "Brigitte"; "Cécile"; "Denise"; "Emmanuelle"; "Fanny";
-     "Geneviève"; "Hélène"; "Isabelle"; "Joëlle"; "Karine"; "Lise"; "Marie";
-     "Noëlle"; "Odile"; "Patricia"; "Quitterie"; "Rosine"; "Sidonie";
-     "Thérèse"; "Ursule"; "Vanessa"; "Wilfried"; "Xavière"; "Yvonne"; "Zoé" |]
+  [| "Anne"; "Brigitte"; "CÃ©cile"; "Denise"; "Emmanuelle"; "Fanny";
+     "GeneviÃ¨ve"; "HÃ©lÃ¨ne"; "Isabelle"; "JoÃ«lle"; "Karine"; "Lise"; "Marie";
+     "NoÃ«lle"; "Odile"; "Patricia"; "Quitterie"; "Rosine"; "Sidonie";
+     "ThÃ©rÃ¨se"; "Ursule"; "Vanessa"; "Wilfried"; "XaviÃ¨re"; "Yvonne"; "ZoÃ©" |]
 
 let char1 =
   let a =
@@ -25,7 +23,7 @@ let char1 =
 
 let char2 =
   let a =
-    [| "a"; "ail"; "al"; "ar"; "as"; "au"; "e"; "é"; "el"; "er"; "i"; "o";
+    [| "a"; "ail"; "al"; "ar"; "as"; "au"; "e"; "Ã©"; "el"; "er"; "i"; "o";
        "ou"; "u" |]
   in
   fun () -> a.(Random.int (Array.length a))
@@ -52,7 +50,7 @@ let char5 =
 
 let char6 =
   let a =
-    [| "al"; "an"; "at"; "ay"; "e"; "é"; "eau"; "ert"; "es"; "et"; "ie";
+    [| "al"; "an"; "at"; "ay"; "e"; "Ã©"; "eau"; "ert"; "es"; "et"; "ie";
        "ier"; "in"; "our"; "y" |]
   in
   fun () -> a.(Random.int (Array.length a))
@@ -84,11 +82,11 @@ let nameize _ =
   let len = Buff.mstore len (char6 ()) in
   String.uppercase_ascii (Buff.get len)
 
-let h_fn n =
+let h_fn _n =
   let n1 = h_first_names.(Random.int (Array.length h_first_names)) in
   let n2 = h_first_names.(Random.int (Array.length h_first_names)) in
   if n1 = n2 then n1 else n1 ^ "-" ^ n2
-let f_fn n =
+let f_fn _n =
   let n1 = f_first_names.(Random.int (Array.length f_first_names)) in
   let n2 = f_first_names.(Random.int (Array.length f_first_names)) in
   if n1 = n2 then n1 else n1 ^ "-" ^ n2
@@ -97,11 +95,8 @@ let add_indi (base, cnt, bname) (fn, sn1, sn2, oc) sex =
   if !cnt >= 300 then
     begin
       cnt := 0;
-      commit_patches !base;
-      Gwdb.apply_base1 !base
-        (fun base ->
-           let bname = base.Dbdisk.data.Dbdisk.bdir in
-           Outbase.output bname base);
+      commit_patches !base ;
+      Gwdb.sync ~scratch:true !base ;
       base := Gwdb.open_base bname
     end;
   incr cnt;
@@ -118,8 +113,8 @@ let mkcelib size =
   loop [] (max 1 (size / 3))
 
 let popule bname size ngen gyear =
-  let h = Array.make size (Adef.iper_of_int 0, "", "") in
-  let f = Array.make size (Adef.iper_of_int 0, "", "") in
+  let h = Array.make size (dummy_iper, "", "") in
+  let f = Array.make size (dummy_iper, "", "") in
   let base = ref (Gwdb.open_base bname) in
   let base_info = base, ref 0, bname in
   let d =
@@ -130,31 +125,24 @@ let popule bname size ngen gyear =
     {day = day; month = month; year = year - gyear * (ngen - 1) - 2;
      prec = Sure; delta = 0}
   in
-  Random.self_init ();
-  let gcc = Gc.get () in
-  gcc.Gc.max_overhead <- 100;
-  Gc.set gcc;
+  Random.self_init () ;
   let jd = Calendar.sdn_of_gregorian d in
-  let (persons_get, persons_set) = persons_array !base in
+  (* let (persons_get, persons_set) = persons_array !base in *)
   for i = 0 to size - 1 do
-    let surn = nameize i in
-    let ip = add_indi base_info (h_fn 0, surn, "", 1) Male in
-    h.(i) <- ip, surn, "";
-    let x = persons_get (Adef.int_of_iper ip) in
-    let d = Calendar.gregorian_of_sdn Sure (jd + Random.int 365) in
-    let x =
-      {x with birth = Adef.cdate_of_od (Some (Dgreg (d, Dgregorian)))}
+    let aux t sex fn =
+      let surn = nameize i in
+      let ip = add_indi base_info (fn 0, surn, "", 1) sex in
+      t.(i) <- ip, surn, "";
+      let x = poi !base ip in
+      let d = Calendar.gregorian_of_sdn Sure (jd + Random.int 365) in
+      let x =
+        { (gen_person_of_person x) with
+          birth = Adef.cdate_of_od (Some (Dgreg (d, Dgregorian))) }
+      in
+      patch_person !base ip x;
     in
-    persons_set (Adef.int_of_iper ip) x;
-    let surn = nameize i in
-    let ip = add_indi base_info (f_fn 0, surn, "", 1) Female in
-    f.(i) <- ip, surn, "";
-    let x = persons_get (Adef.int_of_iper ip) in
-    let d = Calendar.gregorian_of_sdn Sure (jd + Random.int 365) in
-    let x =
-      {x with birth = Adef.cdate_of_od (Some (Dgreg (d, Dgregorian)))}
-    in
-    persons_set (Adef.int_of_iper ip) x
+    aux h Male h_fn ;
+    aux f Female f_fn ;
   done;
   begin let rec loop celib d n =
     if n > ngen then ()
@@ -165,8 +153,8 @@ let popule bname size ngen gyear =
       for i = 0 to size - 1 do
         if List.mem i celib then ()
         else
-          let (ifath, hsn1, hsn2) = h.(i) in
-          let (imoth, fsn1, fsn2) = f.(i) in
+          let (ifath, hsn1, _hsn2) = h.(i) in
+          let (imoth, fsn1, _fsn2) = f.(i) in
           let (sn1, sn2) =
             match Random.int 15 with
               0 -> nameize (), ""
@@ -174,40 +162,23 @@ let popule bname size ngen gyear =
             | _ -> hsn1, ""
           in
           let h_before_f = Random.int 2 = 0 in
-          let list =
-            if false then []
-            else
-              let ip = add_indi base_info (h_fn n, sn1, sn2, n) Male in
-              h.(i) <- ip, sn1, sn2;
-              let x = persons_get (Adef.int_of_iper ip) in
-              let sh_h = if h_before_f then 0 else 2 * 365 in
-              let d =
-                Calendar.gregorian_of_sdn Sure (jd + sh_h + Random.int 365)
-              in
-              let x =
-                {x with birth =
-                  Adef.cdate_of_od (Some (Dgreg (d, Dgregorian)))}
-              in
-              persons_set (Adef.int_of_iper ip) x; [ip]
+          let aux list sex t fn sh_d before =
+            let ip = add_indi base_info (fn n, sn1, sn2, n) sex in
+            t.(i) <- ip, sn1, sn2;
+            let x = poi !base ip in
+            let d =
+              Calendar.gregorian_of_sdn Sure (jd + sh_d + Random.int 365)
+            in
+            let x =
+              { (gen_person_of_person x) with
+                birth = Adef.cdate_of_od (Some (Dgreg (d, Dgregorian))) }
+            in
+            patch_person !base ip x ;
+            if before then list @ [ip] else ip :: list
           in
-          let list =
-            if false then list
-            else
-              let ip = add_indi base_info (f_fn n, sn1, sn2, n) Female in
-              f.(i) <- ip, sn1, sn2;
-              let x = persons_get (Adef.int_of_iper ip) in
-              let sh_f = if h_before_f then 2 * 365 else 0 in
-              let d =
-                Calendar.gregorian_of_sdn Sure (jd + sh_f + Random.int 365)
-              in
-              let x =
-                {x with birth =
-                  Adef.cdate_of_od (Some (Dgreg (d, Dgregorian)))}
-              in
-              persons_set (Adef.int_of_iper ip) x;
-              if h_before_f then list @ [ip] else ip :: list
-          in
-          let _ = (GwBaseLib.add_fam !base ifath imoth list : ifam) in ()
+          let list = aux [] Male h h_fn (if h_before_f then 0 else 2 * 365) true in
+          let list = aux list Female f f_fn (if h_before_f then 2 * 365 else 0) (not h_before_f) in
+          ignore (GwBaseLib.add_fam !base ifath imoth list : ifam)
       done;
       for i = 0 to size - 2 do
         let rf = i + Random.int (size - i - 1) + 1 in
@@ -217,30 +188,49 @@ let popule bname size ngen gyear =
   in
     loop (mkcelib size) {d with year = d.year + gyear} 2
   end;
-  Printf.eprintf "\n";
-  commit_patches !base;
-  Gwdb.apply_base1 !base
-    (fun base ->
-       let bname = base.Dbdisk.data.Dbdisk.bdir in Outbase.output bname base)
+  Printf.eprintf "\n" ;
+  commit_patches !base ;
+  sync ~scratch:true !base
 
 let size = ref 100
 let ngen = ref 200
 let gyear = ref 20
 let bname = ref ""
+let force = ref false
 
 let speclist =
-  ["-s", Arg.Int (fun i -> size := i),
-   "size = nb of men = nb of women (" ^ string_of_int !size ^ ")";
-   "-n", Arg.Int (fun i -> ngen := i),
-   "nb of generations (" ^ string_of_int !ngen ^ ")";
-   "-g", Arg.Int (fun i -> gyear := i),
-   "age at marriage (" ^ string_of_int !gyear ^ ")"]
+  [ ( "-f", Arg.Set force
+    , " force database creation (erase existing base)" )
+  ; ( "-g", Arg.Int (fun i -> gyear := i)
+    , "AGE age at marriage (" ^ string_of_int !gyear ^ ")" )
+  ; ( "-n", Arg.Int (fun i -> ngen := i)
+    , "GEN nb of generations (" ^ string_of_int !ngen ^ ")" )
+  ; ( "-s", Arg.Int (fun i -> size := i)
+    , "SIZE size = nb of men = nb of women (" ^ string_of_int !size ^ ")" )
+  ]
+  |> Arg.align
 let anonfun i = bname := i
 let usage = "Usage: popule base [args]"
 
-let main () =
-  Arg.parse speclist anonfun usage;
-  if !bname = "" then begin Arg.usage speclist usage; exit 2 end;
-  popule !bname !size !ngen !gyear
+let init_base bname =
+  let bnotes =
+    { nread = (fun _ _ -> "") ; norigin_file = "" ; efiles = fun _ -> [] }
+  in
+  let arrays = ( ([|  |], [|  |], [|  |])
+               , ([|  |], [|  |], [|  |])
+               , [| "" ; "?" |], bnotes ) in
+  ignore (Gwdb.make bname [] arrays)
 
-let _ = main ()
+let () =
+  try
+    Arg.parse speclist anonfun usage;
+    match !bname with
+    | "" -> Arg.usage speclist usage; exit 2
+    | bname ->
+      if Sys.file_exists bname then assert !force ;
+      Secure.set_base_dir (Filename.dirname bname);
+      init_base bname ;
+      popule bname !size !ngen !gyear
+  with e ->
+    Printexc.print_backtrace stderr ;
+    raise e

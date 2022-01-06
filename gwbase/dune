@@ -1,8 +1,9 @@
-; TOFIX_EXE := cleopatre popule modif
+; TOFIX_EXE := cleopatre modif
 
 (executables
-  (names   geneanet clavier hist chkimg consmoy lune titres nbdesc probot)
-  (modules geneanet clavier hist chkimg consmoy lune titres nbdesc probot)
+  (names   geneanet clavier hist chkimg consmoy lune titres nbdesc popule probot)
+  (modules geneanet clavier hist chkimg consmoy lune titres nbdesc popule probot
+           gwBaseLib)
   (libraries
     geneweb
     geneweb.gwdb-legacy
