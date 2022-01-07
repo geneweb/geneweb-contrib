@@ -4,5 +4,8 @@
 all:
 	dune build @all
 
+%.exe:
+	dune build $@
+
 clean:
 	dune clean
