@@ -11,7 +11,7 @@
 let () =
   let bname = Sys.argv.(1) in
   Secure.set_base_dir (Filename.dirname bname);
-  Lock.control (Mutil.lock_file bname) true ~onerror:Lock.print_try_again @@
+  Lock.control (Files.lock_file bname) true ~onerror:Lock.print_try_again @@
   fun () ->
   let open Dbdisk in
   let base = Database.opendb bname in

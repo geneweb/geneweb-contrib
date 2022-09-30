@@ -20,13 +20,13 @@ type patches_ht =
 let () =
   let bname = Sys.argv.(1) in
   Secure.set_base_dir (Filename.dirname bname);
-  Lock.control (Mutil.lock_file bname) true ~onerror:Lock.print_try_again @@
+  Lock.control (Files.lock_file bname) true ~onerror:Lock.print_try_again @@
   fun () ->
   let open Dbdisk in
   let base = Database.opendb bname in
   let bdir = base.data.bdir in
   let ic = Secure.open_in_bin (Filename.concat bdir "patches") in
-  assert (Mutil.check_magic "GnPa0001" ic) ;
+  assert (Files.check_magic "GnPa0001" ic) ;
   let ht : patches_ht = input_value ic in
   let changes = ref false in
   let aux ht =
@@ -59,9 +59,9 @@ let () =
     output_string oc9 "GnPa0001" ;
     Dutil.output_value_no_sharing oc9 (ht' : patches_ht) ;
     close_out oc9;
-    Mutil.rm (fname ^ "~");
-    Mutil.mv fname (fname ^ "~") ;
-    Mutil.mv tmp_fname fname ;
+    Files.rm (fname ^ "~");
+    Files.mv fname (fname ^ "~") ;
+    Files.mv tmp_fname fname ;
     print_endline @@ bname ^ ": fixed patch file"
   end else
     print_endline bname

@@ -60,6 +60,6 @@ let () =
     exit 2 ;
   | (bname, Some access, everybody, list) ->
     Secure.set_base_dir (Filename.dirname bname);
-    Lock.control_retry (Mutil.lock_file bname) ~onerror:Lock.print_error_and_exit @@ fun () ->
+    Lock.control_retry (Files.lock_file bname) ~onerror:Lock.print_error_and_exit @@ fun () ->
     if everybody then Gwaccess_util.access_everybody access bname
     else access_some access bname list

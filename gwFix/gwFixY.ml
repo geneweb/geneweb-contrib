@@ -106,7 +106,7 @@ let usage = "Usage: " ^ Sys.argv.(0) ^ " base"
 let main () =
   Arg.parse speclist anonfun usage;
   if !bname = "" then begin Arg.usage speclist usage; exit 2 end;
-  Lock.control (Mutil.lock_file !bname) false
+  Lock.control (Files.lock_file !bname) false
     (fun () -> let base = Gwdb.open_base !bname in fix_occu_y base)
     ~onerror:(fun () ->
         Printf.eprintf "Cannot lock database. Try again.\n";
