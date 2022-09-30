@@ -112,7 +112,7 @@ let main () =
   if !bname = "" then begin Arg.usage speclist usage; exit 2 end;
   Secure.set_base_dir (Filename.dirname !bname);
   Lock.control_retry
-    (Mutil.lock_file !bname) ~onerror:Lock.print_error_and_exit @@ fun () ->
+    (Files.lock_file !bname) ~onerror:Lock.print_error_and_exit @@ fun () ->
   public_all ~fast:!fast !bname !lim_year !trace
 
 let _ = main ()
