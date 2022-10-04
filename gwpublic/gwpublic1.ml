@@ -46,8 +46,8 @@ let mark_descendants base scanned old treshold =
                let sp = Gutil.spouse p_key_index fam in
                if Gwdb.Marker.get scanned sp < ndgen then begin
                  let ndgen'' =
-                   Opt.map_default ndgen
-                     (compute_ndgen treshold)
+                   Option.fold ~none:ndgen
+                     ~some:(compute_ndgen treshold)
                      (Gwaccess_util.most_recent_year_of (poi base sp))
                  in
                  if ndgen'' > 0 then begin
@@ -82,7 +82,7 @@ let mark_ancestors base scanned treshold =
             changes := true
           end
       end ;
-      Opt.iter
+      Option.iter
         (fun ifam ->
            let cpl = foi base ifam in
            loop (poi base (get_father cpl)) ;
