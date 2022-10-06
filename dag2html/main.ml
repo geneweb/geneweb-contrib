@@ -139,7 +139,7 @@ let tag_dag d =
 
 let phony _ = false
 let indi_txt n = n.valu
-let vbar_txt _ = ""
+let vbar_txt _ = Adef.escaped ""
 
 let print_char_table d t =
   let print_elem =
@@ -183,7 +183,7 @@ let print_table border hts =
       Printf.printf ">";
       begin match td with
         TDitem s -> Printf.printf "%s" s
-      | TDtext s -> Printf.printf "%s" s
+      | TDtext s -> Printf.printf "%s" (Adef.as_string s)
       | TDbar _ -> Printf.printf "|"
       | TDhr align ->
           Printf.printf "<hr noshade size=1";
