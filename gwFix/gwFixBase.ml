@@ -124,7 +124,7 @@ let check_persons_parents ~verbosity1 ~verbosity2 base nb_ind fix =
   end;
   Gwdb.Collection.iteri begin fun i p ->
     if verbosity1 then ProgrBar.run i nb_ind;
-    get_parents p |> Opt.iter @@ fun ifam ->
+    get_parents p |> Option.iter @@ fun ifam ->
     let ip = get_iper p in
     let fam = Gwdb.foi base ifam in
     if get_ifam fam = dummy_ifam then begin

@@ -262,10 +262,18 @@ let json_of_fevent_name base name = match name with
   | Efam_Residence -> `String "residence"
   | Efam_Name s -> json_of_istr base s
 
-let json_of_fevent_witness_kind witness_kind = match witness_kind with
-    Witness -> `String "witness"
-  | Witness_GodParent -> `String "godparent"
-  | Witness_Officer -> `String "officer"
+let json_of_fevent_witness_kind witness_kind =
+  (* TODO Witness.to_string .. *)
+  `String (match witness_kind with
+  | Witness -> "witness"
+  | Witness_GodParent -> "witness_godparent"
+  | Witness_CivilOfficer -> "witness_civilofficer"
+  | Witness_ReligiousOfficer -> "witness_religiousofficer"
+  | Witness_Informant -> "witness_informant"
+  | Witness_Attending -> "witness_attending"
+  | Witness_Mentioned -> "witness_mentioned"
+  | Witness_Other -> "witness_other"
+  )
 
 let json_of_fevent_witness witness = match witness with
   (person , witness_kind) -> `Assoc [
