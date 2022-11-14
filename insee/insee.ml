@@ -34,7 +34,7 @@ let check_insee base =
     let d_date =
       match get_death p with
       | Death (_, cd) ->
-        begin match Adef.date_of_cdate cd with
+        begin match Date.date_of_cdate cd with
           | Dgreg (d, _) -> Some d
           | _ -> None
         end
