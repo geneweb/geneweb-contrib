@@ -40,7 +40,7 @@ let gen_good_dates p birth_lim death_lim =
   let death_ok =
     match get_death p with
       Death (_, cd) ->
-        begin match Adef.date_of_cdate cd with
+        begin match Date.date_of_cdate cd with
           Dgreg (d, _) -> d.year <= death_lim
         | _ -> false
         end

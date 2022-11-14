@@ -23,7 +23,7 @@ let apply base date f =
         if before_date date b_dmy then
           match get_death p with
             Death (_, cd) ->
-            begin match Adef.date_of_cdate cd with
+            begin match Date.date_of_cdate cd with
                 Dgreg (d_dmy, _) -> before_date d_dmy date
               | _ -> false
             end

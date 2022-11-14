@@ -41,7 +41,7 @@ let fix_date_text bname =
     let death =
       match death with
         Death (dr, cd) ->
-          let d = Adef.date_of_cdate cd in
+          let d = Date.date_of_cdate cd in
           begin match d with
             Dgreg (_, _) -> death
           | Dtext t ->
