@@ -16,7 +16,7 @@ let update_database_with_burial base =
           else if sou base (get_birth_src p) = "" then None
           else
             let evt =
-              {epers_name = Epers_Birth; epers_date = Adef.cdate_None;
+              {epers_name = Epers_Birth; epers_date = Date.cdate_None;
                epers_place = empty_string; epers_reason = empty_string;
                epers_note = empty_string; epers_src = get_birth_src p;
                epers_witnesses = [| |]}
@@ -31,7 +31,7 @@ let update_database_with_burial base =
           else if sou base (get_baptism_src p) = "" then None
           else
             let evt =
-              {epers_name = Epers_Baptism; epers_date = Adef.cdate_None;
+              {epers_name = Epers_Baptism; epers_date = Date.cdate_None;
                epers_place = empty_string; epers_reason = empty_string;
                epers_note = empty_string; epers_src = get_baptism_src p;
                epers_witnesses = [| |]}
@@ -47,7 +47,7 @@ let update_database_with_burial base =
             None
           else
             let evt =
-              {epers_name = Epers_Death; epers_date = Adef.cdate_None;
+              {epers_name = Epers_Death; epers_date = Date.cdate_None;
                epers_place = get_death_place p; epers_reason = empty_string;
                epers_note = empty_string; epers_src = get_death_src p;
                epers_witnesses = [| |]}
@@ -64,7 +64,7 @@ let update_database_with_burial base =
             None
           else
             let evt =
-              {epers_name = Epers_Burial; epers_date = Adef.cdate_None;
+              {epers_name = Epers_Burial; epers_date = Date.cdate_None;
                epers_place = get_burial_place p; epers_reason = empty_string;
                epers_note = empty_string; epers_src = get_burial_src p;
                epers_witnesses = [| |]}
