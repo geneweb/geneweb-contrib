@@ -9,7 +9,7 @@ let update_database_with_burial base =
   let nb_modified = ref 0 in
   Gwdb.Collection.iter begin fun p ->
     let evt_birth =
-      match Adef.od_of_cdate (get_birth p) with
+      match Date.od_of_cdate (get_birth p) with
         Some _ -> None
       | None ->
           if sou base (get_birth_place p) <> "" then None
@@ -24,7 +24,7 @@ let update_database_with_burial base =
             Some evt
     in
     let evt_bapt =
-      match Adef.od_of_cdate (get_baptism p) with
+      match Date.od_of_cdate (get_baptism p) with
         Some _ -> None
       | None ->
           if sou base (get_baptism_place p) <> "" then None

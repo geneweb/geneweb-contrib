@@ -114,7 +114,7 @@ let json_of_date oc =
   | Dgreg (d, Dhebrew) -> json_of_date_cal d "hebrew"
   | Dtext t -> `String t
 
-let json_of_cdate cd = match Adef.od_of_cdate cd with
+let json_of_cdate cd = match Date.od_of_cdate cd with
     None -> `Null
   | Some date -> json_of_date date
 

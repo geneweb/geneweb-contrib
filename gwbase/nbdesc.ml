@@ -17,7 +17,7 @@ let string_of_date d = string_of_int d.year
 let apply base date f =
   let cnt = ref 0 in
   Gwdb.Collection.iter begin fun p ->
-    match Adef.od_of_cdate (get_birth p) with
+    match Date.od_of_cdate (get_birth p) with
       Some (Dgreg (b_dmy, _)) ->
       let alive_at_that_date =
         if before_date date b_dmy then

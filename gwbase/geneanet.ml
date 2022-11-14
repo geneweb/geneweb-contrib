@@ -48,7 +48,7 @@ let main_title base =
 
 let min_or_max_date f a base p =
   let a =
-    match Adef.od_of_cdate (get_birth p) with
+    match Date.od_of_cdate (get_birth p) with
       Some (Dgreg (d, _)) -> f d.year a
     | _ -> a
   in
@@ -61,13 +61,13 @@ let min_or_max_date f a base p =
     (fun a ifam ->
        let fam = foi base ifam in
        let a =
-         match Adef.od_of_cdate (get_marriage fam) with
+         match Date.od_of_cdate (get_marriage fam) with
            Some (Dgreg (d, _)) -> f d.year a
          | _ -> a
        in
        match get_divorce fam with
          Divorced cod ->
-         begin match Adef.od_of_cdate cod with
+         begin match Date.od_of_cdate cod with
              Some (Dgreg (d, _)) -> f d.year a
            | _ -> a
          end
