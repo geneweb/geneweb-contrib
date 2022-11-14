@@ -48,7 +48,7 @@ let gen_good_dates p birth_lim death_lim =
   in
   if death_ok then true
   else
-    match Adef.od_of_cdate (get_birth p) with
+    match Date.od_of_cdate (get_birth p) with
       Some (Dgreg (d, _)) -> d.year <= birth_lim
     | _ -> false
 

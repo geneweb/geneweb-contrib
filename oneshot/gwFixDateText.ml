@@ -7,7 +7,7 @@ let fix_date_text bname =
   Gwdb.Collection.iter begin fun p ->
     let birth = get_birth p in
     let birth =
-      match Adef.od_of_cdate birth with
+      match Date.od_of_cdate birth with
         Some d ->
           begin match d with
             Dgreg (_, _) -> birth
@@ -23,7 +23,7 @@ let fix_date_text bname =
     in
     let baptism = get_baptism p in
     let baptism =
-      match Adef.od_of_cdate baptism with
+      match Date.od_of_cdate baptism with
         Some d ->
           begin match d with
             Dgreg (_, _) -> baptism
@@ -58,7 +58,7 @@ let fix_date_text bname =
     let burial =
       match burial with
         Buried d ->
-          begin match Adef.od_of_cdate d with
+          begin match Date.od_of_cdate d with
             Some d ->
               begin match d with
                 Dgreg (_, _) -> burial
@@ -74,7 +74,7 @@ let fix_date_text bname =
           | None -> burial
           end
       | Cremated d ->
-          begin match Adef.od_of_cdate d with
+          begin match Date.od_of_cdate d with
             Some d ->
               begin match d with
                 Dgreg (_, _) -> burial
@@ -97,7 +97,7 @@ let fix_date_text bname =
         (fun evt ->
            let date = evt.epers_date in
            let date =
-             match Adef.od_of_cdate date with
+             match Date.od_of_cdate date with
                Some d ->
                  begin match d with
                    Dgreg (_, _) -> date
@@ -125,7 +125,7 @@ let fix_date_text bname =
   Gwdb.Collection.iter begin fun fam ->
     let marriage = get_marriage fam in
     let marriage =
-      match Adef.od_of_cdate marriage with
+      match Date.od_of_cdate marriage with
         Some d ->
           begin match d with
             Dgreg (_, _) -> marriage
@@ -145,7 +145,7 @@ let fix_date_text bname =
         (fun evt ->
            let date = evt.efam_date in
            let date =
-             match Adef.od_of_cdate date with
+             match Date.od_of_cdate date with
                Some d ->
                  begin match d with
                    Dgreg (_, _) -> date

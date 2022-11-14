@@ -9,7 +9,7 @@ let lune bname =
   let moon_phase = Array.make 5 0 in
   let nbb = ref 0 in
   Gwdb.Collection.iter begin fun p ->
-    match Adef.od_of_cdate (get_birth p) with
+    match Date.od_of_cdate (get_birth p) with
       Some (Dgreg (dt, _)) ->
         if dt.prec = Sure && dt.delta = 0 && dt.day > 0 then
           begin

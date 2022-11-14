@@ -5,9 +5,9 @@ open Gwdb
 *)
 let oldest_year_of p =
   let open Def in
-  match Adef.od_of_cdate (get_birth p) with
+  match Date.od_of_cdate (get_birth p) with
   | Some (Dgreg (d, _)) -> Some d.year
-  | _ -> match Adef.od_of_cdate (get_baptism p) with
+  | _ -> match Date.od_of_cdate (get_baptism p) with
     | Some (Dgreg (d, _)) -> Some d.year
     | _ -> match Date.date_of_death (get_death p) with
       | Some (Dgreg (d, _)) -> Some d.year
@@ -20,9 +20,9 @@ let most_recent_year_of p =
   let open Def in
   match Date.date_of_death (get_death p) with
   | Some (Dgreg (d, _)) -> Some d.year
-  | _ -> match Adef.od_of_cdate (get_baptism p) with
+  | _ -> match Date.od_of_cdate (get_baptism p) with
     | Some (Dgreg (d, _)) -> Some d.year
-    | _ -> match Adef.od_of_cdate (get_birth p) with
+    | _ -> match Date.od_of_cdate (get_birth p) with
       | Some (Dgreg (d, _)) -> Some d.year
       | _ -> None
 

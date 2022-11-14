@@ -27,7 +27,7 @@ let check_insee base =
   (* pour chaque personne *)
   Gwdb.Collection.iteri begin fun i p ->
     let b_date =
-      match Adef.od_of_cdate (get_birth p) with
+      match Date.od_of_cdate (get_birth p) with
         Some (Dgreg (d, _)) -> Some d
       | _ -> None
     in
