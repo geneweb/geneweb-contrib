@@ -17,7 +17,7 @@ let fix_date_text bname =
                 let sub_date = String.sub t 0 10 in
                 let end_date = String.sub t 10 (String.length t - 10) in
                 let sub_date = space_to_unders sub_date in
-                Adef.cdate_of_od (Some (Dtext (sub_date ^ end_date)))
+                Date.cdate_of_od (Some (Dtext (sub_date ^ end_date)))
           end
       | None -> birth
     in
@@ -33,7 +33,7 @@ let fix_date_text bname =
                 let sub_date = String.sub t 0 10 in
                 let end_date = String.sub t 10 (String.length t - 10) in
                 let sub_date = space_to_unders sub_date in
-                Adef.cdate_of_od (Some (Dtext (sub_date ^ end_date)))
+                Date.cdate_of_od (Some (Dtext (sub_date ^ end_date)))
           end
       | None -> baptism
     in
@@ -50,7 +50,7 @@ let fix_date_text bname =
                 let sub_date = String.sub t 0 10 in
                 let end_date = String.sub t 10 (String.length t - 10) in
                 let sub_date = space_to_unders sub_date in
-                Death (dr, Adef.cdate_of_date (Dtext (sub_date ^ end_date)))
+                Death (dr, Date.cdate_of_date (Dtext (sub_date ^ end_date)))
           end
       | _ -> death
     in
@@ -69,7 +69,7 @@ let fix_date_text bname =
                     let end_date = String.sub t 10 (String.length t - 10) in
                     let sub_date = space_to_unders sub_date in
                     Buried
-                      (Adef.cdate_of_od (Some (Dtext (sub_date ^ end_date))))
+                      (Date.cdate_of_od (Some (Dtext (sub_date ^ end_date))))
               end
           | None -> burial
           end
@@ -85,7 +85,7 @@ let fix_date_text bname =
                     let end_date = String.sub t 10 (String.length t - 10) in
                     let sub_date = space_to_unders sub_date in
                     Cremated
-                      (Adef.cdate_of_od (Some (Dtext (sub_date ^ end_date))))
+                      (Date.cdate_of_od (Some (Dtext (sub_date ^ end_date))))
               end
           | None -> burial
           end
@@ -109,7 +109,7 @@ let fix_date_text bname =
                          String.sub t 10 (String.length t - 10)
                        in
                        let sub_date = space_to_unders sub_date in
-                       Adef.cdate_of_od (Some (Dtext (sub_date ^ end_date)))
+                       Date.cdate_of_od (Some (Dtext (sub_date ^ end_date)))
                  end
              | None -> date
            in
@@ -135,7 +135,7 @@ let fix_date_text bname =
                 let sub_date = String.sub t 0 10 in
                 let end_date = String.sub t 10 (String.length t - 10) in
                 let sub_date = space_to_unders sub_date in
-                Adef.cdate_of_od (Some (Dtext (sub_date ^ end_date)))
+                Date.cdate_of_od (Some (Dtext (sub_date ^ end_date)))
           end
       | None -> marriage
     in
@@ -157,7 +157,7 @@ let fix_date_text bname =
                          String.sub t 10 (String.length t - 10)
                        in
                        let sub_date = space_to_unders sub_date in
-                       Adef.cdate_of_od (Some (Dtext (sub_date ^ end_date)))
+                       Date.cdate_of_od (Some (Dtext (sub_date ^ end_date)))
                  end
              | None -> date
            in

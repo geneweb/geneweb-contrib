@@ -15,7 +15,7 @@ let check_burial base ~verbosity1 ~verbosity2 nb_ind cnt =
   let fix_pevents p =
     let evt =
       { epers_name = Epers_Burial
-      ; epers_date = Adef.cdate_None
+      ; epers_date = Date.cdate_None
       ; epers_place = get_burial_place p
       ; epers_reason = empty_string
       ; epers_note = get_burial_note p
@@ -28,7 +28,7 @@ let check_burial base ~verbosity1 ~verbosity2 nb_ind cnt =
   in
   let fix_burial p =
     patch_person base (get_iper p)
-      { (gen_person_of_person p) with burial = Buried Adef.cdate_None } ;
+      { (gen_person_of_person p) with burial = Buried Date.cdate_None } ;
   in
   let fix p =
     match get_burial p with

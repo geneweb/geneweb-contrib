@@ -137,7 +137,7 @@ let popule bname size ngen gyear =
       let d = Calendar.gregorian_of_sdn Sure (jd + Random.int 365) in
       let x =
         { (gen_person_of_person x) with
-          birth = Adef.cdate_of_od (Some (Dgreg (d, Dgregorian))) }
+          birth = Date.cdate_of_od (Some (Dgreg (d, Dgregorian))) }
       in
       patch_person !base ip x;
     in
@@ -171,7 +171,7 @@ let popule bname size ngen gyear =
             in
             let x =
               { (gen_person_of_person x) with
-                birth = Adef.cdate_of_od (Some (Dgreg (d, Dgregorian))) }
+                birth = Date.cdate_of_od (Some (Dgreg (d, Dgregorian))) }
             in
             patch_person !base ip x ;
             if before then list @ [ip] else ip :: list
