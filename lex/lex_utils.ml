@@ -205,7 +205,8 @@ let missing_translation lexicon languages =
         print_transl_en_fr list;
         List.iter (fun lang -> print_endline (lang ^ ":")) (List.rev list') ;
         print_string "\n"
-      end
+      end;
+      loop ()
   in loop ()
 in
 
@@ -331,11 +332,13 @@ let usage = "Usage: cat lex_utils.ml | " ^ Sys.argv.(0) ^ " [options] lexicon" i
 
 let main () =
   Arg.parse speclist anonfun usage;
+  Printf.eprintf "Running lex_utils.ml on lexicon: %s\n" !lexicon;
   if !lexicon = "" then (Arg.usage speclist usage; exit 2);
   if !orphans && !repo = "" then (Arg.usage speclist usage; exit 2);
   if !lex_sort then sort_lexicon !lexicon
   else if !missing then missing_translation !lexicon !lang
-  else if !orphans then missing_or_unused_msg !lexicon !repo !log
+  else if !orphans then missing_or_unused_msg !lexicon !repo !log;
+  Printf.eprintf "Done\n"
 in
 
 Printexc.print main () ;;
