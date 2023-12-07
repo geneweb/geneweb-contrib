@@ -326,14 +326,21 @@ let speclist =
   ] |> Arg.align
 in
 
-let anonfun s = lexicon := if !repo = "" then s else (Filename.concat !repo s) in
+let anonfun s =
+  repo := if !repo = "" then Filename.dirname Sys.argv.(0) else !repo;
+  lexicon := Filename.concat !repo s
+in
 
-let usage = "Usage: cat lex_utils.ml | " ^ Sys.argv.(0) ^ " [options] lexicon" in
+let usage = "Usage: cat lex_utils.ml |" ^
+  Sys.argv.(0) ^ " [options] lexicon (relative to gw)"
+in
 
 let main () =
   Arg.parse speclist anonfun usage;
+  repo := if !repo = "" then Filename.dirname Sys.argv.(0) else !repo;
+  if !lexicon = "" then
+    lexicon := String.concat Filename.dir_sep [ !repo; "lang"; "lexicon.txt"];
   Printf.eprintf "Running lex_utils.ml on lexicon: %s\n" !lexicon;
-  if !lexicon = "" then (Arg.usage speclist usage; exit 2);
   if !orphans && !repo = "" then (Arg.usage speclist usage; exit 2);
   if !lex_sort then sort_lexicon !lexicon
   else if !missing then missing_translation !lexicon !lang
