@@ -337,9 +337,9 @@ in
 
 let main () =
   Arg.parse speclist anonfun usage;
-  repo := if !repo = "" then Filename.dirname Sys.argv.(0) else !repo;
+  repo := if !repo = "" then "." else !repo;
   if !lexicon = "" then
-    lexicon := String.concat Filename.dir_sep [ !repo; "lang"; "lexicon.txt"];
+    lexicon := String.concat Filename.dir_sep [ !repo; "hd"; "lang"; "lexicon.txt"];
   Printf.eprintf "Running lex_utils.ml on lexicon: %s\n" !lexicon;
   if !orphans && !repo = "" then (Arg.usage speclist usage; exit 2);
   if !lex_sort then sort_lexicon !lexicon
