@@ -1,0 +1,19 @@
+@import 'functions';
+@import 'variables';
+
+:root, :host {
+  --#{$fa-css-prefix}-font-normal: normal normal 1em/1 "#{ $fa-style-family }";
+}
+
+@font-face {
+  font-family: 'GeneWeb 7.1 webfont subset from Font-Awesome v6.5.1 Solid';
+  font-weight: 900;
+  font-display: $fa-font-display;
+  src: url('#{$fa-font-path}/fa-solid-900.woff2?v=0cb2b9c775c968dd315053e05c000541') format('woff2');
+  
+}
+
+.#{$fa-css-prefix}-solid {
+  font-family: 'GeneWeb 7.1 webfont subset from Font-Awesome v6.5.1 Solid';
+  font-weight: 900;
+}

@@ -1,0 +1,4009 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="google" content="notranslate" />
+    <title>GeneWeb 7.1 webfont subset from Font-Awesome v6.5.1</title>
+    <style>
+      :root {
+          --fa-style-family: "GeneWeb 7.1 webfont subset from Font-Awesome v6.5.1";
+          --fa-style: 100;
+          --fa-display: block;
+          --fa-border-color: blue;
+          --fa-primary-color: blue;
+          --fa-secondary-color: red;
+      }
+
+      * {
+          margin: 0;
+          padding: 0;
+      }
+
+      body {
+          margin: 0;
+          padding: 0;
+          background: #fff;
+          color: #222;
+      }
+
+      h1,
+      h2,
+      h3,
+      p,
+      div,
+      blockquote,
+      footer {
+          font-family: "Helvetica Neue", Arial, sans-serif;
+      }
+
+      h1 {
+          padding: 20px 20px 16px 20px;
+          font-size: 26px;
+          line-height: 26px;
+          font-weight: normal;
+          color: #FFF;
+          background-color: #ef1a73;
+      }
+
+      h1 svg {
+          vertical-align: middle;
+          width: 26px;
+          height: 26px;
+          margin: 0 6px 4px 0;
+      }
+
+      h1 svg path {
+          fill: #FFF;
+      }
+
+      h1 .version {
+          font-size: 14px;
+          background: #FFF;
+          padding: 4px 10px;
+          float: right;
+          border-radius: 2px;
+          margin: -3px 0 0 0;
+          color: #666;
+          font-weight: bold;
+      }
+
+      h1 .version::before {
+          content: 'v';
+      }
+
+      h1 code {
+          font-size: 20px;
+          background: rgba(0, 0, 0, 0.5);
+          padding: 4px 12px;
+          border-radius: 3px;
+          float: right;
+          margin: -3px 10px 0 0;
+          border: 1px solid transparent;
+          cursor: pointer;
+      }
+
+      h1 code:hover {
+          border: 1px solid #FFF;
+      }
+
+      h1 code svg {
+          width: 24px;
+          height: 24px;
+          margin: -1px -4px 0 -2px
+      }
+
+      h2 {
+          font-size: 18px;
+          padding: 20px;
+      }
+
+      h2 small {
+          color: #555;
+          font-size: 0.8rem;
+      }
+
+      h2 small::before {
+          content: '(';
+      }
+
+      h2 small::after {
+          content: ')';
+      }
+
+      h2 span {
+          position: relative;
+      }
+
+      h3 {
+          font-size: 14px;
+          padding: 10px 20px 0 20px;
+          font-weight: bold;
+      }
+
+      p {
+          padding: 10px 20px;
+      }
+
+      p code {
+          display: inline-block;
+          vertical-align: middle;
+          background: #F1F1F1;
+          padding: 3px 5px;
+          border-radius: 3px;
+          border: 1px solid #DDD;
+      }
+
+      p i.fa {
+          vertical-align: middle;
+          border-radius: 4px;
+          display: inline-block;
+      }
+
+      p.note {
+          color: #999;
+          font-size: 14px;
+          padding: 0 20px 5px 20px;
+      }
+
+      p.extras {
+          margin-top: -0.5rem;
+      }
+
+      div.icons {
+          padding: 0 20px 10px 20px;
+          -webkit-column-count: 5;
+          -moz-column-count: 5;
+          column-count: 5;
+          -webkit-column-gap: 20px;
+          -moz-column-gap: 20px;
+          column-gap: 20px;
+      }
+
+      div.icons div {
+          line-height: 2em;
+      }
+
+      div.icons div span {
+          cursor: pointer;
+          font-size: 14px;
+          text-overflow: ellipsis;
+          display: inline-block;
+          max-width: calc(100% - 90px);
+          overflow: hidden;
+          vertical-align: middle;
+          white-space: nowrap;
+      }
+
+      div.icons div code:hover,
+      div.icons div span:hover,
+      div.icons div i:hover {
+          color: #e13315;
+      }
+
+      div.icons div code:hover {
+          border-color: #e13315;
+      }
+
+      div.icons div code {
+          border: 1px solid #DDD;
+          width: 46px;
+          margin-left: 2px;
+          margin-right: 4px;
+          border-radius: 4px;
+          display: inline-block;
+          vertical-align: middle;
+          text-align: center;
+          line-height: 24px;
+          cursor: pointer;
+      }
+
+      div.icons div i {
+          display: inline-block;
+          width: 32px;
+          height: 24px;
+          text-align: center;
+          vertical-align: middle;
+          cursor: pointer;
+          line-height: 24px;
+      }
+
+      pre {
+          margin: 0 20px;
+          font-family: Consolas, monospace;
+          padding: 10px;
+          border: 1px solid #DDD;
+          background: #F1F1F1;
+      }
+
+      blockquote {
+          position: relative;
+          margin: 1rem 1rem 0 1rem;
+          padding: 0.5rem 0.5rem 0.5rem 0.75rem;
+      }
+
+      blockquote.note::before {
+          content: ' ';
+          width: 0.25rem;
+          height: 100%;
+          background: #DDD;
+          position: absolute;
+          border-radius: 0.25rem;
+          top: 0;
+          left: 0;
+      }
+
+      div.copied {
+          position: fixed;
+          top: 100px;
+          left: 50%;
+          width: 200px;
+          text-align: center;
+          color: #f80a25;
+          background-color: #f3e2ec;
+          border: 1px solid #d6e9c6;
+          padding: 10px 15px;
+          border-radius: 4px;
+          margin-left: -100px;
+          box-shadow: 0 0 10px rgba(128, 3, 3, 0.2);
+      }
+
+      div.examples {
+          display: flex;
+          flex-wrap: wrap;
+          margin: 0.5rem 1.25rem;
+      }
+
+      div.examples > div {
+          display: flex;
+          margin-right: 0.5rem;
+          margin-bottom: 0.5rem;
+      }
+
+      div.examples > div > div:first-child {
+          display: flex;
+          padding: 0.5rem;
+          border-radius: 0.2rem;
+          box-shadow: 0 0 0.25rem rgb(143, 4, 62);
+          background: #FFF;
+          z-index: 1;
+          align-items: center;
+          justify-content: center;
+      }
+
+      div.examples > div > div:first-child + div {
+          display: flex;
+          margin-left: -0.25rem;
+          padding: 0.5rem 0.75rem 0.5rem 1rem;
+          background: #ef1a73;
+          border-radius: 0 0.25rem 0.25rem 0;
+      }
+
+      div.examples > div > div:first-child + div > code {
+          color: #FFF;
+          align-self: center;
+      }
+
+      div.examples i {
+          display: flex;
+      }
+
+      div.examples-size > div > div:first-child {
+          min-width: 3rem;
+      }
+
+      footer {
+          display: flex;
+          padding: 20px;
+          color: #666;
+          border-top: 1px solid #DDD;
+          background: #F1F1F1;
+      }
+
+      footer > div:first-child {
+          flex: 1;
+      }
+
+      footer > div:last-child {
+          text-align: right;
+      }
+
+      footer a {
+          color: #e91e63;
+          text-decoration: none;
+      }
+
+      footer a:hover {
+          text-decoration: underline;
+      }
+    </style>
+    <link
+      href="css/all.css?v=9a7db0962e1e618698355882df5de8f7"
+      media="all"
+      rel="stylesheet"
+      type="text/css"
+    />
+  </head>
+
+  <body>
+    <h1>
+      <?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 23.945 23.876" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
+        <defs>
+            <filter id="shadow-filter" x="-5" y="-5" width="10" height="10">
+                <feOffset dx="3" dy="2"/><feComponentTransfer result="shad"></feComponentTransfer>
+                <feFlood flood-color="rgba(0,0,0,0.3)"/>
+                <feComposite in2="shad" operator="in"/>
+                <feMerge>
+                    <feMergeNode/>
+                    <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+            </filter>
+        </defs>
+        <path d="M 7.753 10.422 C 7.768 10.384 -1.81 3.206 4.603 3.206 C 6.465 3.206 8.051 9.066 9.94 8.321 C 11.819 7.579 8.638 2.347 9.94 1.093 C 14.449 -3.255 12.972 8.309 13.005 8.321 C 14.978 9.098 16.436 3.206 18.342 3.206 C 24.754 3.206 15.176 10.384 15.193 10.422 C 15.206 10.454 27.242 9.034 22.716 13.368 C 20.448 15.538 14.699 10.535 13.005 15.47 C 12.999 15.487 14.438 27.036 9.94 22.697 C 8.638 21.442 11.819 16.211 9.94 15.47 C 8.051 14.723 6.465 20.586 4.603 20.586 C -1.804 20.586 7.773 13.416 7.753 13.368 C 6.985 11.568 1.532 14.615 0.23 13.368 C -0.796 12.386 6.798 12.65 7.753 10.422 Z" style="filter: url(#shadow-filter);"/>
+</svg> GeneWeb 7.1 webfont subset from Font-Awesome v6.5.1
+      <span class="version">1.0.3</span>
+      <code id="npm" title="Copy to Clipboard">
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M19,20H5V4H7V7H17V4H19M12,2A1,1 0 0,1 13,3A1,1 0 0,1 12,4A1,1 0 0,1 11,3A1,1 0 0,1 12,2M19,2H14.82C14.4,0.84 13.3,0 12,0C10.7,0 9.6,0.84 9.18,2H5A2,2 0 0,0 3,4V20A2,2 0 0,0 5,22H19A2,2 0 0,0 21,20V4A2,2 0 0,0 19,2Z"
+          />
+        </svg>
+        npm install subset-iconfont
+      </code>
+    </h1>
+
+    <h2 class="usage">Usage</h2>
+    <pre><code id="font-usage">&lt;i class=&quot;fa fa-&quot;&gt;&lt;/i&gt;</code></pre>
+
+    <blockquote class="note">
+      Click the icon, hex unicode, or name below to copy the value to your
+      clipboard.
+    </blockquote>
+
+    <h2 class="icons">
+      All Icons <small id="iconsCount">178</small>
+    </h2>
+    <div class="icons" id="icons">
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-a fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-a"></i>'></i>
+              <code class="clipboard-copy" data-code="41">41</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-a'">fa-solid fa-a</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-address-book fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-address-book"></i>'></i>
+              <code class="clipboard-copy" data-code="f2b9">f2b9</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-address-book'">fa-solid fa-address-book</span>
+            </div>
+          
+            <div>
+              <i class="
+
+                fa-regular fa-address-book fa-lg clipboard-copy"
+                 data-code='<i class="fa-regular fa-address-book"></i>'></i>
+              <code class="clipboard-copy" data-code="f2b9">f2b9</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-regular fa-address-book'">fa-regular fa-address-book</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-address-card fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-address-card"></i>'></i>
+              <code class="clipboard-copy" data-code="f2bb">f2bb</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-address-card'">fa-solid fa-address-card</span>
+            </div>
+          
+            <div>
+              <i class="
+
+                fa-regular fa-address-card fa-lg clipboard-copy"
+                 data-code='<i class="fa-regular fa-address-card"></i>'></i>
+              <code class="clipboard-copy" data-code="f2bb">f2bb</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-regular fa-address-card'">fa-regular fa-address-card</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-align-center fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-align-center"></i>'></i>
+              <code class="clipboard-copy" data-code="f037">f037</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-align-center'">fa-solid fa-align-center</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-align-justify fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-align-justify"></i>'></i>
+              <code class="clipboard-copy" data-code="f039">f039</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-align-justify'">fa-solid fa-align-justify</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-align-left fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-align-left"></i>'></i>
+              <code class="clipboard-copy" data-code="f036">f036</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-align-left'">fa-solid fa-align-left</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-angle-left fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-angle-left"></i>'></i>
+              <code class="clipboard-copy" data-code="f104">f104</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-angle-left'">fa-solid fa-angle-left</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-angle-right fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-angle-right"></i>'></i>
+              <code class="clipboard-copy" data-code="f105">f105</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-angle-right'">fa-solid fa-angle-right</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-arrow-down-1-9 fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-arrow-down-1-9"></i>'></i>
+              <code class="clipboard-copy" data-code="f162">f162</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-arrow-down-1-9'">fa-solid fa-arrow-down-1-9</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-arrow-down-9-1 fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-arrow-down-9-1"></i>'></i>
+              <code class="clipboard-copy" data-code="f886">f886</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-arrow-down-9-1'">fa-solid fa-arrow-down-9-1</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-arrow-down-a-z fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-arrow-down-a-z"></i>'></i>
+              <code class="clipboard-copy" data-code="f15d">f15d</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-arrow-down-a-z'">fa-solid fa-arrow-down-a-z</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-arrow-down-long fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-arrow-down-long"></i>'></i>
+              <code class="clipboard-copy" data-code="f175">f175</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-arrow-down-long'">fa-solid fa-arrow-down-long</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-arrow-down-wide-short fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-arrow-down-wide-short"></i>'></i>
+              <code class="clipboard-copy" data-code="f160">f160</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-arrow-down-wide-short'">fa-solid fa-arrow-down-wide-short</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-arrow-down-z-a fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-arrow-down-z-a"></i>'></i>
+              <code class="clipboard-copy" data-code="f881">f881</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-arrow-down-z-a'">fa-solid fa-arrow-down-z-a</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-arrow-left fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-arrow-left"></i>'></i>
+              <code class="clipboard-copy" data-code="f060">f060</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-arrow-left'">fa-solid fa-arrow-left</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-arrow-left-long fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-arrow-left-long"></i>'></i>
+              <code class="clipboard-copy" data-code="f177">f177</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-arrow-left-long'">fa-solid fa-arrow-left-long</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-arrow-right fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-arrow-right"></i>'></i>
+              <code class="clipboard-copy" data-code="f061">f061</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-arrow-right'">fa-solid fa-arrow-right</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-arrow-right-arrow-left fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-arrow-right-arrow-left"></i>'></i>
+              <code class="clipboard-copy" data-code="f0ec">f0ec</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-arrow-right-arrow-left'">fa-solid fa-arrow-right-arrow-left</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-arrow-rotate-left fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-arrow-rotate-left"></i>'></i>
+              <code class="clipboard-copy" data-code="f0e2">f0e2</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-arrow-rotate-left'">fa-solid fa-arrow-rotate-left</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-arrow-rotate-right fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-arrow-rotate-right"></i>'></i>
+              <code class="clipboard-copy" data-code="f01e">f01e</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-arrow-rotate-right'">fa-solid fa-arrow-rotate-right</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-arrow-turn-up fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-arrow-turn-up"></i>'></i>
+              <code class="clipboard-copy" data-code="f148">f148</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-arrow-turn-up'">fa-solid fa-arrow-turn-up</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-arrow-up fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-arrow-up"></i>'></i>
+              <code class="clipboard-copy" data-code="f062">f062</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-arrow-up'">fa-solid fa-arrow-up</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-arrow-up-long fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-arrow-up-long"></i>'></i>
+              <code class="clipboard-copy" data-code="f176">f176</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-arrow-up-long'">fa-solid fa-arrow-up-long</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-arrow-up-right-dots fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-arrow-up-right-dots"></i>'></i>
+              <code class="clipboard-copy" data-code="e4b7">e4b7</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-arrow-up-right-dots'">fa-solid fa-arrow-up-right-dots</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-award fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-award"></i>'></i>
+              <code class="clipboard-copy" data-code="f559">f559</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-award'">fa-solid fa-award</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-baby fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-baby"></i>'></i>
+              <code class="clipboard-copy" data-code="f77c">f77c</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-baby'">fa-solid fa-baby</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-backward fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-backward"></i>'></i>
+              <code class="clipboard-copy" data-code="f04a">f04a</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-backward'">fa-solid fa-backward</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-bezier-curve fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-bezier-curve"></i>'></i>
+              <code class="clipboard-copy" data-code="f55b">f55b</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-bezier-curve'">fa-solid fa-bezier-curve</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-bold fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-bold"></i>'></i>
+              <code class="clipboard-copy" data-code="f032">f032</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-bold'">fa-solid fa-bold</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-book fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-book"></i>'></i>
+              <code class="clipboard-copy" data-code="f02d">f02d</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-book'">fa-solid fa-book</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-border-none fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-border-none"></i>'></i>
+              <code class="clipboard-copy" data-code="f850">f850</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-border-none'">fa-solid fa-border-none</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-box-archive fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-box-archive"></i>'></i>
+              <code class="clipboard-copy" data-code="f187">f187</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-box-archive'">fa-solid fa-box-archive</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-bug fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-bug"></i>'></i>
+              <code class="clipboard-copy" data-code="f188">f188</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-bug'">fa-solid fa-bug</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-cake-candles fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-cake-candles"></i>'></i>
+              <code class="clipboard-copy" data-code="f1fd">f1fd</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-cake-candles'">fa-solid fa-cake-candles</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-calendar-days fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-calendar-days"></i>'></i>
+              <code class="clipboard-copy" data-code="f073">f073</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-calendar-days'">fa-solid fa-calendar-days</span>
+            </div>
+          
+            <div>
+              <i class="
+
+                fa-regular fa-calendar-days fa-lg clipboard-copy"
+                 data-code='<i class="fa-regular fa-calendar-days"></i>'></i>
+              <code class="clipboard-copy" data-code="f073">f073</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-regular fa-calendar-days'">fa-regular fa-calendar-days</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-caret-left fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-caret-left"></i>'></i>
+              <code class="clipboard-copy" data-code="f0d9">f0d9</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-caret-left'">fa-solid fa-caret-left</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-caret-right fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-caret-right"></i>'></i>
+              <code class="clipboard-copy" data-code="f0da">f0da</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-caret-right'">fa-solid fa-caret-right</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-chart-bar fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-chart-bar"></i>'></i>
+              <code class="clipboard-copy" data-code="f080">f080</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-chart-bar'">fa-solid fa-chart-bar</span>
+            </div>
+          
+            <div>
+              <i class="
+
+                fa-regular fa-chart-bar fa-lg clipboard-copy"
+                 data-code='<i class="fa-regular fa-chart-bar"></i>'></i>
+              <code class="clipboard-copy" data-code="f080">f080</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-regular fa-chart-bar'">fa-regular fa-chart-bar</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-chart-pie fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-chart-pie"></i>'></i>
+              <code class="clipboard-copy" data-code="f200">f200</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-chart-pie'">fa-solid fa-chart-pie</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-check fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-check"></i>'></i>
+              <code class="clipboard-copy" data-code="f00c">f00c</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-check'">fa-solid fa-check</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-chess-board fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-chess-board"></i>'></i>
+              <code class="clipboard-copy" data-code="f43c">f43c</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-chess-board'">fa-solid fa-chess-board</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-chevron-down fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-chevron-down"></i>'></i>
+              <code class="clipboard-copy" data-code="f078">f078</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-chevron-down'">fa-solid fa-chevron-down</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-chevron-left fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-chevron-left"></i>'></i>
+              <code class="clipboard-copy" data-code="f053">f053</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-chevron-left'">fa-solid fa-chevron-left</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-chevron-right fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-chevron-right"></i>'></i>
+              <code class="clipboard-copy" data-code="f054">f054</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-chevron-right'">fa-solid fa-chevron-right</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-chevron-up fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-chevron-up"></i>'></i>
+              <code class="clipboard-copy" data-code="f077">f077</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-chevron-up'">fa-solid fa-chevron-up</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-child fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-child"></i>'></i>
+              <code class="clipboard-copy" data-code="f1ae">f1ae</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-child'">fa-solid fa-child</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-circle-dot fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-circle-dot"></i>'></i>
+              <code class="clipboard-copy" data-code="f192">f192</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-circle-dot'">fa-solid fa-circle-dot</span>
+            </div>
+          
+            <div>
+              <i class="
+
+                fa-regular fa-circle-dot fa-lg clipboard-copy"
+                 data-code='<i class="fa-regular fa-circle-dot"></i>'></i>
+              <code class="clipboard-copy" data-code="f192">f192</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-regular fa-circle-dot'">fa-regular fa-circle-dot</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-circle-stop fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-circle-stop"></i>'></i>
+              <code class="clipboard-copy" data-code="f28d">f28d</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-circle-stop'">fa-solid fa-circle-stop</span>
+            </div>
+          
+            <div>
+              <i class="
+
+                fa-regular fa-circle-stop fa-lg clipboard-copy"
+                 data-code='<i class="fa-regular fa-circle-stop"></i>'></i>
+              <code class="clipboard-copy" data-code="f28d">f28d</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-regular fa-circle-stop'">fa-regular fa-circle-stop</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-clipboard fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-clipboard"></i>'></i>
+              <code class="clipboard-copy" data-code="f328">f328</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-clipboard'">fa-solid fa-clipboard</span>
+            </div>
+          
+            <div>
+              <i class="
+
+                fa-regular fa-clipboard fa-lg clipboard-copy"
+                 data-code='<i class="fa-regular fa-clipboard"></i>'></i>
+              <code class="clipboard-copy" data-code="f328">f328</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-regular fa-clipboard'">fa-regular fa-clipboard</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-clock-rotate-left fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-clock-rotate-left"></i>'></i>
+              <code class="clipboard-copy" data-code="f1da">f1da</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-clock-rotate-left'">fa-solid fa-clock-rotate-left</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-closed-captioning fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-closed-captioning"></i>'></i>
+              <code class="clipboard-copy" data-code="f20a">f20a</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-closed-captioning'">fa-solid fa-closed-captioning</span>
+            </div>
+          
+            <div>
+              <i class="
+
+                fa-regular fa-closed-captioning fa-lg clipboard-copy"
+                 data-code='<i class="fa-regular fa-closed-captioning"></i>'></i>
+              <code class="clipboard-copy" data-code="f20a">f20a</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-regular fa-closed-captioning'">fa-regular fa-closed-captioning</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-code-branch fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-code-branch"></i>'></i>
+              <code class="clipboard-copy" data-code="f126">f126</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-code-branch'">fa-solid fa-code-branch</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-code-fork fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-code-fork"></i>'></i>
+              <code class="clipboard-copy" data-code="e13b">e13b</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-code-fork'">fa-solid fa-code-fork</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-comment-dots fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-comment-dots"></i>'></i>
+              <code class="clipboard-copy" data-code="f4ad">f4ad</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-comment-dots'">fa-solid fa-comment-dots</span>
+            </div>
+          
+            <div>
+              <i class="
+
+                fa-regular fa-comment-dots fa-lg clipboard-copy"
+                 data-code='<i class="fa-regular fa-comment-dots"></i>'></i>
+              <code class="clipboard-copy" data-code="f4ad">f4ad</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-regular fa-comment-dots'">fa-regular fa-comment-dots</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-comment-slash fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-comment-slash"></i>'></i>
+              <code class="clipboard-copy" data-code="f4b3">f4b3</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-comment-slash'">fa-solid fa-comment-slash</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-comments fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-comments"></i>'></i>
+              <code class="clipboard-copy" data-code="f086">f086</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-comments'">fa-solid fa-comments</span>
+            </div>
+          
+            <div>
+              <i class="
+
+                fa-regular fa-comments fa-lg clipboard-copy"
+                 data-code='<i class="fa-regular fa-comments"></i>'></i>
+              <code class="clipboard-copy" data-code="f086">f086</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-regular fa-comments'">fa-regular fa-comments</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-compress fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-compress"></i>'></i>
+              <code class="clipboard-copy" data-code="f066">f066</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-compress'">fa-solid fa-compress</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-crop fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-crop"></i>'></i>
+              <code class="clipboard-copy" data-code="f125">f125</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-crop'">fa-solid fa-crop</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-crop-simple fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-crop-simple"></i>'></i>
+              <code class="clipboard-copy" data-code="f565">f565</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-crop-simple'">fa-solid fa-crop-simple</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-cross fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-cross"></i>'></i>
+              <code class="clipboard-copy" data-code="f654">f654</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-cross'">fa-solid fa-cross</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-crown fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-crown"></i>'></i>
+              <code class="clipboard-copy" data-code="f521">f521</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-crown'">fa-solid fa-crown</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-desktop fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-desktop"></i>'></i>
+              <code class="clipboard-copy" data-code="f390">f390</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-desktop'">fa-solid fa-desktop</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-diagram-project fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-diagram-project"></i>'></i>
+              <code class="clipboard-copy" data-code="f542">f542</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-diagram-project'">fa-solid fa-diagram-project</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-dice fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-dice"></i>'></i>
+              <code class="clipboard-copy" data-code="f522">f522</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-dice'">fa-solid fa-dice</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-dice-five fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-dice-five"></i>'></i>
+              <code class="clipboard-copy" data-code="f523">f523</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-dice-five'">fa-solid fa-dice-five</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-dice-four fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-dice-four"></i>'></i>
+              <code class="clipboard-copy" data-code="f524">f524</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-dice-four'">fa-solid fa-dice-four</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-dice-one fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-dice-one"></i>'></i>
+              <code class="clipboard-copy" data-code="f525">f525</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-dice-one'">fa-solid fa-dice-one</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-dice-six fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-dice-six"></i>'></i>
+              <code class="clipboard-copy" data-code="f526">f526</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-dice-six'">fa-solid fa-dice-six</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-dice-three fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-dice-three"></i>'></i>
+              <code class="clipboard-copy" data-code="f527">f527</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-dice-three'">fa-solid fa-dice-three</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-dice-two fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-dice-two"></i>'></i>
+              <code class="clipboard-copy" data-code="f528">f528</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-dice-two'">fa-solid fa-dice-two</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-dna fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-dna"></i>'></i>
+              <code class="clipboard-copy" data-code="f471">f471</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-dna'">fa-solid fa-dna</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-dove fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-dove"></i>'></i>
+              <code class="clipboard-copy" data-code="f4ba">f4ba</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-dove'">fa-solid fa-dove</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-down-long fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-down-long"></i>'></i>
+              <code class="clipboard-copy" data-code="f309">f309</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-down-long'">fa-solid fa-down-long</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-earth-americas fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-earth-americas"></i>'></i>
+              <code class="clipboard-copy" data-code="f57d">f57d</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-earth-americas'">fa-solid fa-earth-americas</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-elevator fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-elevator"></i>'></i>
+              <code class="clipboard-copy" data-code="e16d">e16d</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-elevator'">fa-solid fa-elevator</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-ellipsis fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-ellipsis"></i>'></i>
+              <code class="clipboard-copy" data-code="f141">f141</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-ellipsis'">fa-solid fa-ellipsis</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-equals fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-equals"></i>'></i>
+              <code class="clipboard-copy" data-code="3d">3d</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-equals'">fa-solid fa-equals</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-file fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-file"></i>'></i>
+              <code class="clipboard-copy" data-code="f15b">f15b</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-file'">fa-solid fa-file</span>
+            </div>
+          
+            <div>
+              <i class="
+
+                fa-regular fa-file fa-lg clipboard-copy"
+                 data-code='<i class="fa-regular fa-file"></i>'></i>
+              <code class="clipboard-copy" data-code="f15b">f15b</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-regular fa-file'">fa-regular fa-file</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-file-csv fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-file-csv"></i>'></i>
+              <code class="clipboard-copy" data-code="f6dd">f6dd</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-file-csv'">fa-solid fa-file-csv</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-file-image fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-file-image"></i>'></i>
+              <code class="clipboard-copy" data-code="f1c5">f1c5</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-file-image'">fa-solid fa-file-image</span>
+            </div>
+          
+            <div>
+              <i class="
+
+                fa-regular fa-file-image fa-lg clipboard-copy"
+                 data-code='<i class="fa-regular fa-file-image"></i>'></i>
+              <code class="clipboard-copy" data-code="f1c5">f1c5</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-regular fa-file-image'">fa-regular fa-file-image</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-file-lines fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-file-lines"></i>'></i>
+              <code class="clipboard-copy" data-code="f15c">f15c</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-file-lines'">fa-solid fa-file-lines</span>
+            </div>
+          
+            <div>
+              <i class="
+
+                fa-regular fa-file-lines fa-lg clipboard-copy"
+                 data-code='<i class="fa-regular fa-file-lines"></i>'></i>
+              <code class="clipboard-copy" data-code="f15c">f15c</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-regular fa-file-lines'">fa-regular fa-file-lines</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-file-pdf fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-file-pdf"></i>'></i>
+              <code class="clipboard-copy" data-code="f1c1">f1c1</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-file-pdf'">fa-solid fa-file-pdf</span>
+            </div>
+          
+            <div>
+              <i class="
+
+                fa-regular fa-file-pdf fa-lg clipboard-copy"
+                 data-code='<i class="fa-regular fa-file-pdf"></i>'></i>
+              <code class="clipboard-copy" data-code="f1c1">f1c1</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-regular fa-file-pdf'">fa-regular fa-file-pdf</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-file-zipper fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-file-zipper"></i>'></i>
+              <code class="clipboard-copy" data-code="f1c6">f1c6</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-file-zipper'">fa-solid fa-file-zipper</span>
+            </div>
+          
+            <div>
+              <i class="
+
+                fa-regular fa-file-zipper fa-lg clipboard-copy"
+                 data-code='<i class="fa-regular fa-file-zipper"></i>'></i>
+              <code class="clipboard-copy" data-code="f1c6">f1c6</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-regular fa-file-zipper'">fa-regular fa-file-zipper</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-filter fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-filter"></i>'></i>
+              <code class="clipboard-copy" data-code="f0b0">f0b0</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-filter'">fa-solid fa-filter</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-folder-open fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-folder-open"></i>'></i>
+              <code class="clipboard-copy" data-code="f07c">f07c</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-folder-open'">fa-solid fa-folder-open</span>
+            </div>
+          
+            <div>
+              <i class="
+
+                fa-regular fa-folder-open fa-lg clipboard-copy"
+                 data-code='<i class="fa-regular fa-folder-open"></i>'></i>
+              <code class="clipboard-copy" data-code="f07c">f07c</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-regular fa-folder-open'">fa-regular fa-folder-open</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-forward fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-forward"></i>'></i>
+              <code class="clipboard-copy" data-code="f04e">f04e</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-forward'">fa-solid fa-forward</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-gear fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-gear"></i>'></i>
+              <code class="clipboard-copy" data-code="f013">f013</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-gear'">fa-solid fa-gear</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-brands fa-github fa-lg clipboard-copy"
+                 data-code='<i class="fa-brands fa-github"></i>'></i>
+              <code class="clipboard-copy" data-code="f09b">f09b</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-brands fa-github'">fa-brands fa-github</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-globe fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-globe"></i>'></i>
+              <code class="clipboard-copy" data-code="f0ac">f0ac</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-globe'">fa-solid fa-globe</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-graduation-cap fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-graduation-cap"></i>'></i>
+              <code class="clipboard-copy" data-code="f19d">f19d</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-graduation-cap'">fa-solid fa-graduation-cap</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-hat-wizard fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-hat-wizard"></i>'></i>
+              <code class="clipboard-copy" data-code="f6e8">f6e8</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-hat-wizard'">fa-solid fa-hat-wizard</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-heading fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-heading"></i>'></i>
+              <code class="clipboard-copy" data-code="f1dc">f1dc</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-heading'">fa-solid fa-heading</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-highlighter fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-highlighter"></i>'></i>
+              <code class="clipboard-copy" data-code="f591">f591</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-highlighter'">fa-solid fa-highlighter</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-hourglass-half fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-hourglass-half"></i>'></i>
+              <code class="clipboard-copy" data-code="f252">f252</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-hourglass-half'">fa-solid fa-hourglass-half</span>
+            </div>
+          
+            <div>
+              <i class="
+
+                fa-regular fa-hourglass-half fa-lg clipboard-copy"
+                 data-code='<i class="fa-regular fa-hourglass-half"></i>'></i>
+              <code class="clipboard-copy" data-code="f252">f252</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-regular fa-hourglass-half'">fa-regular fa-hourglass-half</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-house fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-house"></i>'></i>
+              <code class="clipboard-copy" data-code="f015">f015</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-house'">fa-solid fa-house</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-id-card fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-id-card"></i>'></i>
+              <code class="clipboard-copy" data-code="f2c2">f2c2</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-id-card'">fa-solid fa-id-card</span>
+            </div>
+          
+            <div>
+              <i class="
+
+                fa-regular fa-id-card fa-lg clipboard-copy"
+                 data-code='<i class="fa-regular fa-id-card"></i>'></i>
+              <code class="clipboard-copy" data-code="f2c2">f2c2</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-regular fa-id-card'">fa-regular fa-id-card</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-image fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-image"></i>'></i>
+              <code class="clipboard-copy" data-code="f03e">f03e</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-image'">fa-solid fa-image</span>
+            </div>
+          
+            <div>
+              <i class="
+
+                fa-regular fa-image fa-lg clipboard-copy"
+                 data-code='<i class="fa-regular fa-image"></i>'></i>
+              <code class="clipboard-copy" data-code="f03e">f03e</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-regular fa-image'">fa-regular fa-image</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-image-portrait fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-image-portrait"></i>'></i>
+              <code class="clipboard-copy" data-code="f3e0">f3e0</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-image-portrait'">fa-solid fa-image-portrait</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-images fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-images"></i>'></i>
+              <code class="clipboard-copy" data-code="f302">f302</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-images'">fa-solid fa-images</span>
+            </div>
+          
+            <div>
+              <i class="
+
+                fa-regular fa-images fa-lg clipboard-copy"
+                 data-code='<i class="fa-regular fa-images"></i>'></i>
+              <code class="clipboard-copy" data-code="f302">f302</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-regular fa-images'">fa-regular fa-images</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-indent fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-indent"></i>'></i>
+              <code class="clipboard-copy" data-code="f03c">f03c</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-indent'">fa-solid fa-indent</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-info fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-info"></i>'></i>
+              <code class="clipboard-copy" data-code="f129">f129</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-info'">fa-solid fa-info</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-italic fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-italic"></i>'></i>
+              <code class="clipboard-copy" data-code="f033">f033</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-italic'">fa-solid fa-italic</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-less-than-equal fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-less-than-equal"></i>'></i>
+              <code class="clipboard-copy" data-code="f537">f537</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-less-than-equal'">fa-solid fa-less-than-equal</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-link fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-link"></i>'></i>
+              <code class="clipboard-copy" data-code="f0c1">f0c1</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-link'">fa-solid fa-link</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-link-slash fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-link-slash"></i>'></i>
+              <code class="clipboard-copy" data-code="f127">f127</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-link-slash'">fa-solid fa-link-slash</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-list fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-list"></i>'></i>
+              <code class="clipboard-copy" data-code="f03a">f03a</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-list'">fa-solid fa-list</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-list-ul fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-list-ul"></i>'></i>
+              <code class="clipboard-copy" data-code="f0ca">f0ca</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-list-ul'">fa-solid fa-list-ul</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-magnifying-glass fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-magnifying-glass"></i>'></i>
+              <code class="clipboard-copy" data-code="f002">f002</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-magnifying-glass'">fa-solid fa-magnifying-glass</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-magnifying-glass-minus fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-magnifying-glass-minus"></i>'></i>
+              <code class="clipboard-copy" data-code="f010">f010</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-magnifying-glass-minus'">fa-solid fa-magnifying-glass-minus</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-magnifying-glass-plus fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-magnifying-glass-plus"></i>'></i>
+              <code class="clipboard-copy" data-code="f00e">f00e</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-magnifying-glass-plus'">fa-solid fa-magnifying-glass-plus</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-brands fa-markdown fa-lg clipboard-copy"
+                 data-code='<i class="fa-brands fa-markdown"></i>'></i>
+              <code class="clipboard-copy" data-code="f60f">f60f</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-brands fa-markdown'">fa-brands fa-markdown</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-mars fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-mars"></i>'></i>
+              <code class="clipboard-copy" data-code="f222">f222</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-mars'">fa-solid fa-mars</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-mars-double fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-mars-double"></i>'></i>
+              <code class="clipboard-copy" data-code="f227">f227</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-mars-double'">fa-solid fa-mars-double</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-minus fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-minus"></i>'></i>
+              <code class="clipboard-copy" data-code="f068">f068</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-minus'">fa-solid fa-minus</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-neuter fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-neuter"></i>'></i>
+              <code class="clipboard-copy" data-code="f22c">f22c</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-neuter'">fa-solid fa-neuter</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-newspaper fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-newspaper"></i>'></i>
+              <code class="clipboard-copy" data-code="f1ea">f1ea</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-newspaper'">fa-solid fa-newspaper</span>
+            </div>
+          
+            <div>
+              <i class="
+
+                fa-regular fa-newspaper fa-lg clipboard-copy"
+                 data-code='<i class="fa-regular fa-newspaper"></i>'></i>
+              <code class="clipboard-copy" data-code="f1ea">f1ea</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-regular fa-newspaper'">fa-regular fa-newspaper</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-note-sticky fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-note-sticky"></i>'></i>
+              <code class="clipboard-copy" data-code="f249">f249</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-note-sticky'">fa-solid fa-note-sticky</span>
+            </div>
+          
+            <div>
+              <i class="
+
+                fa-regular fa-note-sticky fa-lg clipboard-copy"
+                 data-code='<i class="fa-regular fa-note-sticky"></i>'></i>
+              <code class="clipboard-copy" data-code="f249">f249</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-regular fa-note-sticky'">fa-regular fa-note-sticky</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-paintbrush fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-paintbrush"></i>'></i>
+              <code class="clipboard-copy" data-code="f1fc">f1fc</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-paintbrush'">fa-solid fa-paintbrush</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-pen-to-square fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-pen-to-square"></i>'></i>
+              <code class="clipboard-copy" data-code="f044">f044</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-pen-to-square'">fa-solid fa-pen-to-square</span>
+            </div>
+          
+            <div>
+              <i class="
+
+                fa-regular fa-pen-to-square fa-lg clipboard-copy"
+                 data-code='<i class="fa-regular fa-pen-to-square"></i>'></i>
+              <code class="clipboard-copy" data-code="f044">f044</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-regular fa-pen-to-square'">fa-regular fa-pen-to-square</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-people-arrows fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-people-arrows"></i>'></i>
+              <code class="clipboard-copy" data-code="e068">e068</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-people-arrows'">fa-solid fa-people-arrows</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-percent fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-percent"></i>'></i>
+              <code class="clipboard-copy" data-code="25">25</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-percent'">fa-solid fa-percent</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-person fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-person"></i>'></i>
+              <code class="clipboard-copy" data-code="f183">f183</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-person'">fa-solid fa-person</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-person-arrow-down-to-line fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-person-arrow-down-to-line"></i>'></i>
+              <code class="clipboard-copy" data-code="e538">e538</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-person-arrow-down-to-line'">fa-solid fa-person-arrow-down-to-line</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-person-arrow-up-from-line fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-person-arrow-up-from-line"></i>'></i>
+              <code class="clipboard-copy" data-code="e539">e539</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-person-arrow-up-from-line'">fa-solid fa-person-arrow-up-from-line</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-person-dress fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-person-dress"></i>'></i>
+              <code class="clipboard-copy" data-code="f182">f182</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-person-dress'">fa-solid fa-person-dress</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-person-praying fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-person-praying"></i>'></i>
+              <code class="clipboard-copy" data-code="f683">f683</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-person-praying'">fa-solid fa-person-praying</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-plus fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-plus"></i>'></i>
+              <code class="clipboard-copy" data-code="2b">2b</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-plus'">fa-solid fa-plus</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-power-off fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-power-off"></i>'></i>
+              <code class="clipboard-copy" data-code="f011">f011</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-power-off'">fa-solid fa-power-off</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-question fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-question"></i>'></i>
+              <code class="clipboard-copy" data-code="3f">3f</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-question'">fa-solid fa-question</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-restroom fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-restroom"></i>'></i>
+              <code class="clipboard-copy" data-code="f7bd">f7bd</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-restroom'">fa-solid fa-restroom</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-retweet fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-retweet"></i>'></i>
+              <code class="clipboard-copy" data-code="f079">f079</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-retweet'">fa-solid fa-retweet</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-right-from-bracket fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-right-from-bracket"></i>'></i>
+              <code class="clipboard-copy" data-code="f2f5">f2f5</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-right-from-bracket'">fa-solid fa-right-from-bracket</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-right-left fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-right-left"></i>'></i>
+              <code class="clipboard-copy" data-code="f362">f362</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-right-left'">fa-solid fa-right-left</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-ring fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-ring"></i>'></i>
+              <code class="clipboard-copy" data-code="f70b">f70b</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-ring'">fa-solid fa-ring</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-rotate fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-rotate"></i>'></i>
+              <code class="clipboard-copy" data-code="f2f1">f2f1</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-rotate'">fa-solid fa-rotate</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-screwdriver-wrench fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-screwdriver-wrench"></i>'></i>
+              <code class="clipboard-copy" data-code="f7d9">f7d9</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-screwdriver-wrench'">fa-solid fa-screwdriver-wrench</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-share fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-share"></i>'></i>
+              <code class="clipboard-copy" data-code="f064">f064</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-share'">fa-solid fa-share</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-share-nodes fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-share-nodes"></i>'></i>
+              <code class="clipboard-copy" data-code="f1e0">f1e0</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-share-nodes'">fa-solid fa-share-nodes</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-shoe-prints fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-shoe-prints"></i>'></i>
+              <code class="clipboard-copy" data-code="f54b">f54b</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-shoe-prints'">fa-solid fa-shoe-prints</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-shuffle fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-shuffle"></i>'></i>
+              <code class="clipboard-copy" data-code="f074">f074</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-shuffle'">fa-solid fa-shuffle</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-sitemap fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-sitemap"></i>'></i>
+              <code class="clipboard-copy" data-code="f0e8">f0e8</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-sitemap'">fa-solid fa-sitemap</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-skull-crossbones fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-skull-crossbones"></i>'></i>
+              <code class="clipboard-copy" data-code="f714">f714</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-skull-crossbones'">fa-solid fa-skull-crossbones</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-sort fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-sort"></i>'></i>
+              <code class="clipboard-copy" data-code="f0dc">f0dc</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-sort'">fa-solid fa-sort</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-sort-down fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-sort-down"></i>'></i>
+              <code class="clipboard-copy" data-code="f0dd">f0dd</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-sort-down'">fa-solid fa-sort-down</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-sort-up fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-sort-up"></i>'></i>
+              <code class="clipboard-copy" data-code="f0de">f0de</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-sort-up'">fa-solid fa-sort-up</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-star fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-star"></i>'></i>
+              <code class="clipboard-copy" data-code="f005">f005</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-star'">fa-solid fa-star</span>
+            </div>
+          
+            <div>
+              <i class="
+
+                fa-regular fa-star fa-lg clipboard-copy"
+                 data-code='<i class="fa-regular fa-star"></i>'></i>
+              <code class="clipboard-copy" data-code="f005">f005</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-regular fa-star'">fa-regular fa-star</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-superscript fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-superscript"></i>'></i>
+              <code class="clipboard-copy" data-code="f12b">f12b</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-superscript'">fa-solid fa-superscript</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-table fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-table"></i>'></i>
+              <code class="clipboard-copy" data-code="f0ce">f0ce</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-table'">fa-solid fa-table</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-table-cells fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-table-cells"></i>'></i>
+              <code class="clipboard-copy" data-code="f00a">f00a</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-table-cells'">fa-solid fa-table-cells</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-thumbs-down fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-thumbs-down"></i>'></i>
+              <code class="clipboard-copy" data-code="f165">f165</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-thumbs-down'">fa-solid fa-thumbs-down</span>
+            </div>
+          
+            <div>
+              <i class="
+
+                fa-regular fa-thumbs-down fa-lg clipboard-copy"
+                 data-code='<i class="fa-regular fa-thumbs-down"></i>'></i>
+              <code class="clipboard-copy" data-code="f165">f165</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-regular fa-thumbs-down'">fa-regular fa-thumbs-down</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-thumbs-up fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-thumbs-up"></i>'></i>
+              <code class="clipboard-copy" data-code="f164">f164</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-thumbs-up'">fa-solid fa-thumbs-up</span>
+            </div>
+          
+            <div>
+              <i class="
+
+                fa-regular fa-thumbs-up fa-lg clipboard-copy"
+                 data-code='<i class="fa-regular fa-thumbs-up"></i>'></i>
+              <code class="clipboard-copy" data-code="f164">f164</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-regular fa-thumbs-up'">fa-regular fa-thumbs-up</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-timeline fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-timeline"></i>'></i>
+              <code class="clipboard-copy" data-code="e29c">e29c</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-timeline'">fa-solid fa-timeline</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-toggle-off fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-toggle-off"></i>'></i>
+              <code class="clipboard-copy" data-code="f204">f204</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-toggle-off'">fa-solid fa-toggle-off</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-toggle-on fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-toggle-on"></i>'></i>
+              <code class="clipboard-copy" data-code="f205">f205</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-toggle-on'">fa-solid fa-toggle-on</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-trash fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-trash"></i>'></i>
+              <code class="clipboard-copy" data-code="f1f8">f1f8</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-trash'">fa-solid fa-trash</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-trash-can fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-trash-can"></i>'></i>
+              <code class="clipboard-copy" data-code="f2ed">f2ed</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-trash-can'">fa-solid fa-trash-can</span>
+            </div>
+          
+            <div>
+              <i class="
+
+                fa-regular fa-trash-can fa-lg clipboard-copy"
+                 data-code='<i class="fa-regular fa-trash-can"></i>'></i>
+              <code class="clipboard-copy" data-code="f2ed">f2ed</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-regular fa-trash-can'">fa-regular fa-trash-can</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-triangle-exclamation fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-triangle-exclamation"></i>'></i>
+              <code class="clipboard-copy" data-code="f071">f071</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-triangle-exclamation'">fa-solid fa-triangle-exclamation</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-turn-up fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-turn-up"></i>'></i>
+              <code class="clipboard-copy" data-code="f3bf">f3bf</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-turn-up'">fa-solid fa-turn-up</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-underline fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-underline"></i>'></i>
+              <code class="clipboard-copy" data-code="f0cd">f0cd</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-underline'">fa-solid fa-underline</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-up-long fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-up-long"></i>'></i>
+              <code class="clipboard-copy" data-code="f30c">f30c</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-up-long'">fa-solid fa-up-long</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-user fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-user"></i>'></i>
+              <code class="clipboard-copy" data-code="f007">f007</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-user'">fa-solid fa-user</span>
+            </div>
+          
+            <div>
+              <i class="
+
+                fa-regular fa-user fa-lg clipboard-copy"
+                 data-code='<i class="fa-regular fa-user"></i>'></i>
+              <code class="clipboard-copy" data-code="f007">f007</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-regular fa-user'">fa-regular fa-user</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-user-gear fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-user-gear"></i>'></i>
+              <code class="clipboard-copy" data-code="f4fe">f4fe</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-user-gear'">fa-solid fa-user-gear</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-user-group fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-user-group"></i>'></i>
+              <code class="clipboard-copy" data-code="f500">f500</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-user-group'">fa-solid fa-user-group</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-user-large fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-user-large"></i>'></i>
+              <code class="clipboard-copy" data-code="f406">f406</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-user-large'">fa-solid fa-user-large</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-user-pen fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-user-pen"></i>'></i>
+              <code class="clipboard-copy" data-code="f4ff">f4ff</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-user-pen'">fa-solid fa-user-pen</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-user-plus fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-user-plus"></i>'></i>
+              <code class="clipboard-copy" data-code="f234">f234</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-user-plus'">fa-solid fa-user-plus</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-user-tie fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-user-tie"></i>'></i>
+              <code class="clipboard-copy" data-code="f508">f508</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-user-tie'">fa-solid fa-user-tie</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-user-xmark fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-user-xmark"></i>'></i>
+              <code class="clipboard-copy" data-code="f235">f235</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-user-xmark'">fa-solid fa-user-xmark</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-users fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-users"></i>'></i>
+              <code class="clipboard-copy" data-code="f0c0">f0c0</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-users'">fa-solid fa-users</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-venus fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-venus"></i>'></i>
+              <code class="clipboard-copy" data-code="f221">f221</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-venus'">fa-solid fa-venus</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-venus-double fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-venus-double"></i>'></i>
+              <code class="clipboard-copy" data-code="f226">f226</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-venus-double'">fa-solid fa-venus-double</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-venus-mars fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-venus-mars"></i>'></i>
+              <code class="clipboard-copy" data-code="f228">f228</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-venus-mars'">fa-solid fa-venus-mars</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-wand-magic-sparkles fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-wand-magic-sparkles"></i>'></i>
+              <code class="clipboard-copy" data-code="e2ca">e2ca</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-wand-magic-sparkles'">fa-solid fa-wand-magic-sparkles</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-brands fa-wikipedia-w fa-lg clipboard-copy"
+                 data-code='<i class="fa-brands fa-wikipedia-w"></i>'></i>
+              <code class="clipboard-copy" data-code="f266">f266</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-brands fa-wikipedia-w'">fa-brands fa-wikipedia-w</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-window-minimize fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-window-minimize"></i>'></i>
+              <code class="clipboard-copy" data-code="f2d1">f2d1</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-window-minimize'">fa-solid fa-window-minimize</span>
+            </div>
+          
+            <div>
+              <i class="
+
+                fa-regular fa-window-minimize fa-lg clipboard-copy"
+                 data-code='<i class="fa-regular fa-window-minimize"></i>'></i>
+              <code class="clipboard-copy" data-code="f2d1">f2d1</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-regular fa-window-minimize'">fa-regular fa-window-minimize</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-wrench fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-wrench"></i>'></i>
+              <code class="clipboard-copy" data-code="f0ad">f0ad</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-wrench'">fa-solid fa-wrench</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-xmark fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-xmark"></i>'></i>
+              <code class="clipboard-copy" data-code="f00d">f00d</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-xmark'">fa-solid fa-xmark</span>
+            </div>
+          
+        
+      
+        
+          
+            <div>
+              <i class="
+
+                fa-solid fa-z fa-lg clipboard-copy"
+                 data-code='<i class="fa-solid fa-z"></i>'></i>
+              <code class="clipboard-copy" data-code="5a">5a</code>
+              <span class="clipboard-copy" data-code="
+
+                fa-solid fa-z'">fa-solid fa-z</span>
+            </div>
+          
+        
+      
+    </div>
+
+    
+      
+        
+        
+        
+
+
+        <h2 class="extras">Extras</h2>
+
+        <p class="extras">The helper CSS classes are listed below.</p>
+        
+          <section>
+            <h3>Size</h3>
+
+            <div class="examples examples-size">
+               
+              <div>
+                <div>
+                  <i class="fa-solid fa-2xs fa-a clipboard-copy"
+                     data-class="fa-a"
+                     data-code='<i class="fa-solid fa-2xs fa-a"></i>'></i>
+                </div>
+                <div>
+                  <code class="clipboard-copy" data-class="fa-a"
+                        data-code="fa-solid fa-2xs fa-a">fa-2xs</code>
+                </div>
+              </div>
+            
+              <div>
+                <div>
+                  <i class="fa-solid fa-sm fa-a clipboard-copy"
+                     data-class="fa-a"
+                     data-code='<i class="fa-solid fa-sm fa-a"></i>'></i>
+                </div>
+                <div>
+                  <code class="clipboard-copy" data-class="fa-a"
+                        data-code="fa-solid fa-sm fa-a">fa-sm</code>
+                </div>
+              </div>
+            
+              <div>
+                <div>
+                  <i class="fa-solid fa-1x fa-a clipboard-copy"
+                     data-class="fa-a"
+                     data-code='<i class="fa-solid fa-1x fa-a"></i>'></i>
+                </div>
+                <div>
+                  <code class="clipboard-copy" data-class="fa-a"
+                        data-code="fa-solid fa-1x fa-a">fa-1x</code>
+                </div>
+              </div>
+            
+              <div>
+                <div>
+                  <i class="fa-solid fa-lg fa-a clipboard-copy"
+                     data-class="fa-a"
+                     data-code='<i class="fa-solid fa-lg fa-a"></i>'></i>
+                </div>
+                <div>
+                  <code class="clipboard-copy" data-class="fa-a"
+                        data-code="fa-solid fa-lg fa-a">fa-lg</code>
+                </div>
+              </div>
+            
+              <div>
+                <div>
+                  <i class="fa-solid fa-2x fa-a clipboard-copy"
+                     data-class="fa-a"
+                     data-code='<i class="fa-solid fa-2x fa-a"></i>'></i>
+                </div>
+                <div>
+                  <code class="clipboard-copy" data-class="fa-a"
+                        data-code="fa-solid fa-2x fa-a">fa-2x</code>
+                </div>
+              </div>
+            
+              <div>
+                <div>
+                  <i class="fa-solid fa-3x fa-a clipboard-copy"
+                     data-class="fa-a"
+                     data-code='<i class="fa-solid fa-3x fa-a"></i>'></i>
+                </div>
+                <div>
+                  <code class="clipboard-copy" data-class="fa-a"
+                        data-code="fa-solid fa-3x fa-a">fa-3x</code>
+                </div>
+              </div>
+            
+              <div>
+                <div>
+                  <i class="fa-solid fa-5x fa-a clipboard-copy"
+                     data-class="fa-a"
+                     data-code='<i class="fa-solid fa-5x fa-a"></i>'></i>
+                </div>
+                <div>
+                  <code class="clipboard-copy" data-class="fa-a"
+                        data-code="fa-solid fa-5x fa-a">fa-5x</code>
+                </div>
+              </div>
+            
+            </div>
+          </section>
+        
+
+        
+          <section>
+            <h3>Rotate</h3>
+
+            <div class="examples">
+              <div>
+                <div>
+                  <i
+                    class="fa-solid fa-lg fa-a"
+                    data-class="fa-a"
+                  ></i>
+                </div>
+              </div>
+               
+              <div>
+                <div>
+                  <i
+                    class="fa-solid fa-lg fa-rotate-90 fa-a clipboard-copy"
+                    data-class="fa-a"
+                    data-code='<i class="fa-solid fa-rotate-90 fa-a"></i>'
+                  ></i>
+                </div>
+                <div>
+                  <code
+                    class="clipboard-copy"
+                    data-code="fa-solid fa-rotate-90 fa-a"
+                    data-class="fa-a"
+                  >fa-rotate-90</code
+                  >
+                </div>
+              </div>
+            
+              <div>
+                <div>
+                  <i
+                    class="fa-solid fa-lg fa-rotate-180 fa-a clipboard-copy"
+                    data-class="fa-a"
+                    data-code='<i class="fa-solid fa-rotate-180 fa-a"></i>'
+                  ></i>
+                </div>
+                <div>
+                  <code
+                    class="clipboard-copy"
+                    data-code="fa-solid fa-rotate-180 fa-a"
+                    data-class="fa-a"
+                  >fa-rotate-180</code
+                  >
+                </div>
+              </div>
+            
+              <div>
+                <div>
+                  <i
+                    class="fa-solid fa-lg fa-rotate-270 fa-a clipboard-copy"
+                    data-class="fa-a"
+                    data-code='<i class="fa-solid fa-rotate-270 fa-a"></i>'
+                  ></i>
+                </div>
+                <div>
+                  <code
+                    class="clipboard-copy"
+                    data-code="fa-solid fa-rotate-270 fa-a"
+                    data-class="fa-a"
+                  >fa-rotate-270</code
+                  >
+                </div>
+              </div>
+            
+            </div>
+          
+
+          
+            <h3>Flip</h3>
+
+            <div class="examples">
+              <div>
+                <div>
+                  <i
+                    class="fa-solid fa-lg fa-a"
+                    data-class="fa-a"
+                  ></i>
+                </div>
+              </div>
+               
+              <div>
+                <div>
+                  <i
+                    class="fa-solid fa-lg fa-flip-horizontal fa-a clipboard-copy"
+                    data-code='<i class="fa-solid fa-flip-horizontal fa-a"></i>'
+                    data-class="fa-a"
+                  ></i>
+                </div>
+                <div>
+                  <code
+                    class="clipboard-copy"
+                    data-code="fa-solid fa-flip-horizontal fa-a"
+                    data-class="fa-a"
+                  >fa-flip-horizontal</code
+                  >
+                </div>
+              </div>
+            
+              <div>
+                <div>
+                  <i
+                    class="fa-solid fa-lg fa-flip-vertical fa-a clipboard-copy"
+                    data-code='<i class="fa-solid fa-flip-vertical fa-a"></i>'
+                    data-class="fa-a"
+                  ></i>
+                </div>
+                <div>
+                  <code
+                    class="clipboard-copy"
+                    data-code="fa-solid fa-flip-vertical fa-a"
+                    data-class="fa-a"
+                  >fa-flip-vertical</code
+                  >
+                </div>
+              </div>
+            
+            </div>
+          </section>
+        
+
+        
+
+
+          <section>
+            <h3>Color</h3>
+
+            <div class="examples">
+              
+              <div>
+                <div style="color: red">
+                  <i
+                    class="fa-solid fa-lg fa-a"
+                  ></i>
+                </div>
+                <div>
+                  <code>fa-a</code>
+                </div>
+              </div>
+            </div>
+          </section>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    <footer>
+      <div>
+        Generated with <a href="https://github.com/dzhuang/subset-iconfont.git" target="_blank">subset-iconfont</a>
+      </div>
+    </footer>
+
+    <script type="text/javascript">
+      function copyText(text) {
+        let copyFrom = document.createElement("textarea");
+        copyFrom.setAttribute(
+          "style",
+          "position:fixed;opacity:0;top:100px;left:100px;"
+        );
+        copyFrom.value = text;
+        document.body.appendChild(copyFrom);
+        copyFrom.select();
+        navigator.clipboard.writeText(text);
+        let copied = document.createElement("div");
+        copied.setAttribute("class", "copied");
+        copied.setAttribute("style", "z-index:1000!important;");
+        copied.appendChild(document.createTextNode("Copied to Clipboard"));
+        document.body.appendChild(copied);
+        setTimeout(function () {
+          document.body.removeChild(copyFrom);
+          document.body.removeChild(copied);
+        }, 1500);
+      }
+
+      (function () {
+        const copiables = document.getElementsByClassName("clipboard-copy");
+        for (let i = 0; i < copiables.length; i++) {
+          copiables[i].addEventListener("mouseup", function (e) {
+            copyText(e.target.dataset["code"]);
+            document.getElementById("font-usage").innerText =
+              e.target.parentNode.children[0].dataset["code"];
+          });
+        }
+
+        document.getElementById("npm").addEventListener("click", function () {
+          copyText("npm install subset-iconfont");
+        });
+      })();
+    </script>
+  </body>
+</html>

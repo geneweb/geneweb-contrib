@@ -1,0 +1,11 @@
+{
+	"version": 3,
+	"file": "fa-brands.css",
+	"sources": [
+		"../scss/fa-brands.scss",
+		"../scss/_functions.scss",
+		"../scss/_variables.scss"
+	],
+	"names": [],
+	"mappings": "AAGA,AAAA,KAAK,EAAE,KAAK,CAAC;EACX,gBAA+B,CAAc,0EAAC;CAC/C;;AAED,UAAU;EACR,WAAW,EAAE,4DAA4D;EACzE,WAAW,EAAE,GAAG;EAChB,YAAY,EEFY,KAAK;EFG7B,GAAG,EAAE,yEAA8E,CAAC,eAAe;;;AAIrG,AAAA,UAAU,CAAgB;EACxB,WAAW,EAAE,4DAA4D;EACzE,WAAW,EAAE,GAAG;CACjB"
+}
