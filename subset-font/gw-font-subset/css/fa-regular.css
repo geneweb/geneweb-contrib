@@ -1,0 +1,17 @@
+:root, :host {
+  --fa-font-normal: normal normal 1em/1 "GeneWeb 7.1 webfont subset from Font-Awesome v6.5.1";
+}
+
+@font-face {
+  font-family: 'GeneWeb 7.1 webfont subset from Font-Awesome v6.5.1 Regular';
+  font-weight: 400;
+  font-display: block;
+  src: url("../webfonts/fa-regular-400.woff2?v=7fc80a66c8dbae5bf43611618b0f82f6") format("woff2");
+}
+
+.fa-regular {
+  font-family: 'GeneWeb 7.1 webfont subset from Font-Awesome v6.5.1 Regular';
+  font-weight: 400;
+}
+
+/*# sourceMappingURL=fa-regular.css.map */
