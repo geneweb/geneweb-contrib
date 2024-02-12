@@ -21,7 +21,7 @@ let get_all_versions ic =
         let i = String.index line ':' in
         let lang = String.sub line 0 i in
         let transl = String.sub line (i + 1) (String.length line - i - 1) in
-        loop ((lang, transl) :: accu)
+        if lang <> "->" then loop ((lang, transl) :: accu) else [("alias", "")]
       with Not_found -> accu
   in loop []
 in
@@ -181,9 +181,8 @@ in
 (**/**) (* Missing translation. *)
 
 let missing_languages list languages =
-  List.fold_left begin fun acc lang ->
-    if not (List.mem_assoc lang list) then lang :: acc else acc
-  end [] languages
+  List.fold_left (fun acc lang ->
+    if not (List.mem_assoc lang list) then lang :: acc else acc) [] languages
 in
 
 let print_transl_en_fr list =
@@ -199,14 +198,14 @@ let missing_translation lexicon languages =
     | exception End_of_file -> close_in ic
     | msg ->
       let list = get_all_versions ic in
-      let list' = missing_languages list languages in
-      if list' <> [] then begin
-        print_endline msg;
-        print_transl_en_fr list;
-        List.iter (fun lang -> print_endline (lang ^ ":")) (List.rev list') ;
-        print_string "\n"
-      end;
-      loop ()
+      if list = [("alias", "")] then loop ()
+      else (
+        let list' = missing_languages list languages in
+        if list' <> [] then (
+          print_endline msg;
+          print_transl_en_fr list;
+          List.iter (fun lang -> print_endline (lang ^ ":")) (List.rev list') ;
+          print_string "\n"; loop ()))
   in loop ()
 in
 
