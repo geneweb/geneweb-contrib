@@ -2,8 +2,10 @@
 
 # Assumes GW and CONTRIB are defined
 # e.g.
-CONTRIB="/Users/Henri/GitHub/hgouraud/geneweb-contrib"
-GW="/Users/Henri/GitHub/hgouraud/geneweb/distribution/gw"
-#OPT="GWREPL_NOPROMPT=1"
+REPO="../../geneweb"
+GW="$REPO/distribution/gw"
+GWREPL_NOPROMPT=1 
+GWREPL_VERBOSE=1
 
-cat $CONTRIB/lex/lex_utils.ml | $OPT $GW/gwrepl "$@"
+cat ./lex_utils.ml | $GW/gwrepl -repo $REPO "$@"
+
