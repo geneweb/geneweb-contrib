@@ -58,7 +58,7 @@ let main () =
   Arg.parse speclist anonfun usage;
   if !bname = "" then begin Arg.usage speclist usage; exit 2 end;
   let gcc = Gc.get () in
-  gcc.Gc.max_overhead <- 100;
+  Gc.set { (Gc.get()) with Gc.max_overhead = 100 };
   Gc.set gcc;
   if !everybody then remove_image_everybody !bname !trace
   else remove_image_some !bname !ind !trace

@@ -26,7 +26,7 @@ let get_all_versions ic =
   in loop []
 in
 
-(**/**) (* Missing or unused translation. *)
+(* Missing or unused translation. *)
 
 let get_ml_files repo =
   Mutil.ls_r [repo]
@@ -71,7 +71,7 @@ let get_msg_src repo =
   let _ = "\"" in (* just for quotes balancing in BBedit. Putting it in comment fails!! *)
   List.fold_left begin fun acc src ->
     let ic = open_in src in
-    let rec loop acc =
+    let loop acc =
       match input_line ic with
       | exception End_of_file -> close_in ic ; acc
       | line ->
@@ -178,7 +178,7 @@ let missing_or_unused_msg lexicon repo log =
   end
 in
 
-(**/**) (* Missing translation. *)
+(* Missing translation. *)
 
 let missing_languages list languages =
   List.fold_left (fun acc lang ->
@@ -209,7 +209,7 @@ let missing_translation lexicon languages =
   in loop ()
 in
 
-(**/**) (* Sorting. *)
+(* Sorting. *)
 
 let module Lex_map = Map.Make
     (struct
@@ -263,7 +263,7 @@ let sort_lexicon lexicon =
 in
 
 
-(**/**) (* Main. *)
+(* Main. *)
 
 let lang_default =
   [ "af"

@@ -172,7 +172,12 @@ let print_table border hts =
     for j = 0 to Array.length hts.(i) - 1 do
       let (colspan, align, td) = hts.(i).(j) in
       Printf.printf "<td";
-      if colspan = 1 && (td = TDitem "&nbsp;" || td = TDhr CenterA) then ()
+      let is_td =
+        match td with
+        | TDitem (_, _, (Adef.safe "&nbsp;")) -> true
+        | _ -> false
+      in
+      if colspan = 1 && (is_td || td = TDhr CenterA) then ()
       else Printf.printf " colspan=%d" colspan;
       begin match align, td with
         LeftA, TDhr LeftA -> Printf.printf " align=left"
@@ -182,7 +187,7 @@ let print_table border hts =
       end;
       Printf.printf ">";
       begin match td with
-        TDitem s -> Printf.printf "%s" s
+      | TDitem (_, _, s) -> Printf.printf "%s"(Adef.as_string s)
       | TDtext s -> Printf.printf "%s" (Adef.as_string s)
       | TDbar _ -> Printf.printf "|"
       | TDhr align ->
