@@ -173,7 +173,7 @@ let () =
   Arg.parse speclist anonfun usage;
   if !bname = "" then begin Arg.usage speclist usage ; exit 2 end ;
   Secure.set_base_dir (Filename.dirname !bname);
-  Lock.control_retry (Mutil.lock_file !bname) ~onerror:Lock.print_error_and_exit @@ fun () ->
+  Lock.control_retry (Files.lock_file !bname) ~onerror:Lock.print_error_and_exit @@ fun () ->
   if !everybody then
     if !ind <> "" then failwith "-everybody and -ind options are mutually exclusive"
     else if !treshold <> 1900 then failwith "-everybody and -y options are mutually exclusive"
