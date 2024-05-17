@@ -1,0 +1,28 @@
+// stacking icons (extracted from _stacked.scss)
+// -------------------------
+
+.#{$fa-css-prefix}-stack {
+  display: inline-block;
+  height: 2em;
+  line-height: 2em;
+  position: relative;
+  vertical-align: $fa-stack-vertical-align;
+  width: $fa-stack-width;
+}
+
+.#{$fa-css-prefix}-stack-1x,
+.#{$fa-css-prefix}-stack-2x {
+  left: 0;
+  position: absolute;
+  text-align: center;
+  width: 100%;
+  z-index: var(--#{$fa-css-prefix}-stack-z-index, #{$fa-stack-z-index});
+}
+
+.#{$fa-css-prefix}-stack-1x {
+  line-height: inherit;
+}
+
+.#{$fa-css-prefix}-stack-2x {
+  font-size: 2em;
+}

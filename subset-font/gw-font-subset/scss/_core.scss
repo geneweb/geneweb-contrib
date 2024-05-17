@@ -1,0 +1,24 @@
+// base icon class definition
+// -------------------------
+
+.#{$fa-css-prefix} {
+  font-family: var(--#{$fa-css-prefix}-style-family, '#{$fa-style-family}');
+  font-weight: var(--#{$fa-css-prefix}-style, #{$fa-style});
+}
+
+.#{$fa-css-prefix},
+.#{$fa-css-prefix}-solid,
+.#{$fa-css-prefix}-regular,
+.#{$fa-css-prefix}-brands{
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  display: var(--#{$fa-css-prefix}-display, #{$fa-display});
+  font-style: normal;
+  font-variant: normal;
+  line-height: 1;
+  text-rendering: auto;
+}
+
+%fa-icon {
+  @include fa-icon;
+}
