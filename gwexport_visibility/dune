@@ -1,0 +1,4 @@
+(executables
+  (names gwexport_visibility)
+  (libraries geneweb geneweb.gwdb-versioned geneweb.sosa_zarith geneweb.gwu_lib geneweb.gwd_lib)
+)
