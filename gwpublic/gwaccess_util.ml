@@ -73,3 +73,12 @@ let access_everybody access bname =
       patch_person base p.Def.key_index p
   end (Gwdb.persons base) ;
   commit_patches base
+
+let change_only_old_access ~old_access ~new_access bname =
+  let base = Gwdb.open_base bname in
+  Gwdb.Collection.iter begin fun p ->
+    if Gwdb.get_access p = old_access then
+      let p = {(gen_person_of_person p) with Def.access = new_access} in
+      patch_person base p.Def.key_index p
+  end (Gwdb.persons base) ;
+  commit_patches base
