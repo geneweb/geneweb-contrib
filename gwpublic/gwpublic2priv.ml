@@ -10,6 +10,8 @@ module DatesStore : sig
 
   val of_base : Gwdb.base -> t
 
+  val fold : ('a -> iper:Gwdb.iper -> estimated_year:int -> 'a) -> 'a -> t -> 'a
+
 end = struct
 
 
@@ -35,6 +37,7 @@ end = struct
     val create : Gwdb.iper Gwdb.Collection.t -> t
     val get : t -> Gwdb.iper -> computation
     val set : t -> Gwdb.iper -> computation -> unit
+    val fold : ('a -> iper -> computation -> 'a) -> 'a -> t -> 'a
   end = struct
 
     type t = {
@@ -49,9 +52,23 @@ end = struct
     let create collection =
       let store = Gwdb.iper_marker collection Todo in
       {collection; store}
+
+    let fold f acc t =
+      Gwdb.Collection.fold (fun acc iper ->
+          f acc iper (get t iper)
+        ) acc t.collection
   end
 
+
   type t = Store.t
+
+  let fold f acc store =
+    Store.fold (fun acc iper comp -> match comp with
+        | Result (EstimatedDate estimated_year) -> f acc ~iper ~estimated_year
+        | Result _ -> acc
+        | Ongoing -> assert false
+        | Todo -> assert false
+      ) acc store
 
   let is_ongoing store iper =
     Store.get store iper = Ongoing
@@ -194,7 +211,7 @@ end = struct
     Queue.add iper iper_queue;
     find_person_date_of_queue base iper_queue stack store
 
-  let debug base store =
+  let _debug base store =
     let string_of_date = function
       | Result (FoundDate d) -> Printf.sprintf "found %d" d
       | Result (EstimatedDate d) -> Printf.sprintf "estimated %d" d
@@ -224,9 +241,34 @@ end = struct
         ProgrBar.run i n
       )
       ipers_collection;
-    debug base store;
+    (*debug base store;*)
     store
 end
+
+let change_access base store lim_year trace =
+  DatesStore.fold (fun changes ~iper ~estimated_year ->
+      (*print_endline @@ Printf.sprintf "<%s> %s" (Gwdb.string_of_iper iper) (string_of_int estimated_year);*)
+      let p = Gwdb.poi base iper in
+      match Gwdb.get_access p with
+      | IfTitles ->
+        let access =
+          if estimated_year > lim_year then Def.Private
+          else Def.Public
+        in
+        let gen_person = {(Gwdb.gen_person_of_person p) with access = access} in
+        Gwdb.patch_person base gen_person.key_index gen_person;
+        if trace then begin
+          let access_string = if access = Def.Private then "private" else "public" in
+          let str = Printf.sprintf
+              "%s -> %s (found an estimated year of %d)"
+              (Gutil.designation base p) access_string estimated_year
+          in
+          print_endline str
+        end;
+        true
+      | Def.Private
+      | Def.Public -> changes
+    ) false store
 
 let change_somebody_access base lim_year trace p year_of_p spouse =
   if year_of_p = None && (get_access p = IfTitles || spouse) then
@@ -251,12 +293,11 @@ let change_somebody_access base lim_year trace p year_of_p spouse =
     | None -> None
   else None
 
-let public_all ~fast bname _lim_year _trace =
+let public_all ~fast bname lim_year trace =
   let base = Gwdb.open_base bname in
   let () = load_ascends_array base in
   let () = load_couples_array base in
   let _n = nb_of_persons base in
-  let changes = ref false in
   if fast then load_persons_array base ;
   Consang.check_noloop base
     (function
@@ -267,9 +308,10 @@ let public_all ~fast bname _lim_year _trace =
          exit 2
      | _ -> assert false);
   ProgrBar.start ();
-  let _ = DatesStore.of_base base in ();
+  let store = DatesStore.of_base base in
+  let changes = change_access base store lim_year trace in
   if fast then clear_persons_array base ;
-  if !changes then commit_patches base;
+  if changes then commit_patches base;
   ProgrBar.finish ()
 
 let lim_year = ref 1900
