@@ -140,47 +140,59 @@ end = struct
     in
     date
 
-  let rec find_person_date base iper_queue (store : t) iper =
+  let rec find_person_date base iper_queue stack (store : t) iper =
     Store.set store iper Ongoing;
     let person = Gwdb.poi base iper in
     begin match  Gwaccess_util.oldest_year_of person with
       | Some date ->
         Store.set store iper (result (FoundDate date));
-        find_person_date_of_queue base iper_queue store
+        find_person_date_of_queue base iper_queue stack store
       | None ->
         let parents = Option.map (Gwdb.foi base) (Gwdb.get_parents person) in
         add_parents_to_queue iper_queue store parents;
         let families = Array.map (Gwdb.foi base) (Gwdb.get_family person) in
         let spouses = spouses_of_families iper families in
         add_spouses_to_queue iper_queue store spouses;
-        find_person_date_of_queue base iper_queue store;
-        let date_parents = best_date_of_parents store parents in
-        let date_spouses = best_date_of_spouses store spouses in
-        let date_year_opt = best_date_year_opt date_spouses date_parents in
-        let date_opt = Option.map (fun year -> EstimatedDate year) date_year_opt in
-        let date = Option.value ~default:NoDate date_opt in
-        let has_ongoing_spouse =
-          Array.exists (fun iper -> Store.get store iper = Ongoing) spouses
-        in
-        if has_ongoing_spouse && date = NoDate then
-          Store.set store iper Todo
-        else
-          Store.set store iper (result date)
+        Stack.push iper stack;
+        find_person_date_of_queue base iper_queue stack store
     end
 
-  and find_person_date_of_queue base iper_queue store =
-    if Queue.is_empty iper_queue then ()
+  and compute_stack base store stack =
+    if Stack.is_empty stack then ()
+    else
+      let iper = Stack.pop stack in
+      let person = Gwdb.poi base iper in
+      let parents = Option.map (Gwdb.foi base) (Gwdb.get_parents person) in
+      let families = Array.map (Gwdb.foi base) (Gwdb.get_family person) in
+      let spouses = spouses_of_families iper families in
+      let date_parents = best_date_of_parents store parents in
+      let date_spouses = best_date_of_spouses store spouses in
+      let date_year_opt = best_date_year_opt date_spouses date_parents in
+      let date_opt = Option.map (fun year -> EstimatedDate year) date_year_opt in
+      let date = Option.value ~default:NoDate date_opt in
+      let has_ongoing_spouse =
+        Array.exists (fun iper -> Store.get store iper = Ongoing) spouses
+      in
+      if has_ongoing_spouse && date = NoDate then
+        Store.set store iper Todo
+      else
+        Store.set store iper (result date);
+      compute_stack base store stack
+
+  and find_person_date_of_queue base iper_queue stack store =
+    if Queue.is_empty iper_queue then compute_stack base store stack
     else
       let iper = Queue.pop iper_queue in
       match Store.get store iper with
-      | Todo -> find_person_date base iper_queue store iper
-      | Result _ -> find_person_date_of_queue base iper_queue store
-      | Ongoing -> find_person_date_of_queue base iper_queue store
+      | Todo -> find_person_date base iper_queue stack store iper
+      | Result _ -> find_person_date_of_queue base iper_queue stack store
+      | Ongoing -> find_person_date_of_queue base iper_queue stack store
 
   let find_person_date base store iper =
     let iper_queue = Queue.create () in
+    let stack = Stack.create () in
     Queue.add iper iper_queue;
-    find_person_date_of_queue base iper_queue store
+    find_person_date_of_queue base iper_queue stack store
 
   let debug base store =
     let string_of_date = function
