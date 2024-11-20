@@ -270,29 +270,6 @@ let change_access base store lim_year trace =
       | Def.Public -> changes
     ) false store
 
-let change_somebody_access base lim_year trace p year_of_p spouse =
-  if year_of_p = None && (get_access p = IfTitles || spouse) then
-    match Gwaccess_util.find_dated_ancestor base p with
-      Some (a, year, nb_gen) ->
-        let acc =
-          if year + nb_gen * nb_years_by_gen > lim_year then Private
-          else Public
-        in
-        let gp = {(gen_person_of_person p) with access = acc} in
-        patch_person base gp.key_index gp;
-        if trace then
-          begin
-            Printf.printf "%s -> " (Gutil.designation base p);
-            if acc = Private then Printf.printf "private" else Printf.printf "public";
-            Printf.printf " (anc %d gen %s year %d)" nb_gen
-              (Gutil.designation base a) year;
-            Printf.printf "\n";
-            flush stdout
-          end;
-        Some acc
-    | None -> None
-  else None
-
 let public_all ~fast bname lim_year trace =
   let base = Gwdb.open_base bname in
   let () = load_ascends_array base in
