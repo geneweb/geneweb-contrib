@@ -302,7 +302,7 @@ let change_access base store lim_year trace =
       | Def.Public -> changes
     ) false store
 
-let public_all ~fast bname lim_year trace =
+let compute_persons_accesses ~fast bname lim_year trace =
   let base = Gwdb.open_base bname in
   let () = load_ascends_array base in
   let () = load_couples_array base in
@@ -345,6 +345,6 @@ let main () =
   Secure.set_base_dir (Filename.dirname !bname);
   Lock.control_retry
     (Files.lock_file !bname) ~onerror:Lock.print_error_and_exit @@ fun () ->
-  public_all ~fast:!fast !bname !lim_year !trace
+  compute_persons_accesses ~fast:!fast !bname !lim_year !trace
 
 let _ = main ()
