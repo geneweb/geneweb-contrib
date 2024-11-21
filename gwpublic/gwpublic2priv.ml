@@ -2,6 +2,8 @@ open Def
 open Gwdb
 
 let nb_years_by_gen = 30
+let debug = ref false
+
 
 module DatesStore : sig
   type t
@@ -239,7 +241,7 @@ end = struct
     Queue.add iper iper_queue;
     find_person_date_of_queue base iper_queue stack store
 
-  let _debug base store =
+  let print_debug_info base store =
     let string_of_date = function
       | Result (FoundDate d) -> Printf.sprintf "found %d" d
       | Result (EstimatedDate d) -> Printf.sprintf "estimated %d" d
@@ -274,7 +276,7 @@ end = struct
         ProgrBar.run i n
       )
       ipers_collection;
-    (*debug base store;*)
+    if !debug then print_debug_info base store;
     store
 end
 
@@ -333,6 +335,7 @@ let speclist =
   ; ("-y", Arg.Int (fun i -> lim_year := i),
      "limit year (default = " ^ string_of_int !lim_year ^ ")")
   ; ("-t", Arg.Set trace, "trace changed persons")
+  ; ("-debug", Arg.Set debug, "print debugging information after dates computation")
   ]
 
 let anonfun i = bname := i
