@@ -73,17 +73,15 @@ end = struct
   let is_ongoing store iper =
     Store.get store iper = Ongoing
 
+  let add_not_ongoing_to_queue store iper_queue iper =
+    if not (is_ongoing store iper) then
+      Queue.add iper iper_queue
+
   let add_parents_to_queue iper_queue store parents =
     let father = Option.map Gwdb.get_father parents in
     let mother = Option.map Gwdb.get_mother parents in
-    Option.iter (fun iper ->
-        if not (is_ongoing store iper) then
-          Queue.add iper iper_queue
-      ) father;
-    Option.iter (fun iper ->
-        if not (is_ongoing store iper) then
-          Queue.add iper iper_queue
-      ) mother
+    Option.iter (add_not_ongoing_to_queue store iper_queue) father;
+    Option.iter (add_not_ongoing_to_queue store iper_queue) mother
 
   let spouses_of_families iper families =
     let get_spouse iper family =
@@ -94,10 +92,7 @@ end = struct
     Array.map (get_spouse iper) families
 
   let add_spouses_to_queue iper_queue store spouses =
-    Array.iter (fun iper ->
-        if not (is_ongoing store iper) then
-          Queue.add iper iper_queue
-      ) spouses
+    Array.iter (add_not_ongoing_to_queue store iper_queue) spouses
 
   let add_one_gen_to_date = function
     | NoDate as d -> d
