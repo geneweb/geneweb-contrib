@@ -125,7 +125,7 @@ end = struct
   let best_date_of_parents store parents =
     let father = Option.map Gwdb.get_father parents in
     let mother = Option.map Gwdb.get_mother parents in
-    let date = match father, mother with
+    let date_opt = match father, mother with
       | Some ifath, Some imoth ->
         let ifath_year_opt = date_of_result (Store.get store ifath) in
         let imoth_year_opt = date_of_result (Store.get store imoth) in
@@ -139,7 +139,7 @@ end = struct
         Option.map add_one_gen_to_date d
       | None, None -> None
     in
-    if Option.is_none date then NoDate else Option.get date
+    Option.value ~default:NoDate date_opt
 
   let best_date_of_spouses store spouses =
     let date = Array.fold_left (fun best_date iper ->
