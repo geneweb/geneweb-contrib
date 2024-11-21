@@ -91,8 +91,8 @@ end = struct
     in
     Array.map (get_spouse iper) families
 
-  let add_spouses_to_queue iper_queue store spouses =
-    Array.iter (add_not_ongoing_to_queue store iper_queue) spouses
+  let add_not_ongoing_ipers_to_queue iper_queue store ipers =
+    Array.iter (add_not_ongoing_to_queue store iper_queue) ipers
 
   let add_one_gen_to_date = function
     | NoDate as d -> d
@@ -164,7 +164,7 @@ end = struct
         add_parents_to_queue iper_queue store parents;
         let families = Array.map (Gwdb.foi base) (Gwdb.get_family person) in
         let spouses = spouses_of_families iper families in
-        add_spouses_to_queue iper_queue store spouses;
+        add_not_ongoing_ipers_to_queue iper_queue store spouses;
         Stack.push iper stack;
         find_person_date_of_queue base iper_queue stack store
     end
