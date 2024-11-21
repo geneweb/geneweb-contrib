@@ -27,6 +27,8 @@ end = struct
 
   let result date = Result date
 
+  let estimated_date year = EstimatedDate year
+
   let date_of_result = function
       Result d -> Some d
     | Todo -> None
@@ -73,31 +75,42 @@ end = struct
   let is_ongoing store iper =
     Store.get store iper = Ongoing
 
-  let add_not_ongoing_to_queue store iper_queue iper =
-    if not (is_ongoing store iper) then
-      Queue.add iper iper_queue
+  let add_not_ongoing_to_queue store iper_queue iper_opt =
+    Option.iter (fun iper ->
+        if not (is_ongoing store iper) then
+          Queue.add iper iper_queue)
+      iper_opt
 
   let add_parents_to_queue iper_queue store parents =
     let father = Option.map Gwdb.get_father parents in
     let mother = Option.map Gwdb.get_mother parents in
-    Option.iter (add_not_ongoing_to_queue store iper_queue) father;
-    Option.iter (add_not_ongoing_to_queue store iper_queue) mother
+    add_not_ongoing_to_queue store iper_queue father;
+    add_not_ongoing_to_queue store iper_queue mother
 
   let spouses_of_families iper families =
     let get_spouse iper family =
       let fath = Gwdb.get_father family in
       let moth = Gwdb.get_mother family in
-      if Gwdb.compare_iper iper fath = 0 then moth else fath
+      if Gwdb.compare_iper iper fath = 0 then Some moth else
+      if Gwdb.compare_iper iper moth = 0 then Some fath else
+        None
     in
     Array.map (get_spouse iper) families
+
+  let siblings_of_family iper parents =
+    let children = Gwdb.get_children parents in
+    Array.map (fun child_iper ->
+        if Gwdb.compare_iper iper child_iper <> 0 then Some child_iper
+        else None
+      ) children
 
   let add_not_ongoing_ipers_to_queue iper_queue store ipers =
     Array.iter (add_not_ongoing_to_queue store iper_queue) ipers
 
   let add_one_gen_to_date = function
     | NoDate as d -> d
-    | FoundDate d -> EstimatedDate (d + nb_years_by_gen)
-    | EstimatedDate d -> EstimatedDate (d + nb_years_by_gen)
+    | FoundDate d -> estimated_date (d + nb_years_by_gen)
+    | EstimatedDate d -> estimated_date (d + nb_years_by_gen)
 
   let best_date_year_opt d1 d2 = match d1, d2 with
     | FoundDate d1, FoundDate d2
@@ -117,10 +130,14 @@ end = struct
 
   let best_estimated_date_of_years d1 d2 = match d1, d2 with
     | Some d1, Some d2 ->
-      Option.map (fun d -> EstimatedDate d) (best_date_year_opt d1 d2)
+      Option.map estimated_date (best_date_year_opt d1 d2)
     | Some d, _ | _, Some d ->
-      Option.map (fun d -> EstimatedDate d) (year_opt_of_date d)
+      Option.map estimated_date (year_opt_of_date d)
     | None, None -> None
+
+  let best_estimated_date_of_dates d1 d2 =
+    let date_opt = Option.map estimated_date (best_date_year_opt d1 d2) in
+    Option.value ~default:NoDate date_opt
 
   let best_date_of_parents store parents =
     let father = Option.map Gwdb.get_father parents in
@@ -141,21 +158,23 @@ end = struct
     in
     Option.value ~default:NoDate date_opt
 
-  let best_date_of_spouses store spouses =
-    let date = Array.fold_left (fun best_date iper ->
-        let spouse_computation = Store.get store iper in
-        let spouse_date = date_of_result spouse_computation in
-        match best_date_year_opt best_date (Option.value ~default:NoDate spouse_date) with
-        | Some d -> EstimatedDate d
+  let best_date_of_ipers_opt store ipers_opt =
+    Array.fold_left (fun best_date -> function
+        | Some iper ->
+          let computation = Store.get store iper in
+          let date_opt = date_of_result computation in
+          let best_year_opt =
+            best_date_year_opt best_date (Option.value ~default:NoDate date_opt)
+          in
+          Option.value ~default:best_date
+            (Option.map estimated_date best_year_opt)
         | None -> best_date
-      ) NoDate spouses
-    in
-    date
+      ) NoDate ipers_opt
 
   let rec find_person_date base iper_queue stack (store : t) iper =
     Store.set store iper Ongoing;
     let person = Gwdb.poi base iper in
-    begin match  Gwaccess_util.oldest_year_of person with
+    match  Gwaccess_util.oldest_year_of person with
       | Some date ->
         Store.set store iper (result (FoundDate date));
         find_person_date_of_queue base iper_queue stack store
@@ -165,9 +184,10 @@ end = struct
         let families = Array.map (Gwdb.foi base) (Gwdb.get_family person) in
         let spouses = spouses_of_families iper families in
         add_not_ongoing_ipers_to_queue iper_queue store spouses;
+        let siblings = Option.map (siblings_of_family iper) parents in
+        Option.iter (add_not_ongoing_ipers_to_queue iper_queue store) siblings;
         Stack.push iper stack;
         find_person_date_of_queue base iper_queue stack store
-    end
 
   and compute_stack base store stack =
     if Stack.is_empty stack then ()
@@ -177,15 +197,28 @@ end = struct
       let parents = Option.map (Gwdb.foi base) (Gwdb.get_parents person) in
       let families = Array.map (Gwdb.foi base) (Gwdb.get_family person) in
       let spouses = spouses_of_families iper families in
+      let siblings = Option.map (siblings_of_family iper) parents in
       let date_parents = best_date_of_parents store parents in
-      let date_spouses = best_date_of_spouses store spouses in
-      let date_year_opt = best_date_year_opt date_spouses date_parents in
-      let date_opt = Option.map (fun year -> EstimatedDate year) date_year_opt in
-      let date = Option.value ~default:NoDate date_opt in
-      let has_ongoing_spouse =
-        Array.exists (fun iper -> Store.get store iper = Ongoing) spouses
+      let date_spouses = best_date_of_ipers_opt store spouses in
+      let date_siblings_opt = Option.map (best_date_of_ipers_opt store) siblings in
+      let date_siblings = Option.value ~default:NoDate date_siblings_opt in
+      let date =
+        best_estimated_date_of_dates date_siblings
+          (best_estimated_date_of_dates date_parents date_spouses)
       in
-      if has_ongoing_spouse && date = NoDate then
+      let has_ongoing_relative () =
+        let has_ongoing ipers_opt =
+          Array.exists (function
+              | Some iper' ->
+                assert (Gwdb.compare_iper iper' iper <> 0);
+                is_ongoing store iper'
+              | None -> false
+            ) ipers_opt
+        in
+        has_ongoing spouses ||
+        Option.value ~default:false (Option.map has_ongoing siblings)
+      in
+      if date = NoDate && has_ongoing_relative () then
         Store.set store iper Todo
       else
         Store.set store iper (result date);
@@ -211,20 +244,25 @@ end = struct
       | Result (FoundDate d) -> Printf.sprintf "found %d" d
       | Result (EstimatedDate d) -> Printf.sprintf "estimated %d" d
       | Result NoDate -> "nodate"
-      | Todo -> assert false
-      | Ongoing -> assert false
+      | Todo -> "todo"
+      | Ongoing -> "ongoing"
     in
     Gwdb.Collection.iter (fun iper ->
         let date = Store.get store iper in
         let date_s = string_of_date date in
-
-        let spouses = spouses_of_families iper (Array.map (Gwdb.foi base) (Gwdb.get_family (Gwdb.poi base iper))) in
-        let spouse_dates = Array.map (fun iper -> iper, Store.get store iper) spouses in
-        let spouses_dates_strings = Array.to_list (Array.map (fun (iper, d) ->
-            Printf.sprintf "<%s> %s" (Gwdb.string_of_iper iper) (string_of_date d)) spouse_dates) in
+        let spouses =
+          spouses_of_families iper
+            (Array.map (Gwdb.foi base) (Gwdb.get_family (Gwdb.poi base iper)))
+          |> Array.to_list |> List.filter (Option.is_some) |> List.map Option.get
+        in
+        let spouse_dates = List.map (fun iper -> iper, Store.get store iper) spouses in
+        let spouses_dates_strings = List.map (fun (iper, d) ->
+            Printf.sprintf "<%s> %s" (Gwdb.string_of_iper iper) (string_of_date d)
+          ) spouse_dates
+        in
         let spouse_str = String.concat "|" spouses_dates_strings in
-
-        print_endline @@ Printf.sprintf "[%s] %s // %s" (Gwdb.string_of_iper iper) date_s spouse_str
+        print_endline @@ Printf.sprintf "[%s] %s // %s"
+          (Gwdb.string_of_iper iper) date_s spouse_str
       ) (Gwdb.ipers base)
 
   let of_base base =
@@ -242,7 +280,6 @@ end
 
 let change_access base store lim_year trace =
   DatesStore.fold (fun changes ~iper ~estimated_year ->
-      (*print_endline @@ Printf.sprintf "<%s> %s" (Gwdb.string_of_iper iper) (string_of_int estimated_year);*)
       let p = Gwdb.poi base iper in
       match Gwdb.get_access p with
       | IfTitles ->
