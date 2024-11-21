@@ -1,17 +1,31 @@
 
+(** This executable is used to update the access field of the persons in the
+    base to match the confidentiality level assiociated with the given year.
+
+    We only change accesses for persons with default access that do not have
+    a date, because when someone has a date, confidentiatlity is handled by
+    geneweb according to the base configuration.
+
+    We perform the task in two steps.
+    1) Compute an estimated date for every person in the base when possible
+    2) Update the accesses of default access persons accordingly
+*)
+
 let nb_years_by_gen = 30
 let debug = ref false
 
-
+(** This module implements a store for the dates of every person in the base.*)
 module DatesStore : sig
   type t
-
-  type computed_date
+  (** the type of the date store *)
 
   val of_base : Gwdb.base -> t
+  (** [of_base base] returns the store corresponding to the base.*)
 
   val fold : ('a -> iper:Gwdb.iper -> estimated_year:int -> 'a) -> 'a -> t -> 'a
-
+  (** [fold f acc store] fold operation over the store, it only considers the
+      persons with an estimated years and ignores the persons with an explicit date in
+      their primary events or without a computed date at all.*)
 end = struct
 
 
@@ -20,6 +34,8 @@ end = struct
     | EstimatedDate of int
     | NoDate
 
+  (* When computing dates for the persons in the base we will need to store the
+     state of the computation associated with a person. *)
   type computation =
     | Result of computed_date
     | Ongoing
@@ -30,10 +46,11 @@ end = struct
   let estimated_date year = EstimatedDate year
 
   let date_of_result = function
-      Result d -> Some d
+    | Result d -> Some d
     | Todo -> None
     | Ongoing -> None
 
+  (* This module implements the actual store of the computation states *)
   module Store : sig
     type t
     val create : Gwdb.iper Gwdb.Collection.t -> t
@@ -46,6 +63,8 @@ end = struct
       collection : Gwdb.iper Gwdb.Collection.t;
       store : (Gwdb.iper, computation) Gwdb.Marker.t
     }
+    (* We keep the collection to ease folding on the store, as markers are not
+       foldable *)
 
     let get {store; _} iper = Gwdb.Marker.get store iper
 
@@ -68,9 +87,11 @@ end = struct
     Store.fold (fun acc iper comp -> match comp with
         | Result (EstimatedDate estimated_year) -> f acc ~iper ~estimated_year
         | Result _ -> acc
-        | Ongoing -> assert false
-        | Todo -> assert false
+        | Ongoing -> assert false (* should not happen *)
+        | Todo -> assert false (* should not happen *)
       ) acc store
+  (* It is assumed that once the computation is done for the whole base, there should
+     not be any ongoing or pending computation. *)
 
   let is_ongoing store iper =
     Store.get store iper = Ongoing
@@ -171,6 +192,12 @@ end = struct
         | None -> best_date
       ) NoDate ipers_opt
 
+  (* Traversal of a given node (iper).
+     If we find a date in the primary events then we have a result for the node,
+     else we have to search through ancestors and relatives, if that is the
+     case then we queue them and push the current node on the stack to use the results
+     we need when they are available.
+  *)
   let rec find_person_date base iper_queue stack (store : t) iper =
     Store.set store iper Ongoing;
     let person = Gwdb.poi base iper in
@@ -189,6 +216,10 @@ end = struct
         Stack.push iper stack;
         find_person_date_of_queue base iper_queue stack store
 
+  (* The stack holds the ids of the nodes that require informations not readily available and
+     found during the search. Once the search starting from a node is finished, we can have
+     access to the needed values.
+  *)
   and compute_stack base store stack =
     if Stack.is_empty stack then ()
     else
@@ -218,6 +249,14 @@ end = struct
         has_ongoing spouses ||
         Option.value ~default:false (Option.map has_ongoing siblings)
       in
+      (* Some nodes depend on the results associated to another that in turns depend on their
+         own result. This only ever happens if there is a cycle in the graph, or if the node was
+         reached by a relative (a spouse or a sibling), but we could not find a result for them.
+         We mark these nodes as still pending, because the originating node is in the stack and
+         will eventually be associated with a result that we may use, then we will be able to
+         break the dependency cycle because all relatives will be either finished or pending but
+         not ongoing.
+      *)
       if date = NoDate && has_ongoing_relative () then
         Store.set store iper Todo
       else
@@ -225,6 +264,8 @@ end = struct
       compute_stack base store stack
 
   and find_person_date_of_queue base iper_queue stack store =
+    (* Whenever the queue is empty, we finished the search and now have to finalize the
+       remaining computations on the stack. *)
     if Queue.is_empty iper_queue then compute_stack base store stack
     else
       let iper = Queue.pop iper_queue in
@@ -233,6 +274,15 @@ end = struct
       | Result _ -> find_person_date_of_queue base iper_queue stack store
       | Ongoing -> find_person_date_of_queue base iper_queue stack store
 
+  (* The overall strategy to compute the dates is to perform a breadth-first search for each
+     node in the DAG, but never search past an edge more than once by reusing the results of
+     previous searches. Each node has a computation state stored in the "store" that helps us
+     do just that.
+     Given a node in the DAG we need to search for the most recent date we can infer from its
+     relatives and ancestors. Breadth-first search is implemented using a queue of the next
+     nodes in the DAG. To be tail recursive we need to postpone some of the computations by
+     piling the concerned nodes in a stack.
+  *)
   let find_person_date base store iper =
     let iper_queue = Queue.create () in
     let stack = Stack.create () in
