@@ -1,5 +1,3 @@
-open Def
-open Gwdb
 
 let nb_years_by_gen = 30
 let debug = ref false
@@ -41,7 +39,7 @@ end = struct
     val create : Gwdb.iper Gwdb.Collection.t -> t
     val get : t -> Gwdb.iper -> computation
     val set : t -> Gwdb.iper -> computation -> unit
-    val fold : ('a -> iper -> computation -> 'a) -> 'a -> t -> 'a
+    val fold : ('a -> Gwdb.iper -> computation -> 'a) -> 'a -> t -> 'a
   end = struct
 
     type t = {
@@ -268,7 +266,7 @@ end = struct
       ) (Gwdb.ipers base)
 
   let of_base base =
-    let n = nb_of_persons base in
+    let n = Gwdb.nb_of_persons base in
     let ipers_collection = Gwdb.ipers base in
     let store = Store.create ipers_collection in
     Gwdb.Collection.iteri (fun i iper ->
@@ -306,10 +304,9 @@ let change_access base store lim_year trace =
 
 let compute_persons_accesses ~fast bname lim_year trace =
   let base = Gwdb.open_base bname in
-  let () = load_ascends_array base in
-  let () = load_couples_array base in
-  let _n = nb_of_persons base in
-  if fast then load_persons_array base ;
+  let () = Gwdb.load_ascends_array base in
+  let () = Gwdb.load_couples_array base in
+  if fast then Gwdb.load_persons_array base ;
   Consang.check_noloop base
     (function
        OwnAncestor p ->
@@ -321,8 +318,8 @@ let compute_persons_accesses ~fast bname lim_year trace =
   ProgrBar.start ();
   let store = DatesStore.of_base base in
   let changes = change_access base store lim_year trace in
-  if fast then clear_persons_array base ;
-  if changes then commit_patches base;
+  if fast then Gwdb.clear_persons_array base ;
+  if changes then Gwdb.commit_patches base;
   ProgrBar.finish ()
 
 let lim_year = ref 1900
