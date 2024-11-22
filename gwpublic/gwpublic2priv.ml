@@ -220,8 +220,15 @@ end = struct
      found during the search. Once the search starting from a node is finished, we can have
      access to the needed values.
   *)
-  and compute_stack base store stack =
-    if Stack.is_empty stack then ()
+  and compute_stack' base store (stack, list) progress_was_made =
+    if Stack.is_empty stack then
+      if list = [] then ()
+      else if progress_was_made then begin
+        List.iter (fun iper -> Stack.push iper stack) list;
+        compute_stack base store stack
+      end
+      else
+        List.iter (fun iper -> Store.set store iper (result NoDate)) list
     else
       let iper = Stack.pop stack in
       let person = Gwdb.poi base iper in
@@ -237,18 +244,6 @@ end = struct
         best_estimated_date_of_dates date_siblings
           (best_estimated_date_of_dates date_parents date_spouses)
       in
-      let has_ongoing_relative () =
-        let has_ongoing ipers_opt =
-          Array.exists (function
-              | Some iper' ->
-                assert (Gwdb.compare_iper iper' iper <> 0);
-                is_ongoing store iper'
-              | None -> false
-            ) ipers_opt
-        in
-        has_ongoing spouses ||
-        Option.value ~default:false (Option.map has_ongoing siblings)
-      in
       (* Some nodes depend on the results associated to another that in turns depend on their
          own result. This only ever happens if there is a cycle in the graph, or if the node was
          reached by a relative (a spouse or a sibling), but we could not find a result for them.
@@ -257,11 +252,19 @@ end = struct
          break the dependency cycle because all relatives will be either finished or pending but
          not ongoing.
       *)
-      if date = NoDate && has_ongoing_relative () then
-        Store.set store iper Todo
-      else
-        Store.set store iper (result date);
-      compute_stack base store stack
+      let list =
+        if date = NoDate && not (Stack.is_empty stack) then
+          iper :: list
+        else begin
+          Store.set store iper (result date);
+          list
+        end
+      in
+      let progress_was_made = progress_was_made || date <> NoDate in
+      compute_stack' base store (stack, list) progress_was_made
+
+  and compute_stack base store stack =
+    compute_stack' base store (stack, []) false
 
   and find_person_date_of_queue base iper_queue stack store =
     (* Whenever the queue is empty, we finished the search and now have to finalize the
