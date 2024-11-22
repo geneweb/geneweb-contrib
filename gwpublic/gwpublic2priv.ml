@@ -132,10 +132,6 @@ end = struct
       let children = Gwdb.get_children parents in
       Store.set_siblings store ifam (Some children);
       children
-(*      Array.map (fun child_iper ->
-          if Gwdb.compare_iper iper child_iper <> 0 then Some child_iper
-          else None
-        ) children*)
 
   let _add_not_ongoing_ipers_to_queue iper_queue store ipers =
     Array.iter (add_not_ongoing_to_queue store iper_queue) ipers
