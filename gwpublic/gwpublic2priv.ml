@@ -53,31 +53,41 @@ end = struct
   (* This module implements the actual store of the computation states *)
   module Store : sig
     type t
-    val create : Gwdb.iper Gwdb.Collection.t -> t
+    val create : Gwdb.iper Gwdb.Collection.t -> Gwdb.ifam Gwdb.Collection.t -> t
     val get : t -> Gwdb.iper -> computation
     val set : t -> Gwdb.iper -> computation -> unit
+    val get_siblings : t -> Gwdb.ifam -> Gwdb.iper array option
+    val set_siblings : t -> Gwdb.ifam -> Gwdb.iper array option -> unit
     val fold : ('a -> Gwdb.iper -> computation -> 'a) -> 'a -> t -> 'a
   end = struct
 
+    type siblings = Gwdb.iper Array.t
+
     type t = {
-      collection : Gwdb.iper Gwdb.Collection.t;
-      store : (Gwdb.iper, computation) Gwdb.Marker.t
+      iper_collection : Gwdb.iper Gwdb.Collection.t;
+      iper_store : (Gwdb.iper, computation) Gwdb.Marker.t;
+      ifam_store :  (Gwdb.ifam, siblings option) Gwdb.Marker.t;
     }
     (* We keep the collection to ease folding on the store, as markers are not
        foldable *)
 
-    let get {store; _} iper = Gwdb.Marker.get store iper
+    let get {iper_store; _} iper = Gwdb.Marker.get iper_store iper
 
-    let set {store;_} iper comp = Gwdb.Marker.set store iper comp
+    let set {iper_store;_} iper comp = Gwdb.Marker.set iper_store iper comp
 
-    let create collection =
-      let store = Gwdb.iper_marker collection Todo in
-      {collection; store}
+    let get_siblings {ifam_store; _} ifam = Gwdb.Marker.get ifam_store ifam
+
+    let set_siblings {ifam_store;_} ifam siblings = Gwdb.Marker.set ifam_store ifam siblings
+
+    let create iper_collection ifam_collection =
+      let iper_store = Gwdb.iper_marker iper_collection Todo in
+      let ifam_store = Gwdb.ifam_marker ifam_collection None in
+      {iper_collection; iper_store; ifam_store}
 
     let fold f acc t =
       Gwdb.Collection.fold (fun acc iper ->
           f acc iper (get t iper)
-        ) acc t.collection
+        ) acc t.iper_collection
   end
 
 
@@ -96,36 +106,38 @@ end = struct
   let is_ongoing store iper =
     Store.get store iper = Ongoing
 
-  let add_not_ongoing_to_queue store iper_queue iper_opt =
-    Option.iter (fun iper ->
-        if not (is_ongoing store iper) then
-          Queue.add iper iper_queue)
-      iper_opt
+  let add_not_ongoing_to_queue store iper_queue iper =
+    if not (is_ongoing store iper) then
+      Queue.add iper iper_queue
 
   let add_parents_to_queue iper_queue store parents =
     let father = Option.map Gwdb.get_father parents in
     let mother = Option.map Gwdb.get_mother parents in
-    add_not_ongoing_to_queue store iper_queue father;
-    add_not_ongoing_to_queue store iper_queue mother
+    Option.iter (add_not_ongoing_to_queue store iper_queue) father;
+    Option.iter (add_not_ongoing_to_queue store iper_queue) mother
 
   let spouses_of_families iper families =
     let get_spouse iper family =
       let fath = Gwdb.get_father family in
       let moth = Gwdb.get_mother family in
-      if Gwdb.compare_iper iper fath = 0 then Some moth else
-      if Gwdb.compare_iper iper moth = 0 then Some fath else
-        None
+      if Gwdb.compare_iper iper fath = 0 then moth else fath
     in
     Array.map (get_spouse iper) families
 
-  let siblings_of_family iper parents =
-    let children = Gwdb.get_children parents in
-    Array.map (fun child_iper ->
-        if Gwdb.compare_iper iper child_iper <> 0 then Some child_iper
-        else None
-      ) children
+  let siblings_of_family store parents =
+    let ifam = Gwdb.get_ifam parents in
+    match Store.get_siblings store ifam with
+    | Some siblings -> siblings
+    | None ->
+      let children = Gwdb.get_children parents in
+      Store.set_siblings store ifam (Some children);
+      children
+(*      Array.map (fun child_iper ->
+          if Gwdb.compare_iper iper child_iper <> 0 then Some child_iper
+          else None
+        ) children*)
 
-  let add_not_ongoing_ipers_to_queue iper_queue store ipers =
+  let _add_not_ongoing_ipers_to_queue iper_queue store ipers =
     Array.iter (add_not_ongoing_to_queue store iper_queue) ipers
 
   let add_one_gen_to_date = function
@@ -179,18 +191,16 @@ end = struct
     in
     Option.value ~default:NoDate date_opt
 
-  let best_date_of_ipers_opt store ipers_opt =
-    Array.fold_left (fun best_date -> function
-        | Some iper ->
-          let computation = Store.get store iper in
-          let date_opt = date_of_result computation in
-          let best_year_opt =
-            best_date_year_opt best_date (Option.value ~default:NoDate date_opt)
-          in
-          Option.value ~default:best_date
-            (Option.map estimated_date best_year_opt)
-        | None -> best_date
-      ) NoDate ipers_opt
+  let best_date_of_ipers_opt store ipers =
+    Array.fold_left (fun best_date iper ->
+        let computation = Store.get store iper in
+        let date_opt = date_of_result computation in
+        let best_year_opt =
+          best_date_year_opt best_date (Option.value ~default:NoDate date_opt)
+        in
+        Option.value ~default:best_date
+          (Option.map estimated_date best_year_opt)
+      ) NoDate ipers
 
   (* Traversal of a given node (iper).
      If we find a date in the primary events then we have a result for the node,
@@ -198,23 +208,23 @@ end = struct
      case then we queue them and push the current node on the stack to use the results
      we need when they are available.
   *)
-  let rec find_person_date base iper_queue stack (store : t) iper =
+  let rec find_person_date base iper_queue sstack stack (store : t) iper =
     Store.set store iper Ongoing;
     let person = Gwdb.poi base iper in
     match  Gwaccess_util.oldest_year_of person with
       | Some date ->
         Store.set store iper (result (FoundDate date));
-        find_person_date_of_queue base iper_queue stack store
+        find_person_date_of_queue base iper_queue sstack stack store
       | None ->
         let parents = Option.map (Gwdb.foi base) (Gwdb.get_parents person) in
         add_parents_to_queue iper_queue store parents;
-        let families = Array.map (Gwdb.foi base) (Gwdb.get_family person) in
+(*        let families = Array.map (Gwdb.foi base) (Gwdb.get_family person) in
         let spouses = spouses_of_families iper families in
-        add_not_ongoing_ipers_to_queue iper_queue store spouses;
-        let siblings = Option.map (siblings_of_family iper) parents in
-        Option.iter (add_not_ongoing_ipers_to_queue iper_queue store) siblings;
+          add_not_ongoing_ipers_to_queue iper_queue store spouses;*)
+        (*let siblings = Option.map (siblings_of_family store) parents in
+          Option.iter (add_not_ongoing_ipers_to_queue iper_queue store) siblings;*)
         Stack.push iper stack;
-        find_person_date_of_queue base iper_queue stack store
+        find_person_date_of_queue base iper_queue sstack stack store
 
   (* The stack holds the ids of the nodes that require informations not readily available and
      found during the search. Once the search starting from a node is finished, we can have
@@ -222,20 +232,18 @@ end = struct
   *)
   and compute_stack' base store (stack, list) progress_was_made =
     if Stack.is_empty stack then
-      if list = [] then ()
-      else if progress_was_made then begin
+      if list = [] then progress_was_made
+      else begin
         List.iter (fun iper -> Stack.push iper stack) list;
-        compute_stack base store stack
+        progress_was_made
       end
-      else
-        List.iter (fun iper -> Store.set store iper (result NoDate)) list
     else
       let iper = Stack.pop stack in
       let person = Gwdb.poi base iper in
       let parents = Option.map (Gwdb.foi base) (Gwdb.get_parents person) in
       let families = Array.map (Gwdb.foi base) (Gwdb.get_family person) in
       let spouses = spouses_of_families iper families in
-      let siblings = Option.map (siblings_of_family iper) parents in
+      let siblings = Option.map (siblings_of_family store) parents in
       let date_parents = best_date_of_parents store parents in
       let date_spouses = best_date_of_ipers_opt store spouses in
       let date_siblings_opt = Option.map (best_date_of_ipers_opt store) siblings in
@@ -253,7 +261,7 @@ end = struct
          not ongoing.
       *)
       let list =
-        if date = NoDate && not (Stack.is_empty stack) then
+        if date = NoDate then
           iper :: list
         else begin
           Store.set store iper (result date);
@@ -266,16 +274,16 @@ end = struct
   and compute_stack base store stack =
     compute_stack' base store (stack, []) false
 
-  and find_person_date_of_queue base iper_queue stack store =
+  and find_person_date_of_queue base iper_queue stack_queue stack store =
     (* Whenever the queue is empty, we finished the search and now have to finalize the
        remaining computations on the stack. *)
-    if Queue.is_empty iper_queue then compute_stack base store stack
+    if Queue.is_empty iper_queue then Queue.push stack stack_queue
     else
       let iper = Queue.pop iper_queue in
       match Store.get store iper with
-      | Todo -> find_person_date base iper_queue stack store iper
-      | Result _ -> find_person_date_of_queue base iper_queue stack store
-      | Ongoing -> find_person_date_of_queue base iper_queue stack store
+      | Todo -> find_person_date base iper_queue stack_queue stack store iper
+      | Result _ -> find_person_date_of_queue base iper_queue stack_queue stack store
+      | Ongoing -> find_person_date_of_queue base iper_queue stack_queue stack store
 
   (* The overall strategy to compute the dates is to perform a breadth-first search for each
      node in the DAG, but never search past an edge more than once by reusing the results of
@@ -286,11 +294,11 @@ end = struct
      nodes in the DAG. To be tail recursive we need to postpone some of the computations by
      piling the concerned nodes in a stack.
   *)
-  let find_person_date base store iper =
+  let find_person_date base store stack_queue iper =
     let iper_queue = Queue.create () in
     let stack = Stack.create () in
     Queue.add iper iper_queue;
-    find_person_date_of_queue base iper_queue stack store
+    find_person_date_of_queue base iper_queue stack_queue stack store
 
   let print_debug_info base store =
     let string_of_date = function
@@ -306,7 +314,7 @@ end = struct
         let spouses =
           spouses_of_families iper
             (Array.map (Gwdb.foi base) (Gwdb.get_family (Gwdb.poi base iper)))
-          |> Array.to_list |> List.filter (Option.is_some) |> List.map Option.get
+          |> Array.to_list
         in
         let spouse_dates = List.map (fun iper -> iper, Store.get store iper) spouses in
         let spouses_dates_strings = List.map (fun (iper, d) ->
@@ -321,12 +329,31 @@ end = struct
   let of_base base =
     let n = Gwdb.nb_of_persons base in
     let ipers_collection = Gwdb.ipers base in
-    let store = Store.create ipers_collection in
+    let ifams_collection = Gwdb.ifams base in
+    let store = Store.create ipers_collection ifams_collection in
+    let stack_queue = Queue.create () in
     Gwdb.Collection.iteri (fun i iper ->
-        find_person_date base store iper;
+        find_person_date base store stack_queue iper;
         ProgrBar.run i n
       )
       ipers_collection;
+    let rec work_until_no_progress stack_queue nstack_queue progress =
+      if Queue.is_empty stack_queue then
+        if progress then
+          work_until_no_progress nstack_queue stack_queue false
+        else begin
+          Queue.iter (Stack.iter (fun iper ->
+              Store.set store iper (result NoDate)
+            )) nstack_queue
+        end
+      else
+        let stack = Queue.pop stack_queue in
+        let stack_progress = compute_stack base store stack in
+        if not (Stack.is_empty stack) then Queue.push stack nstack_queue;
+        let progress = progress || stack_progress in
+        work_until_no_progress stack_queue nstack_queue progress
+    in
+    work_until_no_progress stack_queue (Queue.create ()) false;
     if !debug then print_debug_info base store;
     store
 end
