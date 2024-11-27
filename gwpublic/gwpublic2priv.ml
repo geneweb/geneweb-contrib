@@ -117,12 +117,7 @@ end = struct
     Option.iter (add_not_ongoing_to_queue store iper_queue) mother
 
   let spouses_of_families iper families =
-    let get_spouse iper family =
-      let fath = Gwdb.get_father family in
-      let moth = Gwdb.get_mother family in
-      if Gwdb.compare_iper iper fath = 0 then moth else fath
-    in
-    Array.map (get_spouse iper) families
+    Array.map (Gutil.spouse iper) families
 
   let siblings_of_family store parents =
     let ifam = Gwdb.get_ifam parents in
