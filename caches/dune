@@ -1,0 +1,5 @@
+(library
+ (name caches)
+ (wrapped false)
+ (libraries geneweb unix geneweb.gwdb-versioned geneweb.wserver)
+ (modules caches))

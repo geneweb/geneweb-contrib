@@ -1,0 +1,4 @@
+(executables
+  (names gwfixbase)
+  (libraries unix geneweb.gwdb-versioned geneweb.sosa_zarith geneweb.gwfixbase_lib caches)
+)

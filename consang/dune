@@ -1,0 +1,4 @@
+(executables
+  (names consang)
+  (libraries unix geneweb.gwdb-versioned geneweb.sosa_zarith geneweb geneweb.consang_lib)
+)
