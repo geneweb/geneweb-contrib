@@ -196,18 +196,18 @@ end = struct
      case then we queue them and push the current node on the stack to use the results
      we need when they are available.
   *)
-  let rec find_person_date base iper_queue sstack stack (store : t) iper =
+  let rec find_person_date base iper_queue stack_queue stack (store : t) iper =
     Store.set store iper Ongoing;
     let person = Gwdb.poi base iper in
     match  Gwaccess_util.oldest_year_of person with
       | Some date ->
         Store.set store iper (result (FoundDate date));
-        find_person_date_of_queue base iper_queue sstack stack store
+        find_person_date_of_queue base iper_queue stack_queue stack store
       | None ->
         let parents = Option.map (Gwdb.foi base) (Gwdb.get_parents person) in
         add_parents_to_queue iper_queue store parents;
         Stack.push iper stack;
-        find_person_date_of_queue base iper_queue sstack stack store
+        find_person_date_of_queue base iper_queue stack_queue stack store
 
   (* The stack holds the ids of the nodes that require informations not readily available and
      found during the search. Once the search starting from a node is finished, we can have
