@@ -206,11 +206,6 @@ end = struct
       | None ->
         let parents = Option.map (Gwdb.foi base) (Gwdb.get_parents person) in
         add_parents_to_queue iper_queue store parents;
-(*        let families = Array.map (Gwdb.foi base) (Gwdb.get_family person) in
-        let spouses = spouses_of_families iper families in
-          add_not_ongoing_ipers_to_queue iper_queue store spouses;*)
-        (*let siblings = Option.map (siblings_of_family store) parents in
-          Option.iter (add_not_ongoing_ipers_to_queue iper_queue store) siblings;*)
         Stack.push iper stack;
         find_person_date_of_queue base iper_queue sstack stack store
 
