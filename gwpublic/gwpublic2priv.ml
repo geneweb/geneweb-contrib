@@ -128,9 +128,6 @@ end = struct
       Store.set_siblings store ifam (Some children);
       children
 
-  let _add_not_ongoing_ipers_to_queue iper_queue store ipers =
-    Array.iter (add_not_ongoing_to_queue store iper_queue) ipers
-
   let add_one_gen_to_date = function
     | NoDate as d -> d
     | FoundDate d -> estimated_date (d + nb_years_by_gen)
