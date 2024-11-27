@@ -24,7 +24,7 @@ module DatesStore : sig
 
   val fold : ('a -> iper:Gwdb.iper -> estimated_year:int -> 'a) -> 'a -> t -> 'a
   (** [fold f acc store] fold operation over the store, it only considers the
-      persons with an estimated years and ignores the persons with an explicit date in
+      persons with an estimated year and ignores the persons with an explicit date in
       their primary events or without a computed date at all.*)
 end = struct
 
