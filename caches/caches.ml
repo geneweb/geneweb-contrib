@@ -91,7 +91,7 @@ let occupation_cache_fname base_file =
   Filename.concat base_file "cache_occupation"
 
 let sorted_list_of_istr_set base cmp istr_set =
-  let str_list = List.map (Gwdb.sou base)  (IstrSet.elements istr_set) in
+  let str_list = List.rev_map (Gwdb.sou base) (IstrSet.elements istr_set) in
   List.sort cmp str_list
 
 let write_cache_data fname cache_data =
@@ -106,12 +106,12 @@ let write_caches base () =
     let cache = create_cache_data base in
     let base_dir = Geneweb.Util.bpath (Gwdb.bname base ^ ".gwb") in
     let lastname = sorted_list_of_istr_set base Utf8.alphabetic_order cache.lastname in
-    let first_name = sorted_list_of_istr_set base Utf8.alphabetic_order cache.first_name in
-    let occupation = sorted_list_of_istr_set base Utf8.alphabetic_order cache.occupation in
-    let source = sorted_list_of_istr_set base Utf8.alphabetic_order cache.source  in
-    let place = sorted_list_of_istr_set base Geneweb.Place.compare_places cache.place in
     write_cache_data (lastname_cache_fname base_dir) lastname;
+    let first_name = sorted_list_of_istr_set base Utf8.alphabetic_order cache.first_name in
     write_cache_data (first_name_cache_fname base_dir) first_name;
+    let occupation = sorted_list_of_istr_set base Utf8.alphabetic_order cache.occupation in
     write_cache_data (occupation_cache_fname base_dir) occupation;
+    let source = sorted_list_of_istr_set base Utf8.alphabetic_order cache.source  in
     write_cache_data (source_cache_fname base_dir) source;
+    let place = sorted_list_of_istr_set base Geneweb.Place.compare_places cache.place in
     write_cache_data (place_cache_fname base_dir) place
