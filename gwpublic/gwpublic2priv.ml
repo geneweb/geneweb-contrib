@@ -3,7 +3,7 @@
     base to match the confidentiality level assiociated with the given year.
 
     We only change accesses for persons with default access that do not have
-    a date, because when someone has a date, confidentiatlity is handled by
+    a date, because when someone has a date, confidentiality is handled by
     geneweb according to the base configuration.
 
     We perform the task in two steps.
