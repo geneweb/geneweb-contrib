@@ -1,3 +1,3 @@
 
 let () =
-  Gwfixbase_lib.main ~tasks:[]
+  Gwfixbase_lib.main ~tasks:[Caches.write_caches]

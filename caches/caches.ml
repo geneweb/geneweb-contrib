@@ -99,16 +99,19 @@ let write_cache_data fname cache_data =
   Marshal.to_channel oc cache_data [ Marshal.No_sharing ] ;
   close_out oc
 
-let write_caches base =
-  let cache = create_cache_data base in
-  let base_dir = Geneweb.Util.bpath (Gwdb.bname base ^ ".gwb") in
-  let lastname = sorted_list_of_istr_set base Utf8.alphabetic_order cache.lastname in
-  let first_name = sorted_list_of_istr_set base Utf8.alphabetic_order cache.first_name in
-  let occupation = sorted_list_of_istr_set base Utf8.alphabetic_order cache.occupation in
-  let source = sorted_list_of_istr_set base Utf8.alphabetic_order cache.source  in
-  let place = sorted_list_of_istr_set base Geneweb.Place.compare_places cache.place in
-  write_cache_data (lastname_cache_fname base_dir) lastname;
-  write_cache_data (first_name_cache_fname base_dir) first_name;
-  write_cache_data (occupation_cache_fname base_dir) occupation;
-  write_cache_data (source_cache_fname base_dir) source;
-  write_cache_data (place_cache_fname base_dir) place
+let node_threshold = 20_000
+
+let write_caches base () =
+  if Gwdb.nb_of_persons base > node_threshold then
+    let cache = create_cache_data base in
+    let base_dir = Geneweb.Util.bpath (Gwdb.bname base ^ ".gwb") in
+    let lastname = sorted_list_of_istr_set base Utf8.alphabetic_order cache.lastname in
+    let first_name = sorted_list_of_istr_set base Utf8.alphabetic_order cache.first_name in
+    let occupation = sorted_list_of_istr_set base Utf8.alphabetic_order cache.occupation in
+    let source = sorted_list_of_istr_set base Utf8.alphabetic_order cache.source  in
+    let place = sorted_list_of_istr_set base Geneweb.Place.compare_places cache.place in
+    write_cache_data (lastname_cache_fname base_dir) lastname;
+    write_cache_data (first_name_cache_fname base_dir) first_name;
+    write_cache_data (occupation_cache_fname base_dir) occupation;
+    write_cache_data (source_cache_fname base_dir) source;
+    write_cache_data (place_cache_fname base_dir) place
