@@ -106,15 +106,15 @@ end = struct
   let is_ongoing store iper =
     Store.get store iper = Ongoing
 
-  let add_not_ongoing_to_queue store iper_queue iper =
+  let add_not_ongoing_to_queue store search_queue iper =
     if not (is_ongoing store iper) then
-      Queue.add iper iper_queue
+      Queue.add iper search_queue
 
-  let add_parents_to_queue iper_queue store parents =
+  let add_parents_to_queue search_queue store parents =
     let father = Option.map Gwdb.get_father parents in
     let mother = Option.map Gwdb.get_mother parents in
-    Option.iter (add_not_ongoing_to_queue store iper_queue) father;
-    Option.iter (add_not_ongoing_to_queue store iper_queue) mother
+    Option.iter (add_not_ongoing_to_queue store search_queue) father;
+    Option.iter (add_not_ongoing_to_queue store search_queue) mother
 
   let spouses_of_families iper families =
     Array.map (Gutil.spouse iper) families
@@ -196,30 +196,30 @@ end = struct
      case then we queue them and push the current node on the stack to use the results
      we need when they are available.
   *)
-  let rec find_person_date base iper_queue stack_queue stack (store : t) iper =
+  let rec find_person_date base search_queue ancestor_stack_queue ancestor_stack (store : t) iper =
     Store.set store iper Ongoing;
     let person = Gwdb.poi base iper in
     match  Gwaccess_util.oldest_year_of person with
       | Some date ->
         Store.set store iper (result (FoundDate date));
-        find_person_date_of_queue base iper_queue stack_queue stack store
+        find_person_date_of_queue base search_queue ancestor_stack_queue ancestor_stack store
       | None ->
         let parents = Option.map (Gwdb.foi base) (Gwdb.get_parents person) in
-        add_parents_to_queue iper_queue store parents;
-        Stack.push iper stack;
-        find_person_date_of_queue base iper_queue stack_queue stack store
+        add_parents_to_queue search_queue store parents;
+        Stack.push iper ancestor_stack;
+        find_person_date_of_queue base search_queue ancestor_stack_queue ancestor_stack store
 
   (* The stack holds the ids of the nodes that require informations not readily available and
      found during the search. Once the search starting from a node is finished, we can have
      access to the needed values.
   *)
-  and compute_stack' base store (stack, to_compute_again) progress_was_made =
-    if Stack.is_empty stack then begin
-      List.iter (fun iper -> Stack.push iper stack) to_compute_again;
+  and compute_stack' base store (ancestor_stack, to_compute_again) progress_was_made =
+    if Stack.is_empty ancestor_stack then begin
+      List.iter (fun iper -> Stack.push iper ancestor_stack) to_compute_again;
       progress_was_made
     end
     else
-      let iper = Stack.pop stack in
+      let iper = Stack.pop ancestor_stack in
       let person = Gwdb.poi base iper in
       let parents = Option.map (Gwdb.foi base) (Gwdb.get_parents person) in
       let families = Array.map (Gwdb.foi base) (Gwdb.get_family person) in
@@ -250,21 +250,21 @@ end = struct
         end
       in
       let progress_was_made = progress_was_made || date <> NoDate in
-      compute_stack' base store (stack, to_compute_again) progress_was_made
+      compute_stack' base store (ancestor_stack, to_compute_again) progress_was_made
 
-  and compute_stack base store stack =
-    compute_stack' base store (stack, []) false
+  and compute_stack base store ancestor_stack =
+    compute_stack' base store (ancestor_stack, []) false
 
-  and find_person_date_of_queue base iper_queue stack_queue stack store =
+  and find_person_date_of_queue base search_queue ancestor_stack_queue ancestor_stack store =
     (* Whenever the queue is empty, we finished the search and now have to finalize the
        remaining computations on the stack. *)
-    if Queue.is_empty iper_queue then Queue.push stack stack_queue
+    if Queue.is_empty search_queue then Queue.push ancestor_stack ancestor_stack_queue
     else
-      let iper = Queue.pop iper_queue in
+      let iper = Queue.pop search_queue in
       match Store.get store iper with
-      | Todo -> find_person_date base iper_queue stack_queue stack store iper
-      | Result _ -> find_person_date_of_queue base iper_queue stack_queue stack store
-      | Ongoing -> find_person_date_of_queue base iper_queue stack_queue stack store
+      | Todo -> find_person_date base search_queue ancestor_stack_queue ancestor_stack store iper
+      | Result _ -> find_person_date_of_queue base search_queue ancestor_stack_queue ancestor_stack store
+      | Ongoing -> find_person_date_of_queue base search_queue ancestor_stack_queue ancestor_stack store
 
   (* The overall strategy to compute the dates is to perform a breadth-first search for each
      node in the DAG, but never search past an edge more than once by reusing the results of
@@ -275,11 +275,11 @@ end = struct
      nodes in the DAG. To be tail recursive we need to postpone some of the computations by
      piling the concerned nodes in a stack.
   *)
-  let find_person_date base store stack_queue iper =
-    let iper_queue = Queue.create () in
-    let stack = Stack.create () in
-    Queue.add iper iper_queue;
-    find_person_date_of_queue base iper_queue stack_queue stack store
+  let find_person_date base store ancestor_stack_queue iper =
+    let search_queue = Queue.create () in
+    let ancestor_stack = Stack.create () in
+    Queue.add iper search_queue;
+    find_person_date_of_queue base search_queue ancestor_stack_queue ancestor_stack store
 
   let print_debug_info base store =
     let string_of_date = function
@@ -312,28 +312,28 @@ end = struct
     let ipers_collection = Gwdb.ipers base in
     let ifams_collection = Gwdb.ifams base in
     let store = Store.create ipers_collection ifams_collection in
-    let stack_queue = Queue.create () in
+    let ancestor_stack_queue = Queue.create () in
     Gwdb.Collection.iteri (fun i iper ->
-        find_person_date base store stack_queue iper;
+        find_person_date base store ancestor_stack_queue iper;
         ProgrBar.run i n
       )
       ipers_collection;
-    let rec work_until_no_progress stack_queue nstack_queue progress =
-      if Queue.is_empty stack_queue then
+    let rec work_until_no_progress ancestor_stack_queue n_ancestor_stack_queue progress =
+      if Queue.is_empty ancestor_stack_queue then
         if progress then
-          work_until_no_progress nstack_queue (Queue.create ()) false
+          work_until_no_progress n_ancestor_stack_queue (Queue.create ()) false
         else
           Queue.iter (Stack.iter (fun iper ->
               Store.set store iper (result NoDate)
-            )) nstack_queue
+            )) n_ancestor_stack_queue
       else
-        let stack = Queue.pop stack_queue in
-        let stack_progress = compute_stack base store stack in
-        if not (Stack.is_empty stack) then Queue.push stack nstack_queue;
+        let ancestor_stack = Queue.pop ancestor_stack_queue in
+        let stack_progress = compute_stack base store ancestor_stack in
+        if not (Stack.is_empty ancestor_stack) then Queue.push ancestor_stack n_ancestor_stack_queue;
         let progress = progress || stack_progress in
-        work_until_no_progress stack_queue nstack_queue progress
+        work_until_no_progress ancestor_stack_queue n_ancestor_stack_queue progress
     in
-    work_until_no_progress stack_queue (Queue.create ()) false;
+    work_until_no_progress ancestor_stack_queue (Queue.create ()) false;
     if !debug then print_debug_info base store;
     store
 end
