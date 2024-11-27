@@ -213,11 +213,11 @@ end = struct
      found during the search. Once the search starting from a node is finished, we can have
      access to the needed values.
   *)
-  and compute_stack' base store (stack, list) progress_was_made =
+  and compute_stack' base store (stack, to_compute_again) progress_was_made =
     if Stack.is_empty stack then
-      if list = [] then progress_was_made
+      if to_compute_again = [] then progress_was_made
       else begin
-        List.iter (fun iper -> Stack.push iper stack) list;
+        List.iter (fun iper -> Stack.push iper stack) to_compute_again;
         progress_was_made
       end
     else
@@ -243,16 +243,16 @@ end = struct
          break the dependency cycle because all relatives will be either finished or pending but
          not ongoing.
       *)
-      let list =
+      let to_compute_again =
         if date = NoDate then
-          iper :: list
+          iper :: to_compute_again
         else begin
           Store.set store iper (result date);
-          list
+          to_compute_again
         end
       in
       let progress_was_made = progress_was_made || date <> NoDate in
-      compute_stack' base store (stack, list) progress_was_made
+      compute_stack' base store (stack, to_compute_again) progress_was_made
 
   and compute_stack base store stack =
     compute_stack' base store (stack, []) false
