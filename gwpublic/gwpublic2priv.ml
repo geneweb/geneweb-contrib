@@ -214,12 +214,10 @@ end = struct
      access to the needed values.
   *)
   and compute_stack' base store (stack, to_compute_again) progress_was_made =
-    if Stack.is_empty stack then
-      if to_compute_again = [] then progress_was_made
-      else begin
-        List.iter (fun iper -> Stack.push iper stack) to_compute_again;
-        progress_was_made
-      end
+    if Stack.is_empty stack then begin
+      List.iter (fun iper -> Stack.push iper stack) to_compute_again;
+      progress_was_made
+    end
     else
       let iper = Stack.pop stack in
       let person = Gwdb.poi base iper in
