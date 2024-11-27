@@ -323,7 +323,7 @@ end = struct
     let rec work_until_no_progress stack_queue nstack_queue progress =
       if Queue.is_empty stack_queue then
         if progress then
-          work_until_no_progress nstack_queue stack_queue false
+          work_until_no_progress nstack_queue (Queue.create ()) false
         else
           Queue.iter (Stack.iter (fun iper ->
               Store.set store iper (result NoDate)
