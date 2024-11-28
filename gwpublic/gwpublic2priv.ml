@@ -209,7 +209,7 @@ end = struct
         Stack.push iper ancestor_stack;
         find_person_date_of_queue base search_queue ancestor_stack_queue ancestor_stack store
 
-  (* The stack holds the ids of the nodes that require informations not readily available and
+  (* The stack holds the ids of the nodes that require information not readily available and
      found during the search. Once the search starting from a node is finished, we can have
      access to the needed values.
   *)
