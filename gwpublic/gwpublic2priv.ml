@@ -190,30 +190,11 @@ end = struct
           (Option.map estimated_date best_year_opt)
       ) NoDate ipers
 
-  (* Traversal of a given node (iper).
-     If we find a date in the primary events then we have a result for the node,
-     else we have to search through ancestors and relatives, if that is the
-     case then we queue them and push the current node on the stack to use the results
-     we need when they are available.
-  *)
-  let rec find_person_date base search_queue ancestor_stack_queue ancestor_stack (store : t) iper =
-    Store.set store iper Ongoing;
-    let person = Gwdb.poi base iper in
-    match  Gwaccess_util.oldest_year_of person with
-      | Some date ->
-        Store.set store iper (result (FoundDate date));
-        find_person_date_of_queue base search_queue ancestor_stack_queue ancestor_stack store
-      | None ->
-        let parents = Option.map (Gwdb.foi base) (Gwdb.get_parents person) in
-        add_parents_to_queue search_queue store parents;
-        Stack.push iper ancestor_stack;
-        find_person_date_of_queue base search_queue ancestor_stack_queue ancestor_stack store
-
   (* The stack holds the ids of the nodes that require information not readily available and
      found during the search. Once the search starting from a node is finished, we can have
      access to the needed values.
   *)
-  and compute_stack' base store (ancestor_stack, to_compute_again) progress_was_made =
+  let rec compute_stack' base store (ancestor_stack, to_compute_again) progress_was_made =
     if Stack.is_empty ancestor_stack then begin
       List.iter (fun iper -> Stack.push iper ancestor_stack) to_compute_again;
       progress_was_made
@@ -252,8 +233,27 @@ end = struct
       let progress_was_made = progress_was_made || date <> NoDate in
       compute_stack' base store (ancestor_stack, to_compute_again) progress_was_made
 
-  and compute_stack base store ancestor_stack =
+  let compute_stack base store ancestor_stack =
     compute_stack' base store (ancestor_stack, []) false
+
+  (* Traversal of a given node (iper).
+     If we find a date in the primary events then we have a result for the node,
+     else we have to search through ancestors and relatives, if that is the
+     case then we queue them and push the current node on the stack to use the results
+     we need when they are available.
+  *)
+  let rec find_person_date base search_queue ancestor_stack_queue ancestor_stack (store : t) iper =
+    Store.set store iper Ongoing;
+    let person = Gwdb.poi base iper in
+    match  Gwaccess_util.oldest_year_of person with
+      | Some date ->
+        Store.set store iper (result (FoundDate date));
+        find_person_date_of_queue base search_queue ancestor_stack_queue ancestor_stack store
+      | None ->
+        let parents = Option.map (Gwdb.foi base) (Gwdb.get_parents person) in
+        add_parents_to_queue search_queue store parents;
+        Stack.push iper ancestor_stack;
+        find_person_date_of_queue base search_queue ancestor_stack_queue ancestor_stack store
 
   and find_person_date_of_queue base search_queue ancestor_stack_queue ancestor_stack store =
     (* Whenever the queue is empty, we finished the search and now have to finalize the
