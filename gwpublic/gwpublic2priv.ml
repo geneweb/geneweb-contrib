@@ -233,7 +233,7 @@ end = struct
         best_estimated_date_of_dates date_siblings
           (best_estimated_date_of_dates date_parents date_spouses)
       in
-      (* Some nodes depend on the results associated to another that in turns depend on their
+      (* Some nodes depend on the results associated to another that in turn depend on their
          own result. This only ever happens if there is a cycle in the graph, or if the node was
          reached by a relative (a spouse or a sibling), but we could not find a result for them.
          We mark these nodes as still pending, because the originating node is in the stack and
