@@ -108,7 +108,7 @@ end = struct
 
   let add_not_ongoing_to_queue store search_queue iper =
     if not (is_ongoing store iper) then
-      Queue.add iper search_queue
+      Queue.push iper search_queue
 
   let add_parents_to_queue search_queue store parents =
     let father = Option.map Gwdb.get_father parents in
@@ -278,7 +278,7 @@ end = struct
   let find_person_date base store ancestor_stack_queue iper =
     let search_queue = Queue.create () in
     let ancestor_stack = Stack.create () in
-    Queue.add iper search_queue;
+    Queue.push iper search_queue;
     find_person_date_of_queue base search_queue ancestor_stack_queue ancestor_stack store
 
   let print_debug_info base store =
