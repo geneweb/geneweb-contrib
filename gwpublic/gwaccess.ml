@@ -74,7 +74,7 @@ let () =
     exit 2 ;
   | (bname, Some access, everybody, target_access, list) ->
     Secure.set_base_dir (Filename.dirname bname);
-    Lock.control_retry (Files.lock_file bname) ~onerror:Lock.print_error_and_exit @@ fun () ->
+    Geneweb_util.Lock.control_retry (Files.lock_file bname) ~onerror:Geneweb_util.Lock.print_error_and_exit @@ fun () ->
     if Option.is_some target_access then
       Gwaccess_util.change_only_old_access
         ~old_access:(Option.get target_access)

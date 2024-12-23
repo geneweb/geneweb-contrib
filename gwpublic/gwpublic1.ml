@@ -111,24 +111,24 @@ let public_all ~mem bname treshold =
   let ipers = Gwdb.ipers base in
   let old = Gwdb.iper_marker ipers false in
   let scanned = Gwdb.iper_marker ipers (-1) in
-  ProgrBar.start () ;
+  Geneweb_util.ProgrBar.start () ;
   Gwdb.Collection.iteri begin fun i ip ->
-    ProgrBar.run i nb ;
+    Geneweb_util.ProgrBar.run i nb ;
     if Gwdb.Marker.get scanned ip < 0 then
       let p = poi base ip in
       mark_descendants base scanned old treshold p 0
   end ipers ;
-  ProgrBar.finish () ;
+  Geneweb_util.ProgrBar.finish () ;
   let ipers = Gwdb.ipers base in
   let scanned = Gwdb.iper_marker ipers false in
-  ProgrBar.start () ;
+  Geneweb_util.ProgrBar.start () ;
   Gwdb.Collection.iteri begin fun i ip ->
-    ProgrBar.run i nb ;
+    Geneweb_util.ProgrBar.run i nb ;
     if Gwdb.Marker.get old ip && not @@ Gwdb.Marker.get scanned ip then
       let p = poi base ip in
       mark_ancestors base scanned treshold p
   end ipers ;
-  ProgrBar.finish () ;
+  Geneweb_util.ProgrBar.finish () ;
   if not mem then begin
     clear_persons_array base ;
     clear_ascends_array base ;
@@ -173,7 +173,7 @@ let () =
   Arg.parse speclist anonfun usage;
   if !bname = "" then begin Arg.usage speclist usage ; exit 2 end ;
   Secure.set_base_dir (Filename.dirname !bname);
-  Lock.control_retry (Files.lock_file !bname) ~onerror:Lock.print_error_and_exit @@ fun () ->
+  Geneweb_util.Lock.control_retry (Files.lock_file !bname) ~onerror:Geneweb_util.Lock.print_error_and_exit @@ fun () ->
   if !everybody then
     if !ind <> "" then failwith "-everybody and -ind options are mutually exclusive"
     else if !treshold <> 1900 then failwith "-everybody and -y options are mutually exclusive"

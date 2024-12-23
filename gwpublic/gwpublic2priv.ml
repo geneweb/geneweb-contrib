@@ -315,7 +315,7 @@ end = struct
     let ancestor_stack_queue = Queue.create () in
     Gwdb.Collection.iteri (fun i iper ->
         find_person_date base store ancestor_stack_queue iper;
-        ProgrBar.run i n
+        Geneweb_util.ProgrBar.run i n
       )
       ipers_collection;
     let rec work_until_no_progress ancestor_stack_queue n_ancestor_stack_queue progress =
@@ -375,12 +375,12 @@ let compute_persons_accesses ~fast bname lim_year trace =
          flush stdout;
          exit 2
      | _ -> assert false);
-  ProgrBar.start ();
+  Geneweb_util.ProgrBar.start ();
   let store = DatesStore.of_base base in
   let changes = change_access base store lim_year trace in
   if fast then Gwdb.clear_persons_array base ;
   if changes then Gwdb.commit_patches base;
-  ProgrBar.finish ()
+  Geneweb_util.ProgrBar.finish ()
 
 let lim_year = ref 1900
 let trace = ref false
@@ -403,8 +403,8 @@ let main () =
   Arg.parse speclist anonfun usage;
   if !bname = "" then begin Arg.usage speclist usage; exit 2 end;
   Secure.set_base_dir (Filename.dirname !bname);
-  Lock.control_retry
-    (Files.lock_file !bname) ~onerror:Lock.print_error_and_exit @@ fun () ->
+  Geneweb_util.Lock.control_retry
+    (Files.lock_file !bname) ~onerror:Geneweb_util.Lock.print_error_and_exit @@ fun () ->
   compute_persons_accesses ~fast:!fast !bname !lim_year !trace
 
 let _ = main ()

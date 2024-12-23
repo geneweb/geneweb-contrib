@@ -41,9 +41,9 @@ let public_all bname lim_year trace =
      | _ -> assert false);
   let n = nb_of_persons base in
   let changes = ref false in
-  ProgrBar.start ();
+  Geneweb_util.ProgrBar.start ();
   Gwdb.Collection.iteri begin fun i p ->
-    ProgrBar.run i n;
+    Geneweb_util.ProgrBar.run i n;
     if Gwaccess_util.oldest_year_of p = None && get_access p = IfTitles then
       match change_somebody_access base lim_year trace p (Gwaccess_util.oldest_year_of p) with
       | Some _ -> changes := true
@@ -83,7 +83,7 @@ let public_all bname lim_year trace =
           loop 0
   end (Gwdb.persons base) ;
   if !changes then commit_patches base;
-  ProgrBar.finish ()
+  Geneweb_util.ProgrBar.finish ()
 
 let lim_year = ref 1900
 let trace = ref false
@@ -100,9 +100,9 @@ let main () =
   Arg.parse speclist anonfun usage;
   if !bname = "" then begin Arg.usage speclist usage; exit 2 end;
   Secure.set_base_dir (Filename.dirname !bname) ;
-  Lock.control_retry
+  Geneweb_util.Lock.control_retry
     (Files.lock_file !bname)
-    ~onerror:Lock.print_error_and_exit
+    ~onerror:Geneweb_util.Lock.print_error_and_exit
     (fun () -> public_all !bname !lim_year !trace)
 
 let _ = main ()
