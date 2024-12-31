@@ -7,118 +7,134 @@ let update_database_with_burial base =
   let empty_string = Gwdb.insert_string base "" in
   let base_changed = ref false in
   let nb_modified = ref 0 in
-  Gwdb.Collection.iter begin fun p ->
-    let evt_birth =
-      match Date.od_of_cdate (get_birth p) with
-        Some _ -> None
-      | None ->
-          if sou base (get_birth_place p) <> "" then None
-          else if sou base (get_birth_src p) = "" then None
-          else
-            let evt =
-              {epers_name = Epers_Birth; epers_date = Date.cdate_None;
-               epers_place = empty_string; epers_reason = empty_string;
-               epers_note = empty_string; epers_src = get_birth_src p;
-               epers_witnesses = [| |]}
-            in
-            Some evt
-    in
-    let evt_bapt =
-      match Date.od_of_cdate (get_baptism p) with
-        Some _ -> None
-      | None ->
-          if sou base (get_baptism_place p) <> "" then None
-          else if sou base (get_baptism_src p) = "" then None
-          else
-            let evt =
-              {epers_name = Epers_Baptism; epers_date = Date.cdate_None;
-               epers_place = empty_string; epers_reason = empty_string;
-               epers_note = empty_string; epers_src = get_baptism_src p;
-               epers_witnesses = [| |]}
-            in
-            Some evt
-    in
-    let evt_death =
-      match get_death p with
-        NotDead | DontKnowIfDead ->
-          if sou base (get_death_place p) = "" &&
-             sou base (get_death_src p) = ""
-          then
-            None
-          else
-            let evt =
-              {epers_name = Epers_Death; epers_date = Date.cdate_None;
-               epers_place = get_death_place p; epers_reason = empty_string;
-               epers_note = empty_string; epers_src = get_death_src p;
-               epers_witnesses = [| |]}
-            in
-            Some evt
-      | _ -> None
-    in
-    let evt_burial =
-      match get_burial p with
-        UnknownBurial ->
-          if sou base (get_burial_place p) = "" &&
-             sou base (get_burial_src p) = ""
-          then
-            None
-          else
-            let evt =
-              {epers_name = Epers_Burial; epers_date = Date.cdate_None;
-               epers_place = get_burial_place p; epers_reason = empty_string;
-               epers_note = empty_string; epers_src = get_burial_src p;
-               epers_witnesses = [| |]}
-            in
-            Some evt
-      | _ -> None
-    in
-    let pevents = [evt_birth; evt_bapt; evt_death; evt_burial] in
-    let (changed, pevents) =
-      List.fold_right
-        (fun evt (changed, pevents) ->
-           match evt with
-             Some evt -> true, evt :: pevents
-           | None -> changed, pevents)
-        pevents (false, [])
-    in
-    if changed then
-      begin
-        if !trace then
-          begin
-            Printf.eprintf "Modifiy person : %s\n" (Gutil.designation base p);
-            flush stderr
-          end;
+  Gwdb.Collection.iter
+    (fun p ->
+      let evt_birth =
+        match Date.od_of_cdate (get_birth p) with
+        | Some _ -> None
+        | None ->
+            if sou base (get_birth_place p) <> "" then None
+            else if sou base (get_birth_src p) = "" then None
+            else
+              let evt =
+                {
+                  epers_name = Epers_Birth;
+                  epers_date = Date.cdate_None;
+                  epers_place = empty_string;
+                  epers_reason = empty_string;
+                  epers_note = empty_string;
+                  epers_src = get_birth_src p;
+                  epers_witnesses = [||];
+                }
+              in
+              Some evt
+      in
+      let evt_bapt =
+        match Date.od_of_cdate (get_baptism p) with
+        | Some _ -> None
+        | None ->
+            if sou base (get_baptism_place p) <> "" then None
+            else if sou base (get_baptism_src p) = "" then None
+            else
+              let evt =
+                {
+                  epers_name = Epers_Baptism;
+                  epers_date = Date.cdate_None;
+                  epers_place = empty_string;
+                  epers_reason = empty_string;
+                  epers_note = empty_string;
+                  epers_src = get_baptism_src p;
+                  epers_witnesses = [||];
+                }
+              in
+              Some evt
+      in
+      let evt_death =
+        match get_death p with
+        | NotDead | DontKnowIfDead ->
+            if
+              sou base (get_death_place p) = ""
+              && sou base (get_death_src p) = ""
+            then None
+            else
+              let evt =
+                {
+                  epers_name = Epers_Death;
+                  epers_date = Date.cdate_None;
+                  epers_place = get_death_place p;
+                  epers_reason = empty_string;
+                  epers_note = empty_string;
+                  epers_src = get_death_src p;
+                  epers_witnesses = [||];
+                }
+              in
+              Some evt
+        | _ -> None
+      in
+      let evt_burial =
+        match get_burial p with
+        | UnknownBurial ->
+            if
+              sou base (get_burial_place p) = ""
+              && sou base (get_burial_src p) = ""
+            then None
+            else
+              let evt =
+                {
+                  epers_name = Epers_Burial;
+                  epers_date = Date.cdate_None;
+                  epers_place = get_burial_place p;
+                  epers_reason = empty_string;
+                  epers_note = empty_string;
+                  epers_src = get_burial_src p;
+                  epers_witnesses = [||];
+                }
+              in
+              Some evt
+        | _ -> None
+      in
+      let pevents = [ evt_birth; evt_bapt; evt_death; evt_burial ] in
+      let changed, pevents =
+        List.fold_right
+          (fun evt (changed, pevents) ->
+            match evt with
+            | Some evt -> (true, evt :: pevents)
+            | None -> (changed, pevents))
+          pevents (false, [])
+      in
+      if changed then (
+        if !trace then (
+          Printf.eprintf "Modifiy person : %s\n" (Gutil.designation base p);
+          flush stderr);
         let pevents = get_pevents p @ pevents in
-        let gp = {(gen_person_of_person p) with pevents = pevents} in
+        let gp = { (gen_person_of_person p) with pevents } in
         patch_person base gp.key_index gp;
         base_changed := true;
-        incr nb_modified
-      end
-  end (Gwdb.persons base) ;
-  if !base_changed then
-    begin
-      commit_patches base;
-      Printf.eprintf "Number of modified persons: %d\n" !nb_modified;
-      flush stderr
-    end
-
+        incr nb_modified))
+    (Gwdb.persons base);
+  if !base_changed then (
+    commit_patches base;
+    Printf.eprintf "Number of modified persons: %d\n" !nb_modified;
+    flush stderr)
 
 (**/**)
 
 let bname = ref ""
-
-let speclist = ["-t", Arg.Set trace, "trace modified person"]
+let speclist = [ ("-t", Arg.Set trace, "trace modified person") ]
 let anonfun i = bname := i
 let usage = "Usage: " ^ Sys.argv.(0) ^ " base"
 
 let main () =
   Arg.parse speclist anonfun usage;
-  if !bname = "" then begin Arg.usage speclist usage; exit 2 end;
-    Lock.control (Files.lock_file !bname) false
-      ~onerror:(fun () ->
-          Printf.eprintf "Cannot lock database. Try again.\n";
-          flush stderr)
-      (fun () ->
-         let base = Gwdb.open_base !bname in update_database_with_burial base)
+  if !bname = "" then (
+    Arg.usage speclist usage;
+    exit 2);
+  Lock.control (Files.lock_file !bname) false
+    ~onerror:(fun () ->
+      Printf.eprintf "Cannot lock database. Try again.\n";
+      flush stderr)
+    (fun () ->
+      let base = Gwdb.open_base !bname in
+      update_database_with_burial base)
 
 let _ = main ()

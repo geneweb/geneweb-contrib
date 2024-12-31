@@ -1,21 +1,22 @@
 open Def
 
-type gen_record =
-  { date : string;
-    wizard : string;
-    gen_p : (Gwdb.iper, Gwdb.iper, string) gen_person;
-    gen_f : (Gwdb.iper, Gwdb.ifam, string) gen_family list;
-    gen_c : Gwdb.iper array list }
+type gen_record = {
+  date : string;
+  wizard : string;
+  gen_p : (Gwdb.iper, Gwdb.iper, string) gen_person;
+  gen_f : (Gwdb.iper, Gwdb.ifam, string) gen_family list;
+  gen_c : Gwdb.iper array list;
+}
 
 let test_history fname pos =
   match try Some (Secure.open_in_bin fname) with Sys_error _ -> None with
-    Some ic ->
-      begin try
-        seek_in ic pos;
-        let v : gen_record = input_value ic in
-        let _ = List.length v.gen_p.pevents in ()
-      with End_of_file -> ()
-      end;
+  | Some ic ->
+      (try
+         seek_in ic pos;
+         let v : gen_record = input_value ic in
+         let _ = List.length v.gen_p.pevents in
+         ()
+       with End_of_file -> ());
       close_in ic
   | None -> ()
 
@@ -25,14 +26,3 @@ let main () =
   test_history fname pos
 
 let _ = main ()
-
-
-
-
-
-
-
-
-
-
-

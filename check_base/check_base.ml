@@ -1,12 +1,14 @@
 open Geneweb
 
 let print_error base x =
-  Printf.printf "\nError: "; Check.print_base_error stdout base x
+  Printf.printf "\nError: ";
+  Check.print_base_error stdout base x
 
-let print_warning base =
-  function
-    Def.UndefinedSex _ -> ()
-  | x -> Printf.printf "\nWarning: "; Check.print_base_warning stdout base x
+let print_warning base = function
+  | Def.UndefinedSex _ -> ()
+  | x ->
+      Printf.printf "\nWarning: ";
+      Check.print_base_warning stdout base x
 
 let set_list l v = l := v :: !l
 
@@ -20,11 +22,10 @@ let check_base bname =
   in
   let errors = ref [] in
   let warnings = ref [] in
-  Check.check_base base (set_list errors) (set_list warnings) changed_p ;
+  Check.check_base base (set_list errors) (set_list warnings) changed_p;
   List.iter (print_error base) (List.rev !errors);
   List.iter (print_warning base) (List.sort_uniq compare !warnings);
   flush stdout
 
 let main () = check_base Sys.argv.(1)
-
 let _ = main ()

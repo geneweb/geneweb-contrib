@@ -1,4 +1,4 @@
-(executables
-  (names lex_utils)
-  (libraries unix geneweb.gwdb-legacy geneweb.sosa_zarith geneweb)
-)
+(library
+ (name lex_utils)
+ (libraries unix geneweb.gwdb-legacy geneweb.sosa_zarith geneweb)
+ (modules lex_utils))

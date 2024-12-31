@@ -1,6 +1,6 @@
 #!/bin/bash
 # Répertoire du dépôt à parcourir
-repositoryDir="~/gw"
+repositoryDir=$1
 
 # Répertoires à parcourir dans le dépôt: /bin et /hd/etc
 directories=("${repositoryDir}/lib" "${repositoryDir}/hd/etc")

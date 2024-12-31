@@ -7,22 +7,20 @@ let main bname =
   let base = Gwdb.open_base bname in
   let ip1 = GwBaseLib.add_indi base ("Ptolémée", "d'Égypte", 0) Male in
   let ip2 = GwBaseLib.add_indi base ("Cléopâtre", "d'Égypte", 0) Female in
-  begin let rec loop n ip1 ip2 =
-    if n = 50 then ()
-    else
-      let x = string_of_int n in
-      let ip3 =
-        GwBaseLib.add_indi base ("Ptolémée " ^ x, "d'Égypte", 0) Male
-      in
-      let ip4 =
-        GwBaseLib.add_indi base ("Cléopâtre " ^ x, "d'Égypte", 0) Female
-      in
-      let _ifam = GwBaseLib.add_fam base ip1 ip2 [ip3; ip4] in
-      loop (n + 1) ip3 ip4
-  in
-    loop 2 ip1 ip2
-  end;
+  (let rec loop n ip1 ip2 =
+     if n = 50 then ()
+     else
+       let x = string_of_int n in
+       let ip3 =
+         GwBaseLib.add_indi base ("Ptolémée " ^ x, "d'Égypte", 0) Male
+       in
+       let ip4 =
+         GwBaseLib.add_indi base ("Cléopâtre " ^ x, "d'Égypte", 0) Female
+       in
+       let _ifam = GwBaseLib.add_fam base ip1 ip2 [ ip3; ip4 ] in
+       loop (n + 1) ip3 ip4
+   in
+   loop 2 ip1 ip2);
   commit_patches base
 
 let _ = main Sys.argv.(1)
-

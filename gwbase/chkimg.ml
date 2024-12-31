@@ -3,9 +3,11 @@
 let get_images_names bname =
   let dh = Unix.opendir (Filename.concat "images" bname) in
   let list = ref [] in
-  begin try while true do list := Unix.readdir dh :: !list done with
-    End_of_file -> ()
-  end;
+  (try
+     while true do
+       list := Unix.readdir dh :: !list
+     done
+   with End_of_file -> ());
   Unix.closedir dh;
   !list
 
@@ -20,8 +22,13 @@ let check_key_aux base ifname fname =
     let ip = Gwdb.person_of_key base fn sn oc in
     if ip = None then raise Not_found
   with
-    Not_found -> Printf.printf "... nobody: %s\n" ifname; flush stdout
-  | x -> Printf.printf "error at %s\n" fname; flush stdout; raise x
+  | Not_found ->
+      Printf.printf "... nobody: %s\n" ifname;
+      flush stdout
+  | x ->
+      Printf.printf "error at %s\n" fname;
+      flush stdout;
+      raise x
 
 let check_key base fname =
   if Filename.check_suffix fname ".jpg" then
@@ -32,7 +39,8 @@ let check_key base fname =
 
 let chkimg bname base =
   let list = get_images_names bname in
-  List.iter (check_key base) list; flush stdout
+  List.iter (check_key base) list;
+  flush stdout
 
 let bname = ref ""
 let usage = "usage: " ^ Sys.argv.(0) ^ " <base>"
@@ -40,6 +48,7 @@ let speclist = []
 
 let main () =
   Arg.parse speclist (fun s -> bname := s) usage;
-  let base = Gwdb.open_base !bname in chkimg !bname base
+  let base = Gwdb.open_base !bname in
+  chkimg !bname base
 
 let _ = Printexc.print main ()

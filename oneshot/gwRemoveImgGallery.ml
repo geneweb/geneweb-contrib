@@ -7,40 +7,39 @@ let image_start_with_gallery img =
 
 let remove_image_everybody bname trace =
   let base = Gwdb.open_base bname in
-  Gwdb.Collection.iter begin fun p ->
-    if image_start_with_gallery (sou base (get_image p)) then
-      begin
+  Gwdb.Collection.iter
+    (fun p ->
+      if image_start_with_gallery (sou base (get_image p)) then (
         if trace then Printf.printf "%s\n" (Gutil.designation base p);
         let empty = Gwdb.insert_string base "" in
-        let p = {(gen_person_of_person p) with image = empty} in
-        patch_person base p.key_index p
-      end
-  end (Gwdb.persons base) ;
+        let p = { (gen_person_of_person p) with image = empty } in
+        patch_person base p.key_index p))
+    (Gwdb.persons base);
   commit_patches base
 
 let remove_image_some bname key trace =
   let base = Gwdb.open_base bname in
   match Gutil.person_ht_find_all base key with
-    [ip] ->
+  | [ ip ] ->
       let p = poi base ip in
-      if image_start_with_gallery (sou base (get_image p)) then
-        begin
-          if trace then Printf.printf "%s\n" (Gutil.designation base p);
-          let empty = Gwdb.insert_string base "" in
-          let p = {(gen_person_of_person p) with image = empty} in
-          patch_person base p.key_index p
-        end;
+      if image_start_with_gallery (sou base (get_image p)) then (
+        if trace then Printf.printf "%s\n" (Gutil.designation base p);
+        let empty = Gwdb.insert_string base "" in
+        let p = { (gen_person_of_person p) with image = empty } in
+        patch_person base p.key_index p);
       commit_patches base
-  | _ ->
+  | _ -> (
       match Gutil.person_of_string_dot_key base key with
-        Some ip ->
+      | Some ip ->
           let p = poi base ip in
-          if get_access p <> Private then
-            begin let p = {(gen_person_of_person p) with access = Private} in
-              patch_person base p.key_index p
-            end;
+          (if get_access p <> Private then
+           let p = { (gen_person_of_person p) with access = Private } in
+           patch_person base p.key_index p);
           commit_patches base
-      | None -> Printf.eprintf "Bad key %s\n" key; flush stderr; exit 2
+      | None ->
+          Printf.eprintf "Bad key %s\n" key;
+          flush stderr;
+          exit 2)
 
 let ind = ref ""
 let bname = ref ""
@@ -48,17 +47,22 @@ let everybody = ref false
 let trace = ref false
 
 let speclist =
-  ["-everybody", Arg.Set everybody, "remove image for everybody";
-   "-ind", Arg.String (fun x -> ind := x), "individual key";
-   "-t", Arg.Set trace, "trace changed persons"]
+  [
+    ("-everybody", Arg.Set everybody, "remove image for everybody");
+    ("-ind", Arg.String (fun x -> ind := x), "individual key");
+    ("-t", Arg.Set trace, "trace changed persons");
+  ]
+
 let anonfun i = bname := i
 let usage = "Usage: gwRemoveImgGallery [-everybody] [-ind key] base"
 
 let main () =
   Arg.parse speclist anonfun usage;
-  if !bname = "" then begin Arg.usage speclist usage; exit 2 end;
+  if !bname = "" then (
+    Arg.usage speclist usage;
+    exit 2);
   let gcc = Gc.get () in
-  Gc.set { (Gc.get()) with Gc.max_overhead = 100 };
+  Gc.set { (Gc.get ()) with Gc.max_overhead = 100 };
   Gc.set gcc;
   if !everybody then remove_image_everybody !bname !trace
   else remove_image_some !bname !ind !trace

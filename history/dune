@@ -1,4 +1,3 @@
 (executables
-  (names convert_hist fix_hist is_gw_plus)
-  (libraries unix geneweb.gwdb-legacy geneweb.sosa_zarith geneweb)
-)
+ (names convert_hist fix_hist is_gw_plus)
+ (libraries unix geneweb.gwdb-legacy geneweb.sosa_zarith geneweb))

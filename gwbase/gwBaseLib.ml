@@ -5,12 +5,14 @@ open Gwdb
 
 let add_indi base (fn, sn, nb) sex =
   let empty = empty_person base dummy_iper in
-  let np = { (gen_person_of_person empty) with
-             first_name = insert_string base fn
-           ; surname = insert_string base sn
-           ; occ = nb
-           ; sex
-           }
+  let np =
+    {
+      (gen_person_of_person empty) with
+      first_name = insert_string base fn;
+      surname = insert_string base sn;
+      occ = nb;
+      sex;
+    }
   in
   let na = gen_ascend_of_person empty in
   let nu = gen_union_of_person empty in
@@ -29,8 +31,9 @@ let add_fam base fath moth children =
   patch_union base fath ufath;
   let umoth = { family = Array.append (get_family umoth) [| ifam |] } in
   patch_union base moth umoth;
-  List.iter (fun ip ->
+  List.iter
+    (fun ip ->
       let a = { parents = Some ifam; consang = Adef.fix (-1) } in
-      patch_ascend base ip a
-    ) children;
+      patch_ascend base ip a)
+    children;
   ifam

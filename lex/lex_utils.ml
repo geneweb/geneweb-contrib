@@ -3,14 +3,32 @@
    [ GWREPL_NOPROMPT=1 ] gwrepl.exe [script_arg1] ...
 *)
 
+#require "geneweb.gwdb_driver";;
+#require "geneweb.gwdb-legacy";;
+#require "geneweb.sosa";;
+#require "geneweb.sosa_zarith";;
+#require "geneweb";;
+
+open Geneweb;;
+
 (**/**) (* Utils. *)
+
+let my_print_string oc str =
+  if !out_file <> "" then Printf.fprintf oc str
+  else Printf.fprintf stdout str
+;;
+
+let my_print_endline oc str =
+  if !out_file <> "" then Printf.fprintf oc str ^ "\n"
+  else Printf.fprintf stdout str ^ "\n"
+;;
 
 let skip_to_next_message ic =
   let rec loop () =
     let line = input_line ic in
     if Mutil.start_with "    " 0 line then line else loop ()
   in loop ()
-in
+;;
 
 let get_all_versions ic =
   let rec loop accu =
@@ -24,19 +42,19 @@ let get_all_versions ic =
         if lang <> "->" then loop ((lang, transl) :: accu) else [("alias", "")]
       with Not_found -> accu
   in loop []
-in
+;;
 
 (* Missing or unused translation. *)
 
 let get_ml_files repo =
-  Files.ls_r [repo]
+  Mutil.ls_r [repo]
   |> List.filter (fun x -> Filename.check_suffix x ".ml")
-in
+;;
 
 let get_tpl_files repo =
-  Files.ls_r [repo]
+  Mutil.ls_r [repo]
   |> List.filter (fun x -> Filename.check_suffix x ".txt")
-in
+;;
 
 (* Récupère tous les identifiants de message de lexicon. *)
 let get_lexicon_msg lexicon =
@@ -45,7 +63,7 @@ let get_lexicon_msg lexicon =
     | exception End_of_file -> close_in ic ; List.rev acc
     | msg -> loop (String.sub msg 4 (String.length msg - 4) :: acc)
   in loop []
-in
+;;
 
 let cut_all_msg_src acc s =
   let regexp = Str.regexp "transl" in
@@ -63,7 +81,7 @@ let cut_all_msg_src acc s =
       loop (stop + 1) (String.sub s (start + 1) (stop - start - 1) :: acc)
     with Not_found -> acc
   in loop 0 acc
-in
+;;
 
 let get_msg_src repo =
   (* TODO the current setup misses translations with the string on the next line !! *)
@@ -82,7 +100,7 @@ let get_msg_src repo =
       in loop acc
     end acc (get_ml_files dir)
   end [] repo
-in
+;;
 
 let cut_all_msg acc s =
   let rec loop i acc =
@@ -121,7 +139,7 @@ let cut_all_msg acc s =
       loop (stop + 1) acc
     with Not_found -> acc
   in loop 0 acc
-in
+;;
 
 let get_msg_tpl repo : string list =
   let regexp = Str.regexp "[*?[a-z]+]" in
@@ -137,13 +155,13 @@ let get_msg_tpl repo : string list =
       in loop acc
     end acc (get_tpl_files dir)
   end [] repo
-in
+;;
 
-let module StringSet = Set.Make (String) in
+module StringSet = Set.Make (String);;
 
 (* Essaie de chercher tous les identifiants de message du répository et *)
 (* recherche s'il ne sont plus utilisés pour au contraire non traduit.  *)
-let missing_or_unused_msg lexicon repo log =
+let missing_or_unused_msg oc lexicon repo log =
   let absolute f =
     if Filename.is_relative f then Filename.concat (Sys.getcwd ()) f else f
   in
@@ -173,66 +191,75 @@ let missing_or_unused_msg lexicon repo log =
          List.iter (fun w -> Printf.fprintf oc "%s\n" w) msg;
          close_out oc
        | None -> ());
-    print_endline
-      "View log_lex for lexicon msg and log_msg for src and tpl msg."
+    Printf.fprintf stderr
+      "View log_lex for lexicon msg and log_msg for src and tpl msg.\n"
   end
   else begin
-    Printf.fprintf stdout "\nMessage in lexicon not used anymore in %s and %s:\n%!" repo repo_tpl;
+    Printf.fprintf oc "\nMessage in lexicon not used anymore in %s and %s:\n%!" repo repo_tpl;
     let lex_cnt = ref 0 in
-    List.iter (fun w -> if not (List.mem w msg) then begin print_endline w; incr lex_cnt end) lex;
-    Printf.fprintf stdout "\nMessage from %s and %s not in lexicon:\n%!" repo repo_tpl;
+    List.iter (fun w ->
+      if not (List.mem w msg)
+      then begin Printf.fprintf oc "%s\n" w;
+      incr lex_cnt end) lex;
+    Printf.fprintf oc "\nMessage from %s and %s not in lexicon:\n%!" repo repo_tpl;
     let msg_cnt = ref 0 in
-    List.iter (fun w -> if not (List.mem w lex) then begin print_endline w; incr msg_cnt end) msg;
-    Printf.fprintf stdout "\n%d messages in sources, %d messages in lexicon\n" (List.length msg) (List.length lex);
-    Printf.fprintf stdout "%d messages not used, %d messages not translated\n" !lex_cnt !msg_cnt;
+    List.iter (fun w ->
+      if not (List.mem w lex)
+      then begin Printf.fprintf oc "%s\n" w;
+      incr msg_cnt end) msg;
+    Printf.fprintf oc "\n%d messages in sources, %d messages in lexicon\n" (List.length msg) (List.length lex);
+    Printf.fprintf oc "%d messages not used, %d messages not translated\n" !lex_cnt !msg_cnt;
   end
-in
+;;
 
 (* Missing translation. *)
 
 let missing_languages list languages =
   List.fold_left (fun acc lang ->
     if not (List.mem_assoc lang list) then lang :: acc else acc) [] languages
-in
+;;
 
-let print_transl_en_fr list =
+let print_transl_en_fr oc list =
   let en_transl = try List.assoc "en" list with Not_found -> "" in
   let fr_transl = try List.assoc "fr" list with Not_found -> "" in
-  if en_transl <> "" then print_endline ("en:" ^ en_transl);
-  if fr_transl <> "" then print_endline ("fr:" ^ fr_transl)
-in
+  if en_transl <> "" then Printf.fprintf oc "%s\n" ("en:" ^ en_transl);
+  if fr_transl <> "" then Printf.fprintf oc "%s\n" ("fr:" ^ fr_transl)
+;;
 
-let missing_translation lexicon languages =
+let missing_translation oc lexicon languages =
   let ic = open_in lexicon in
-  let rec loop () = match skip_to_next_message ic with
+  let rec loop () =
+    match skip_to_next_message ic with
     | exception End_of_file -> close_in ic
     | msg ->
-      let list = get_all_versions ic in
-      if list = [("alias", "")] then loop ()
-      else (
-        let list' = missing_languages list languages in
-        if list' <> [] then (
-          print_endline msg;
-          print_transl_en_fr list;
-          List.iter (fun lang -> print_endline (lang ^ ":")) (List.rev list') ;
-          print_string "\n"; loop ()))
-  in loop ()
-in
+        let list = get_all_versions ic in
+        if list = [("alias", "")] then loop ()
+        else (
+          let list' = missing_languages list languages in
+          if list' <> [] then (
+            Printf.fprintf oc "%s\n" msg;
+            print_transl_en_fr oc list;
+            List.iter (fun lang -> Printf.fprintf oc "%s\n" (lang ^ ":")) (List.rev list') ;
+            Printf.fprintf oc "\n");
+            loop ())
+  in
+  loop ()
+;;
 
 (* Sorting. *)
 
-let module Lex_map = Map.Make
+module Lex_map = Map.Make
     (struct
       type t = string
       let compare x y =
         compare (String.lowercase_ascii x) (String.lowercase_ascii y)
     end)
-in
+;;
 
-let merge = ref false in
-let first = ref false in
+let merge = ref false;;
+let first = ref false;;
 
-let sort_lexicon lexicon =
+let sort_lexicon oc lexicon =
   let lex_sort = ref Lex_map.empty in
   (match try Some (open_in lexicon) with Sys_error _ -> None with
      | Some ic ->
@@ -265,12 +292,12 @@ let sort_lexicon lexicon =
      | None -> ());
   Lex_map.iter
     (fun msg list ->
-       print_endline msg;
+       Printf.fprintf oc "%s" msg;
        List.iter
-         (fun (lang, transl) -> print_endline (lang ^ ":" ^ transl)) list;
-       print_string "\n")
+         (fun (lang, transl) -> Printf.fprintf oc "%s\n" (lang ^ ":" ^ transl)) list;
+       Printf.fprintf oc "%s" "\n")
     !lex_sort
-in
+;;
 
 
 (* Main. *)
@@ -308,20 +335,25 @@ let lang_default =
   ; "tr"
   ; "zh"
   ]
-in
+;;
 
-let lang = ref lang_default in
+let lang = ref lang_default;;
 
-let lexicon = ref "" in
-let lex_sort = ref false in
-let missing = ref false in
-let orphans = ref false in
-let repo = ref "" in
-let log = ref false in
+let lexicon = ref "";;
+let lex_sort = ref false;;
+let missing = ref false;;
+let orphans = ref false;;
+let print_langs = ref false;;
+let out_file = ref "";;
+let repo = ref "";;
+let log = ref false;;
+let current = ref 0;;
 
-let speclist =
+let speclist = ref
   [ ("-missing", Arg.Set missing
-    ," Print missing translation for these lang: " ^ String.concat "," lang_default ^".")
+    ," Print missing translation for the list of langs.")
+  ; ("-langs", Arg.Set print_langs
+    ," Prints the list of available langs.")
   ; ("-missing-lang", Arg.String (fun s -> missing := true ; lang := String.split_on_char ',' s)
     ," Same as -missing, but use a comma-separated list of lang instead of the default one.")
   ; ("-repo", Arg.String (fun x -> repo := x)
@@ -329,32 +361,69 @@ let speclist =
   ; ("-orphans", Arg.Set orphans
     ," Check missing or unused keyword. -repo must be defined")
   ; ("-log", Arg.Set log, " Option for orphans. Print in log files instead of stdout.")
+  ; ("-o", Arg.String (fun x -> out_file := x)
+    ," Prints results to the designated output file.")
   ; ("-sort", Arg.Set lex_sort, " Sort the lexicon (both key and content).")
   ; ("-first", Arg.Set first, " If multiple language entries, select first occurence.")
   ; ("-merge", Arg.Set merge, " Merge rather than replace new lexicon entries.")
-  ] |> Arg.align
-in
+  ]
+;;
+
+let speclist_ref = ref speclist ;;
 
 let anonfun s =
   repo := if !repo = "" then Filename.dirname Sys.argv.(0) else !repo;
-  lexicon := Filename.concat !repo s
-in
+  lexicon := if s <> "" then Filename.concat !repo s else ""
+;;
 
-let usage = "Usage: cat lex_utils.ml |" ^
-  Sys.argv.(0) ^ " [options] lexicon (relative to gw)"
-in
+let usage =
+{|Usage:
+  cd geneweb_repo
+  dune utop
+  #use "../geneweb-contrib/lex/lex_utils.ml";;
+  #main "options";; (example: "-repo . -missing-lang de")
+  
+  Options:|};;
 
-let main () =
-  Arg.parse speclist anonfun usage;
+let args = ref [|"-help"|];;
+
+let main str =
+  let str_l = String.split_on_char ' ' str in
+  let str_l = "lex_utils.ml" :: str_l in
+  args := Array.of_list (str_l);
+  Printf.eprintf "before try\n";
+  Array.iter (fun a -> Printf.eprintf "Arg: %s\n" a) !args;
+  Printf.eprintf "Missing %s\n" (if !missing then "on" else "off");
+  flush stderr;
+  (try
+    Arg.parse_and_expand_argv_dynamic current args speclist anonfun usage
+  with
+  | Arg.Help _ -> Arg.usage (!speclist |> Arg.align) usage);
+  Printf.eprintf "after try\n";
+  flush stderr;
   repo := if !repo = "" then "." else !repo;
   if !lexicon = "" then
     lexicon := String.concat Filename.dir_sep [ !repo; "hd"; "lang"; "lexicon.txt"];
-  Printf.eprintf "Running lex_utils.ml on lexicon: %s\n" !lexicon;
-  if !orphans && !repo = "" then (Arg.usage speclist usage; exit 2);
-  if !lex_sort then sort_lexicon !lexicon
-  else if !missing then missing_translation !lexicon !lang
-  else if !orphans then missing_or_unused_msg !lexicon !repo !log;
-  Printf.eprintf "Done\n"
-in
+  Printf.eprintf "Running lex_utils.ml on lexicon: %s%s" !lexicon
+    (if !out_file <> "" then Format.sprintf " to %s\n" !out_file else "\n");
+  if !print_langs then (
+    Printf.eprintf "Available langs: %s\n" (String.concat ", " lang_default));
+  if !orphans && !repo = "" then (Arg.usage (!speclist |> Arg.align) usage)
+  else (
+    if !out_file <> "" then
+      match try Some (open_out !out_file) with Sys_error _ -> None with
+      | Some oc -> (
+          if !lex_sort then sort_lexicon oc !lexicon
+          else if !missing then missing_translation oc !lexicon !lang
+          else if !orphans then missing_or_unused_msg oc !lexicon !repo !log;
+          Printf.eprintf "Done\n")
+      | None -> Printf.eprintf "Failed to open out_file\n"
+    else (
+      if !lex_sort then sort_lexicon stdout !lexicon
+      else if !missing then missing_translation stdout !lexicon !lang
+      else if !orphans then missing_or_unused_msg stdout !lexicon !repo !log;
+      Printf.eprintf "Done\n"))
+  ;;
 
-Printexc.print main () ;;
+main "-repo ../geneweb -sort ";;
+

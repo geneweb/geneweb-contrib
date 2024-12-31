@@ -1,7 +1,6 @@
 open Def
 open Gwdb
-
-module Buff = Buff.Make (struct  end)
+module Buff = Buff.Make ()
 
 let lower_utf_8 s =
   let rec loop i len =
@@ -16,24 +15,27 @@ let lower_utf_8 s =
 
 let titres bname =
   let base = Gwdb.open_base bname in
-  Gwdb.Collection.iter begin fun p ->
-    List.iter
-      (fun t ->
-         Printf.printf "%s/%s\n" (lower_utf_8 (sou base t.t_ident))
-           (lower_utf_8 (sou base t.t_place)))
-      (get_titles p)
-  end (Gwdb.persons base) ;
+  Gwdb.Collection.iter
+    (fun p ->
+      List.iter
+        (fun t ->
+          Printf.printf "%s/%s\n"
+            (lower_utf_8 (sou base t.t_ident))
+            (lower_utf_8 (sou base t.t_place)))
+        (get_titles p))
+    (Gwdb.persons base);
   flush stdout
 
 let bname = ref ""
-
 let speclist = []
 let anonfun i = bname := i
 let usage = "Usage: titres base"
 
 let main () =
   Arg.parse speclist anonfun usage;
-  if !bname = "" then begin Arg.usage speclist usage; exit 2 end;
+  if !bname = "" then (
+    Arg.usage speclist usage;
+    exit 2);
   titres !bname
 
 let _ = main ()

@@ -18,6 +18,7 @@ let speclist = []
 
 let main () =
   Arg.parse speclist (fun s -> bname := s) usage;
-  let base = Gwdb.open_base !bname in consmoy base
+  let base = Gwdb.open_base !bname in
+  consmoy base
 
 let _ = Printexc.print main ()

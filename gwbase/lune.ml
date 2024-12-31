@@ -8,27 +8,26 @@ let lune bname =
   let moon_age = Array.make 31 0 in
   let moon_phase = Array.make 5 0 in
   let nbb = ref 0 in
-  Gwdb.Collection.iter begin fun p ->
-    match Date.od_of_cdate (get_birth p) with
-      Some (Dgreg (dt, _)) ->
-        if dt.prec = Sure && dt.delta = 0 && dt.day > 0 then
-          begin
+  Gwdb.Collection.iter
+    (fun p ->
+      match Date.od_of_cdate (get_birth p) with
+      | Some (Dgreg (dt, _)) ->
+          if dt.prec = Sure && dt.delta = 0 && dt.day > 0 then (
             incr nbb;
             let jd = Calendar.sdn_of_gregorian dt in
-            let (mp, ma) = Calendar.moon_phase_of_sdn jd in
-            moon_age.(ma-1) <- moon_age.(ma-1) + 1;
+            let mp, ma = Calendar.moon_phase_of_sdn jd in
+            moon_age.(ma - 1) <- moon_age.(ma - 1) + 1;
             let i =
               match mp with
-                None -> 0
+              | None -> 0
               | Some (Calendar.NewMoon, _, _) -> 1
               | Some (Calendar.FirstQuarter, _, _) -> 2
               | Some (Calendar.FullMoon, _, _) -> 3
               | Some (Calendar.LastQuarter, _, _) -> 4
             in
-            moon_phase.(i) <- moon_phase.(i) + 1
-          end
-    | _ -> ()
-  end (Gwdb.persons base) ;
+            moon_phase.(i) <- moon_phase.(i) + 1)
+      | _ -> ())
+    (Gwdb.persons base);
   Printf.printf "Influence de la lune sur les naissances.\n\n";
   Printf.printf "Nombre de personnes = %d\n" !nbb;
   Printf.printf "\n";
@@ -58,7 +57,9 @@ let usage = "Usage: superstition base"
 
 let main () =
   Arg.parse speclist anonfun usage;
-  if !bname = "" then begin Arg.usage speclist usage; exit 2 end;
+  if !bname = "" then (
+    Arg.usage speclist usage;
+    exit 2);
   lune !bname
 
 let _ = main ()
