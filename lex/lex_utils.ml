@@ -1,6 +1,5 @@
 (*
-  use: cat <script.ml> | [ GWREPL_VERBOSE=1 ] [ GWREPL_FORCE_UNPACK=1 ]
-   [ GWREPL_NOPROMPT=1 ] gwrepl.exe [script_arg1] ...
+  use: echo "#use \"lex/lex_utils.ml\";;main \"-sort -repo ../geneweb\";;" | utop -stdin
 *)
 
 #require "geneweb.gwdb_driver";;
@@ -357,8 +356,6 @@ let speclist = ref
   ; ("-merge", Arg.Set merge, " Merge rather than replace new lexicon entries.")
   ]
 ;;
-
-let speclist_ref = ref speclist ;;
 
 let anonfun s =
   lexicon := if s <> "" then Filename.concat !repo s else ""
