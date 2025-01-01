@@ -1,11 +1,9 @@
-#! /bin/sh
+#!/bin/bash
 
-# Assumes GW and CONTRIB are defined
-# e.g.
-REPO="../../geneweb"
-GW="$REPO/distribution/gw"
-GWREPL_NOPROMPT=1 
-GWREPL_VERBOSE=1
+CONTRIB_DIR=`dirname "$0"`
 
-cat ./lex_utils.ml | $GW/gwrepl -repo $REPO "$@"
+cat $CONTRIB_DIR/lex_utils.ml > $CONTRIB_DIR/tmp.ml
+echo "main \"$@\";;" >> $CONTRIB_DIR/tmp.ml
 
+echo "#use \"$CONTRIB_DIR/tmp.ml\";;" | utop -stdin
+rm $CONTRIB_DIR/tmp.ml

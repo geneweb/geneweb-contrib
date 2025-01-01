@@ -13,15 +13,52 @@ open Geneweb;;
 
 (**/**) (* Utils. *)
 
-let my_print_string oc str =
-  if !out_file <> "" then Printf.fprintf oc str
-  else Printf.fprintf stdout str
+let lang_default =
+  [ "af"
+  ; "bg"
+  ; "br"
+  ; "ca"
+  ; "co"
+  ; "cs"
+  ; "da"
+  ; "de"
+  ; "en"
+  ; "eo"
+  ; "es"
+  ; "et"
+  ; "fi"
+  ; "fr"
+  ; "he"
+  ; "is"
+  ; "it"
+  ; "lv"
+  ; "nl"
+  ; "no"
+  ; "oc"
+  ; "pl"
+  ; "pt"
+  ; "pt-br"
+  ; "ro"
+  ; "ru"
+  ; "sk"
+  ; "sl"
+  ; "sv"
+  ; "tr"
+  ; "zh"
+  ]
 ;;
 
-let my_print_endline oc str =
-  if !out_file <> "" then Printf.fprintf oc str ^ "\n"
-  else Printf.fprintf stdout str ^ "\n"
-;;
+let lang = ref lang_default;;
+
+let lexicon = ref "";;
+let lex_sort = ref false;;
+let missing = ref false;;
+let orphans = ref false;;
+let print_langs = ref false;;
+let out_file = ref "";;
+let repo = ref "";;
+let log = ref false;;
+let current = ref 0;;
 
 let skip_to_next_message ic =
   let rec loop () =
@@ -299,55 +336,7 @@ let sort_lexicon oc lexicon =
     !lex_sort
 ;;
 
-
 (* Main. *)
-
-let lang_default =
-  [ "af"
-  ; "bg"
-  ; "br"
-  ; "ca"
-  ; "co"
-  ; "cs"
-  ; "da"
-  ; "de"
-  ; "en"
-  ; "eo"
-  ; "es"
-  ; "et"
-  ; "fi"
-  ; "fr"
-  ; "he"
-  ; "is"
-  ; "it"
-  ; "lv"
-  ; "nl"
-  ; "no"
-  ; "oc"
-  ; "pl"
-  ; "pt"
-  ; "pt-br"
-  ; "ro"
-  ; "ru"
-  ; "sk"
-  ; "sl"
-  ; "sv"
-  ; "tr"
-  ; "zh"
-  ]
-;;
-
-let lang = ref lang_default;;
-
-let lexicon = ref "";;
-let lex_sort = ref false;;
-let missing = ref false;;
-let orphans = ref false;;
-let print_langs = ref false;;
-let out_file = ref "";;
-let repo = ref "";;
-let log = ref false;;
-let current = ref 0;;
 
 let speclist = ref
   [ ("-missing", Arg.Set missing
@@ -372,7 +361,6 @@ let speclist = ref
 let speclist_ref = ref speclist ;;
 
 let anonfun s =
-  repo := if !repo = "" then Filename.dirname Sys.argv.(0) else !repo;
   lexicon := if s <> "" then Filename.concat !repo s else ""
 ;;
 
@@ -391,15 +379,11 @@ let main str =
   let str_l = String.split_on_char ' ' str in
   let str_l = "lex_utils.ml" :: str_l in
   args := Array.of_list (str_l);
-  Printf.eprintf "before try\n";
-  Array.iter (fun a -> Printf.eprintf "Arg: %s\n" a) !args;
-  Printf.eprintf "Missing %s\n" (if !missing then "on" else "off");
   flush stderr;
   (try
     Arg.parse_and_expand_argv_dynamic current args speclist anonfun usage
   with
   | Arg.Help _ -> Arg.usage (!speclist |> Arg.align) usage);
-  Printf.eprintf "after try\n";
   flush stderr;
   repo := if !repo = "" then "." else !repo;
   if !lexicon = "" then
@@ -423,7 +407,6 @@ let main str =
       else if !missing then missing_translation stdout !lexicon !lang
       else if !orphans then missing_or_unused_msg stdout !lexicon !repo !log;
       Printf.eprintf "Done\n"))
-  ;;
+;;
 
-main "-repo ../geneweb -sort ";;
 
