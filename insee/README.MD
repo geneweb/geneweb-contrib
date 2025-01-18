@@ -38,12 +38,12 @@ mysql_config_editor set --login-path=client --user=insee --password
 - `./clean-sources.sh` : permet de supprimer certains intrusifs des sources ;
 - `./load-files.sh` : permet de charger tous les fichiers INSEE en base ;
 - `./reload-file.sh` : permet de recharger une année du fichier INSEE en base ; 
-- `./get-COG.sh` : permet de récupérer le référentiel des communes de l’INSEE (COG) ;
+- `./get-COG.sh` : permet de récupérer le référentiel des communes de l’INSEE (COG) version 2019 ou 2024 ;
 - `./load-false-positive.sh RESULT.txt mabase` : permet de charger la liste noire en base depuis les résultats non concordants laissés dans RESULT.txt ;
 - `./blacklist.sh` : permet de sauvegarder et restaurer la table de liste noire ; 
 - `./mysql.sh < load-SQL.sql` : permet de chargrer le fichier des pays ;
 - `./mysql.sh < load-COG.sql` : permet de charger le référentiel COG en base ;
-- `./mysql.sh < PlaceNorme.sql` : permet de synthétiser le référentiel COG en une seule table (trois alternatives de nommenclatures sont disponibles) ;
+- `./mysql.sh < PlaceNorme.sql` : permet de synthétiser le référentiel COG en une seule table (quatre alternatives de nommenclatures sont disponibles) ;
 - `./mysql.sh < getPlaceLib.sql` : création d’une fonction pour convertir un code INSEE en libellé commune pour une date donnée ;
 - `./mysql.sh < processTodo.sql` : création de la procédure qui va confronter les données GeneWeb avec le fichier INSEE ;
 - `./run-TODO.sh` : (à ajuster si besoin pour utilisation avec GeneWeb) si le binaire `insee.exe` est trouvé, lance l’extraction GeneWeb et génère un fichier `TODO.lst` qui est chargé ensuite dans la base MySQL et dont chaque ligne sera confrontée aux données de l’INSEE ; enfin le script utilise `rapport.sh` et `rapportFormate.sh` pour créer un rapport lisible pour simplifier les mises à jour dans GeneWeb.
