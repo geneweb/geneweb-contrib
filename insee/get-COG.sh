@@ -31,6 +31,8 @@ else
     DEPT_FILE="v_departement_2024.csv"
     COMM_FILE="v_commune_2024.csv"
     MVT_FILE="v_mvt_commune_2024.csv"
+    COMM_HIST_FILE="v_commune_depuis_1943.csv"
+    PAYS_HIST_FILE="v_pays_et_territoire_depuis_1943.csv"
 fi
 
 # Autre source pour les pays car les libellés ne sont pas satisfaisants dans le lot de fichier INSEE (au moins pour 2019)
@@ -48,12 +50,16 @@ else
 fi
 
 echo "Extracting COG files for ${YEAR}..."
-# Extract files with year-specific names
+
+if [ "$YEAR" = "2019" ]; then
+  # Extract files with year-specific names
 unzip -qc "${DIR}/${ZIP_PREFIX}.zip" "${PAYS_FILE}" | sed 's/$//' > "${DIR}/COG-pays.csv"
 unzip -qc "${DIR}/${ZIP_PREFIX}.zip" "${DEPT_FILE}" | sed 's/$//' > "${DIR}/COG-departement.csv"
 unzip -qc "${DIR}/${ZIP_PREFIX}.zip" "${COMM_FILE}" | sed 's/$//' > "${DIR}/COG-commune.csv"
 unzip -qc "${DIR}/${ZIP_PREFIX}.zip" "${MVT_FILE}" | sed 's/$//' > "${DIR}/COG-mvt.csv"
-
+else
+    unzip -q "${DIR}/${ZIP_PREFIX}.zip" -d "${DIR}"
+fi
 # Download supplementary country data if needed
 if [ ! -f "${DIR}/sql-pays.csv" ]; then
     echo "Downloading supplementary country data..."
