@@ -7,10 +7,10 @@ echo "Comparing ONE -> INSEE..."
 echo BEGIN $(date '+%FT%T')
 $MYSQL -N << EOF | sed 's/\\n/\n/g'
 call processOne(
-	"LEBORGNE", "JEANNE MARIE ANGELE", "2",
-	"1913", "05", "24", "Beaurainville (Pas-de-Calais)",
-	"1992", "03", "06", "Campagne-lès-Hesdin (Pas-de-Calais)",
-	"myKey", @Etat, @nbr, @score, @id, @record, @msg);
+    "HUMBERT", "JEANNE MARIE BERTHE", "2",
+    "1900", "00", "00", "",
+    "1988", "00", "00", "",
+    "Jeanne Marie Berthe.0 HUMBERT", @Etat, @nbr, @score, @id, @record, @msg);
 
 select concat( case @Etat
 	when -5 then 'Score faible D'

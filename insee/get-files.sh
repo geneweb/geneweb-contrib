@@ -47,7 +47,7 @@ do
 
 	if [[ ("${file_title}" =~ "-t") ||
 	      ("${file_title}" =~ "-m" && "$year" == "2019") ||
-	      (!("${file_title}" =~ -(t|m)) && "$year" -gt "2019") ]]
+	      (!("${file_title}" =~ -(t|m)) && "$year" =~ '^[0-9]+$' && "$year" -gt "2019") ]]
 	then
 		echo "File ${DIR}/${file_title} is useless."
 	elif [[ "${last_sync}" < "${file_last_modified}" ]]
