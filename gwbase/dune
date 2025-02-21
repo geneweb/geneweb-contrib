@@ -7,7 +7,6 @@
   (libraries
     geneweb
     geneweb.gwdb-legacy
-    geneweb.sosa_zarith
     unix
   )
 )
