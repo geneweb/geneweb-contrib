@@ -1,4 +1,4 @@
 (executables
-  (names gwaccess gwpublic1 gwpublic2 gwpublic2priv)
+  (names gwaccess gwpublic1 gwpublic2priv)
   (libraries unix geneweb.gwdb-versioned geneweb)
 )
