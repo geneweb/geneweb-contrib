@@ -6,14 +6,14 @@
 }
 
 @font-face {
-  font-family: 'GeneWeb 7.1 webfont subset from Font-Awesome v6.5.1 Solid';
+  font-family: 'GeneWeb 7.1 webfont subset from Font-Awesome v6.7.2 Solid';
   font-weight: 900;
   font-display: $fa-font-display;
-  src: url('#{$fa-font-path}/fa-solid-900.woff2?v=0cb2b9c775c968dd315053e05c000541') format('woff2');
+  src: url('#{$fa-font-path}/fa-solid-900.woff2?v=ece7077c80dea480fbdf3b6aad36703c') format('woff2');
   
 }
 
 .#{$fa-css-prefix}-solid {
-  font-family: 'GeneWeb 7.1 webfont subset from Font-Awesome v6.5.1 Solid';
+  font-family: 'GeneWeb 7.1 webfont subset from Font-Awesome v6.7.2 Solid';
   font-weight: 900;
 }

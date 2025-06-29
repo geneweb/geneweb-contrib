@@ -1,0 +1,8 @@
+# Icons Whitelist - Regular style
+# Add icons here that aren't automatically detected
+# One icon name per line (without fa- prefix)
+# This file is preserved between runs
+circle-xmark
+circle-question
+folder
+lightbulb
