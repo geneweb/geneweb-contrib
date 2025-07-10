@@ -4,7 +4,7 @@
  * Copyright 2022 Fonticons, Inc.
  */
 .fa {
-  font-family: var(--fa-style-family, "GeneWeb 7.1 webfont subset from Font-Awesome v6.5.1");
+  font-family: var(--fa-style-family, "GeneWeb 7.1 webfont subset from Font-Awesome v6.7.2");
   font-weight: var(--fa-style, 400);
 }
 
@@ -209,6 +209,10 @@ readers do not read off random characters that represent icons */
   content: "\f105";
 }
 
+.fa-arrow-down::before {
+  content: "\f063";
+}
+
 .fa-arrow-down-1-9::before {
   content: "\f162";
 }
@@ -265,12 +269,20 @@ readers do not read off random characters that represent icons */
   content: "\f062";
 }
 
+.fa-arrow-up-from-bracket::before {
+  content: "\e09a";
+}
+
 .fa-arrow-up-long::before {
   content: "\f176";
 }
 
 .fa-arrow-up-right-dots::before {
   content: "\e4b7";
+}
+
+.fa-arrows-spin::before {
+  content: "\e4bb";
 }
 
 .fa-award::before {
@@ -341,6 +353,10 @@ readers do not read off random characters that represent icons */
   content: "\f43c";
 }
 
+.fa-chess-rook::before {
+  content: "\f447";
+}
+
 .fa-chevron-down::before {
   content: "\f078";
 }
@@ -361,12 +377,28 @@ readers do not read off random characters that represent icons */
   content: "\f1ae";
 }
 
+.fa-children::before {
+  content: "\e4e1";
+}
+
 .fa-circle-dot::before {
   content: "\f192";
 }
 
+.fa-circle-info::before {
+  content: "\f05a";
+}
+
+.fa-circle-question::before {
+  content: "\f059";
+}
+
 .fa-circle-stop::before {
   content: "\f28d";
+}
+
+.fa-circle-xmark::before {
+  content: "\f057";
 }
 
 .fa-clipboard::before {
@@ -387,6 +419,10 @@ readers do not read off random characters that represent icons */
 
 .fa-code-fork::before {
   content: "\e13b";
+}
+
+.fa-comment::before {
+  content: "\f075";
 }
 
 .fa-comment-dots::before {
@@ -513,6 +549,10 @@ readers do not read off random characters that represent icons */
   content: "\f0b0";
 }
 
+.fa-folder::before {
+  content: "\f07b";
+}
+
 .fa-folder-open::before {
   content: "\f07c";
 }
@@ -589,6 +629,10 @@ readers do not read off random characters that represent icons */
   content: "\f537";
 }
 
+.fa-lightbulb::before {
+  content: "\f0eb";
+}
+
 .fa-link::before {
   content: "\f0c1";
 }
@@ -617,6 +661,10 @@ readers do not read off random characters that represent icons */
   content: "\f00e";
 }
 
+.fa-map-location-dot::before {
+  content: "\f5a0";
+}
+
 .fa-markdown::before {
   content: "\f60f";
 }
@@ -627,6 +675,10 @@ readers do not read off random characters that represent icons */
 
 .fa-mars-double::before {
   content: "\f227";
+}
+
+.fa-mask::before {
+  content: "\f6fa";
 }
 
 .fa-minus::before {
@@ -649,12 +701,24 @@ readers do not read off random characters that represent icons */
   content: "\f1fc";
 }
 
+.fa-pen::before {
+  content: "\f304";
+}
+
 .fa-pen-to-square::before {
   content: "\f044";
 }
 
+.fa-pencil::before {
+  content: "\f303";
+}
+
 .fa-people-arrows::before {
   content: "\e068";
+}
+
+.fa-people-group::before {
+  content: "\e533";
 }
 
 .fa-percent::before {
@@ -671,6 +735,26 @@ readers do not read off random characters that represent icons */
 
 .fa-person-arrow-up-from-line::before {
   content: "\e539";
+}
+
+.fa-person-breastfeeding::before {
+  content: "\e53a";
+}
+
+.fa-person-circle-check::before {
+  content: "\e53e";
+}
+
+.fa-person-circle-minus::before {
+  content: "\e540";
+}
+
+.fa-person-circle-plus::before {
+  content: "\e541";
+}
+
+.fa-person-circle-question::before {
+  content: "\e542";
 }
 
 .fa-person-dress::before {
@@ -737,6 +821,10 @@ readers do not read off random characters that represent icons */
   content: "\f074";
 }
 
+.fa-signature::before {
+  content: "\f5b7";
+}
+
 .fa-sitemap::before {
   content: "\f0e8";
 }
@@ -757,8 +845,16 @@ readers do not read off random characters that represent icons */
   content: "\f0de";
 }
 
+.fa-spell-check::before {
+  content: "\f891";
+}
+
 .fa-star::before {
   content: "\f005";
+}
+
+.fa-strikethrough::before {
+  content: "\f0cc";
 }
 
 .fa-superscript::before {
@@ -821,6 +917,10 @@ readers do not read off random characters that represent icons */
   content: "\f007";
 }
 
+.fa-user-doctor::before {
+  content: "\f0f0";
+}
+
 .fa-user-gear::before {
   content: "\f4fe";
 }
@@ -839,6 +939,10 @@ readers do not read off random characters that represent icons */
 
 .fa-user-plus::before {
   content: "\f234";
+}
+
+.fa-user-shield::before {
+  content: "\f505";
 }
 
 .fa-user-tie::before {
