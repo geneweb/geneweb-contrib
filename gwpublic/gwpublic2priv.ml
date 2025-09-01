@@ -407,4 +407,4 @@ let main () =
     (Files.lock_file !bname) ~onerror:Lock.print_error_and_exit @@ fun () ->
   compute_persons_accesses ~fast:!fast !bname !lim_year !trace
 
-let _ = main ()
+let () = main ()
