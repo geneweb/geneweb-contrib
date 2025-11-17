@@ -75,10 +75,12 @@ let () =
   | (bname, Some access, everybody, target_access, list) ->
     Secure.set_base_dir (Filename.dirname bname);
     Lock.control_retry (Files.lock_file bname) ~onerror:Lock.print_error_and_exit @@ fun () ->
-    if Option.is_some target_access then
+    match target_access with
+    | Some target_access ->
       Gwaccess_util.change_only_old_access
-        ~old_access:(Option.get target_access)
+        ~old_access:target_access
         ~new_access:access
         bname
-    else if everybody then Gwaccess_util.access_everybody access bname
-    else access_some access bname list
+    | None ->
+      if everybody then Gwaccess_util.access_everybody access bname
+      else access_some access bname list
