@@ -347,7 +347,7 @@ let change_access base store lim_year trace =
           if estimated_year > lim_year then Def.Private
           else Def.Public
         in
-        let gen_person = {(Gwdb.gen_person_of_person p) with access = access} in
+        let gen_person = {(Gwdb.gen_person_of_person p) with access} in
         Gwdb.patch_person base gen_person.key_index gen_person;
         if trace then begin
           let access_string = if access = Def.Private then "private" else "public" in
