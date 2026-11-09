@@ -5,7 +5,7 @@ let access_some_aux base access key =
   | [ip] ->
     let p = poi base ip in
     if get_access p <> access then begin
-      let p = {(gen_person_of_person p) with Def.access = access} in
+      let p = {(gen_person_of_person p) with Def.access} in
       patch_person base p.Def.key_index p
     end ;
   | _ ->
@@ -13,7 +13,7 @@ let access_some_aux base access key =
     | Some ip ->
       let p = poi base ip in
       if get_access p <> access then begin
-        let p = {(gen_person_of_person p) with Def.access = access} in
+        let p = {(gen_person_of_person p) with Def.access} in
         patch_person base p.Def.key_index p
       end ;
     | None ->

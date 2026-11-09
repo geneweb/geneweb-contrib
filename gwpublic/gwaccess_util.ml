@@ -34,7 +34,7 @@ let access_everybody access bname =
   ProgrBar.start ();
   Gwdb.Collection.iteri begin fun i p ->
     if get_access p <> access then begin
-      let p = {(gen_person_of_person p) with Def.access = access} in
+      let p = {(gen_person_of_person p) with Def.access} in
       patch_person base p.Def.key_index p
     end;
     ProgrBar.run i n
